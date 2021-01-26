@@ -19,7 +19,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<mybatisplus.version>3.3.1</mybatisplus.version>
-		<mysql.version>8.0.17</mysql.version>
+		<mysql.version>5.1.47</mysql.version>
 		<mssql.version>4.0</mssql.version>
 		<oracle.version>11.2.0.3</oracle.version>
 		<druid.version>1.1.13</druid.version>
@@ -41,7 +41,7 @@
 		<fastjson.version>1.2.72</fastjson.version>
 		<hutool.version>4.1.1</hutool.version>
 		<lombok.version>1.18.4</lombok.version>
-		<flyway.version>7.5.1</flyway.version>
+		<flyway.version>5.2.4</flyway.version>
 		<!--wagon plugin 配置-->
 		<service-path>/work/renren</service-path>
 		<pack-name>${project.artifactId}-${project.version}.jar</pack-name>
@@ -312,15 +312,19 @@
 			<plugin>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
-				<version>7.5.1</version>
+				<version>${flyway.version}</version>
 				<configuration>
+					<url>jdbc:mysql://localhost:3306/guli_admin?serverTimezone=UTC</url>
 					<user>root</user>
-					<password>52902003</password>
-					<driver>com.mysql.cj.jdbc.Driver</driver>
-					<url>jdbc:mysql://localhost:3306/guli_admin?serverTimezone=Asia/Shanghai</url>
-					<baselineOnMigrate>true</baselineOnMigrate>
-					<locations>classpath:db/migration/</locations>
+					<password>123456</password>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>${mysql.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

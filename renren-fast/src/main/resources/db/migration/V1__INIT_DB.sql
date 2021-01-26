@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS guli_admin;
+
 -- 菜单
 CREATE TABLE IF NOT EXISTS `sys_menu` (
   `menu_id` bigint NOT NULL AUTO_INCREMENT,
