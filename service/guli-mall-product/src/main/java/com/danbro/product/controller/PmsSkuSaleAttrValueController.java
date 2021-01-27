@@ -1,7 +1,7 @@
 package com.danbro.product.controller;
  
-import com.danbro.product.entity.PmsCategoryBrandRelation;
-import com.danbro.product.service.PmsCategoryBrandRelationService;
+import com.danbro.product.entity.PmsSkuSaleAttrValue;
+import com.danbro.product.service.PmsSkuSaleAttrValueService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
  * @author makejava
  * @since 2021-01-27 22:02:43
  */
-@Api(tags = "品牌分类关联(PmsCategoryBrandRelation)") 
+@Api(tags = "sku销售属性&值(PmsSkuSaleAttrValue)") 
 @Validated
 @RestController
 @AllArgsConstructor
-@RequestMapping("pmsCategoryBrandRelation")
-public class PmsCategoryBrandRelationController {
+@RequestMapping("pmsSkuSaleAttrValue")
+public class PmsSkuSaleAttrValueController {
     @Autowired
-    private  PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
+    private  PmsSkuSaleAttrValueService pmsSkuSaleAttrValueService;
  
 }

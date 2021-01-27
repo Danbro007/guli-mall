@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 品牌分类关联(PmsCategoryBrandRelation)表服务实现类
  *
  * @author makejava
- * @since 2021-01-27 21:30:43
+ * @since 2021-01-27 22:02:43
  */
 @Service
 public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategoryBrandRelationMapper, PmsCategoryBrandRelation> implements PmsCategoryBrandRelationService {
