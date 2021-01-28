@@ -1,292 +1,220 @@
-drop table if exists sms_coupon;
+/*
+ Navicat Premium Data Transfer
 
-drop table if exists sms_coupon_history;
+ Source Server         : 10.43.1.52
+ Source Server Type    : MySQL
+ Source Server Version : 50729
+ Source Host           : 10.43.1.52:3306
+ Source Schema         : mall_ums
 
-drop table if exists sms_coupon_spu_category_relation;
+ Target Server Type    : MySQL
+ Target Server Version : 50729
+ File Encoding         : 65001
 
-drop table if exists sms_coupon_spu_relation;
+ Date: 10/07/2020 22:21:13
+*/
 
-drop table if exists sms_home_adv;
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
-drop table if exists sms_home_subject;
+-- ----------------------------
+-- Table structure for ums_growth_change_history
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_growth_change_history`;
+CREATE TABLE `ums_growth_change_history`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `member_id` bigint(20) NULL DEFAULT NULL COMMENT 'member_id',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT 'create_time',
+  `change_count` int(11) NULL DEFAULT NULL COMMENT '改变的值（正负计数）',
+  `note` varchar(0) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `source_type` tinyint(4) NULL DEFAULT NULL COMMENT '积分来源[0-购物，1-管理员修改]',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '成长值变化历史记录' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_home_subject_spu;
+-- ----------------------------
+-- Table structure for ums_integration_change_history
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_integration_change_history`;
+CREATE TABLE `ums_integration_change_history`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `member_id` bigint(20) NULL DEFAULT NULL COMMENT 'member_id',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT 'create_time',
+  `change_count` int(11) NULL DEFAULT NULL COMMENT '变化的值',
+  `note` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `source_tyoe` tinyint(4) NULL DEFAULT NULL COMMENT '来源[0->购物；1->管理员修改;2->活动]',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分变化历史记录' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_member_price;
+-- ----------------------------
+-- Table structure for ums_member
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member`;
+CREATE TABLE `ums_member`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `level_id` bigint(20) NULL DEFAULT NULL COMMENT '会员等级id',
+  `username` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户名',
+  `password` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '密码',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '昵称',
+  `mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '手机号码',
+  `email` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `header` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '头像',
+  `gender` tinyint(4) NULL DEFAULT NULL COMMENT '性别',
+  `birth` date NULL DEFAULT NULL COMMENT '生日',
+  `city` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '所在城市',
+  `job` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '职业',
+  `sign` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '个性签名',
+  `source_type` tinyint(4) NULL DEFAULT NULL COMMENT '用户来源',
+  `integration` int(11) NULL DEFAULT NULL COMMENT '积分',
+  `growth` int(11) NULL DEFAULT NULL COMMENT '成长值',
+  `status` tinyint(4) NULL DEFAULT NULL COMMENT '启用状态',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '注册时间',
+  `social_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '社交账号ID',
+  `access_token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '社交账号Token',
+  `expires_in` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '社交账号Token过期时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_seckill_promotion;
+-- ----------------------------
+-- Records of ums_member
+-- ----------------------------
+INSERT INTO `ums_member` VALUES (1, 1, 'firenay', '$2a$10$uDXc05.IsjGI//f7HC8/lOGys0oRiFZX59olzqVqTl8IKxR8iBVGy', 'firenay', '18173516208', 'xxx@gmail.com', NULL, 0, '2020-06-25', '湖南 长沙', 'JAVA', NULL, NULL, NULL, NULL, 0, '2020-06-25 13:09:14', NULL, NULL, NULL);
+INSERT INTO `ums_member` VALUES (2, 1, 'sentinel', '$2a$10$j5XRpUeGq7AYIFk7pqdvyebK.Bo5MvasCxk.8RuBWsHFcq5RzXKEC', 'sentinel', '18173516102', 'xxx@gmail.com', NULL, 1, '2020-06-25', '湖南 长沙', 'JAVA', NULL, NULL, NULL, NULL, 0, '2020-06-25 13:15:33', NULL, NULL, NULL);
+INSERT INTO `ums_member` VALUES (3, 1, 'firenayfly', '$2a$10$UvvfpBagTqbalI6UTnq5nOiPheEdbKLO64fozWMx1lUeK9p2tM366', 'firenayfly', '18467894965', 'xxx@gmail.com', NULL, 1, '2020-06-25', '湖南 长沙', 'JAVA', NULL, NULL, NULL, NULL, 0, '2020-06-25 13:18:32', NULL, NULL, NULL);
+INSERT INTO `ums_member` VALUES (4, 1, '汀西氟的我是你', '$2a$10$uDXc05.IsjGI//f7HC8/lOGys0oRiFZX59olzqVqTl8IKxR8iBVGy', '汀西氟的我是你', '18467894965', 'xxx@gmail.com', NULL, 1, '2020-06-26', '湖南 长沙', '自媒体', NULL, NULL, NULL, NULL, 0, '2020-06-26 09:36:00', '5605937365', '2.00b5w4HGMwxc6B0e3d62c666DlN1DD', '157679999');
 
-drop table if exists sms_seckill_session;
+-- ----------------------------
+-- Table structure for ums_member_collect_spu
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member_collect_spu`;
+CREATE TABLE `ums_member_collect_spu`  (
+  `id` bigint(20) NOT NULL COMMENT 'id',
+  `member_id` bigint(20) NULL DEFAULT NULL COMMENT '会员id',
+  `spu_id` bigint(20) NULL DEFAULT NULL COMMENT 'spu_id',
+  `spu_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'spu_name',
+  `spu_img` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'spu_img',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT 'create_time',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员收藏的商品' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_seckill_sku_notice;
+-- ----------------------------
+-- Table structure for ums_member_collect_subject
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member_collect_subject`;
+CREATE TABLE `ums_member_collect_subject`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `subject_id` bigint(20) NULL DEFAULT NULL COMMENT 'subject_id',
+  `subject_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'subject_name',
+  `subject_img` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'subject_img',
+  `subject_urll` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '活动url',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员收藏的专题活动' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_seckill_sku_relation;
+-- ----------------------------
+-- Table structure for ums_member_level
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member_level`;
+CREATE TABLE `ums_member_level`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '等级名称',
+  `growth_point` int(11) NULL DEFAULT NULL COMMENT '等级需要的成长值',
+  `default_status` tinyint(4) NULL DEFAULT NULL COMMENT '是否为默认等级[0->不是；1->是]',
+  `free_freight_point` decimal(18, 4) NULL DEFAULT NULL COMMENT '免运费标准',
+  `comment_growth_point` int(11) NULL DEFAULT NULL COMMENT '每次评价获取的成长值',
+  `priviledge_free_freight` tinyint(4) NULL DEFAULT NULL COMMENT '是否有免邮特权',
+  `priviledge_member_price` tinyint(4) NULL DEFAULT NULL COMMENT '是否有会员价格特权',
+  `priviledge_birthday` tinyint(4) NULL DEFAULT NULL COMMENT '是否有生日特权',
+  `note` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员等级' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_sku_full_reduction;
+-- ----------------------------
+-- Records of ums_member_level
+-- ----------------------------
+INSERT INTO `ums_member_level` VALUES (1, '普通会员', 0, 1, 188.0000, 10, 0, 0, 1, '初级会员');
+INSERT INTO `ums_member_level` VALUES (2, '铜牌会员', 2000, 0, 159.0000, 20, 0, 1, 1, '铜牌会员');
+INSERT INTO `ums_member_level` VALUES (3, '银牌会员', 5000, 0, 129.0000, 50, 0, 1, 1, '银牌会员');
+INSERT INTO `ums_member_level` VALUES (4, '金牌会员', 8000, 0, 88.0000, 0, 1, 1, 1, '金牌会员');
+INSERT INTO `ums_member_level` VALUES (5, '钻石会员', 12000, 0, 48.0000, 80, 1, 1, 1, '钻石会员');
 
-drop table if exists sms_sku_ladder;
+-- ----------------------------
+-- Table structure for ums_member_login_log
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member_login_log`;
+CREATE TABLE `ums_member_login_log`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `member_id` bigint(20) NULL DEFAULT NULL COMMENT 'member_id',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `ip` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'ip',
+  `city` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'city',
+  `login_type` tinyint(1) NULL DEFAULT NULL COMMENT '登录类型[1-web，2-app]',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员登录记录' ROW_FORMAT = Dynamic;
 
-drop table if exists sms_spu_bounds;
+-- ----------------------------
+-- Table structure for ums_member_receive_address
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member_receive_address`;
+CREATE TABLE `ums_member_receive_address`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `member_id` bigint(20) NULL DEFAULT NULL COMMENT 'member_id',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '收货人姓名',
+  `phone` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电话',
+  `post_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮政编码',
+  `province` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '省份/直辖市',
+  `city` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '城市',
+  `region` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '区',
+  `detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '详细地址(街道)',
+  `areacode` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '省市区代码',
+  `default_status` tinyint(1) NULL DEFAULT NULL COMMENT '是否默认',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员收货地址' ROW_FORMAT = Dynamic;
 
-/*==============================================================*/
-/* Table: sms_coupon                                            */
-/*==============================================================*/
-create table sms_coupon
-(
-    id                   bigint not null auto_increment comment 'id',
-    coupon_type          tinyint(1) comment '优惠卷类型[0->全场赠券；1->会员赠券；2->购物赠券；3->注册赠券]',
-    coupon_img           varchar(2000) comment '优惠券图片',
-    coupon_name          varchar(100) comment '优惠卷名字',
-    num                  int comment '数量',
-    amount               decimal(18,4) comment '金额',
-    per_limit            int comment '每人限领张数',
-    min_point            decimal(18,4) comment '使用门槛',
-    start_time           datetime comment '开始时间',
-    end_time             datetime comment '结束时间',
-    use_type             tinyint(1) comment '使用类型[0->全场通用；1->指定分类；2->指定商品]',
-    note                 varchar(200) comment '备注',
-    publish_count        int(11) comment '发行数量',
-    use_count            int(11) comment '已使用数量',
-    receive_count        int(11) comment '领取数量',
-    enable_start_time    datetime comment '可以领取的开始日期',
-    enable_end_time      datetime comment '可以领取的结束日期',
-    code                 varchar(64) comment '优惠码',
-    member_level         tinyint(1) comment '可以领取的会员等级[0->不限等级，其他-对应等级]',
-    publish              tinyint(1) comment '发布状态[0-未发布，1-已发布]',
-    primary key (id)
-);
+-- ----------------------------
+-- Records of ums_member_receive_address
+-- ----------------------------
+INSERT INTO `ums_member_receive_address` VALUES (1, 1, 'firenay', '18173516208', NULL, '湖南', '长沙', NULL, '望城区', NULL, 1);
+INSERT INTO `ums_member_receive_address` VALUES (2, 2, 'sentinel', '18173516102', NULL, '湖南', '长沙', NULL, '雨花区', NULL, 1);
+INSERT INTO `ums_member_receive_address` VALUES (3, 3, 'firenayfly', '15421564125', NULL, '陕西', '西安', NULL, '新城区', NULL, 1);
 
-alter table sms_coupon comment '优惠券信息';
+-- ----------------------------
+-- Table structure for ums_member_statistics_info
+-- ----------------------------
+DROP TABLE IF EXISTS `ums_member_statistics_info`;
+CREATE TABLE `ums_member_statistics_info`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `member_id` bigint(20) NULL DEFAULT NULL COMMENT '会员id',
+  `consume_amount` decimal(18, 4) NULL DEFAULT NULL COMMENT '累计消费金额',
+  `coupon_amount` decimal(18, 4) NULL DEFAULT NULL COMMENT '累计优惠金额',
+  `order_count` int(11) NULL DEFAULT NULL COMMENT '订单数量',
+  `coupon_count` int(11) NULL DEFAULT NULL COMMENT '优惠券数量',
+  `comment_count` int(11) NULL DEFAULT NULL COMMENT '评价数',
+  `return_order_count` int(11) NULL DEFAULT NULL COMMENT '退货数量',
+  `login_count` int(11) NULL DEFAULT NULL COMMENT '登录次数',
+  `attend_count` int(11) NULL DEFAULT NULL COMMENT '关注数量',
+  `fans_count` int(11) NULL DEFAULT NULL COMMENT '粉丝数量',
+  `collect_product_count` int(11) NULL DEFAULT NULL COMMENT '收藏的商品数量',
+  `collect_subject_count` int(11) NULL DEFAULT NULL COMMENT '收藏的专题活动数量',
+  `collect_comment_count` int(11) NULL DEFAULT NULL COMMENT '收藏的评论数量',
+  `invite_friend_count` int(11) NULL DEFAULT NULL COMMENT '邀请的朋友数量',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '会员统计信息' ROW_FORMAT = Dynamic;
 
-/*==============================================================*/
-/* Table: sms_coupon_history                                    */
-/*==============================================================*/
-create table sms_coupon_history
-(
-    id                   bigint not null auto_increment comment 'id',
-    coupon_id            bigint comment '优惠券id',
-    member_id            bigint comment '会员id',
-    member_nick_name     varchar(64) comment '会员名字',
-    get_type             tinyint(1) comment '获取方式[0->后台赠送；1->主动领取]',
-    create_time          datetime comment '创建时间',
-    use_type             tinyint(1) comment '使用状态[0->未使用；1->已使用；2->已过期]',
-    use_time             datetime comment '使用时间',
-    order_id             bigint comment '订单id',
-    order_sn             bigint comment '订单号',
-    primary key (id)
-);
+-- ----------------------------
+-- Table structure for undo_log
+-- ----------------------------
+DROP TABLE IF EXISTS `undo_log`;
+CREATE TABLE `undo_log`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `branch_id` bigint(20) NOT NULL,
+  `xid` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `context` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `rollback_info` longblob NOT NULL,
+  `log_status` int(11) NOT NULL,
+  `log_created` datetime(0) NOT NULL,
+  `log_modified` datetime(0) NOT NULL,
+  `ext` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `ux_undo_log`(`xid`, `branch_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
-alter table sms_coupon_history comment '优惠券领取历史记录';
-
-/*==============================================================*/
-/* Table: sms_coupon_spu_category_relation                      */
-/*==============================================================*/
-create table sms_coupon_spu_category_relation
-(
-    id                   bigint not null auto_increment comment 'id',
-    coupon_id            bigint comment '优惠券id',
-    category_id          bigint comment '产品分类id',
-    category_name        varchar(64) comment '产品分类名称',
-    primary key (id)
-);
-
-alter table sms_coupon_spu_category_relation comment '优惠券分类关联';
-
-/*==============================================================*/
-/* Table: sms_coupon_spu_relation                               */
-/*==============================================================*/
-create table sms_coupon_spu_relation
-(
-    id                   bigint not null auto_increment comment 'id',
-    coupon_id            bigint comment '优惠券id',
-    spu_id               bigint comment 'spu_id',
-    spu_name             varchar(255) comment 'spu_name',
-    primary key (id)
-);
-
-alter table sms_coupon_spu_relation comment '优惠券与产品关联';
-
-/*==============================================================*/
-/* Table: sms_home_adv                                          */
-/*==============================================================*/
-create table sms_home_adv
-(
-    id                   bigint not null auto_increment comment 'id',
-    name                 varchar(100) comment '名字',
-    pic                  varchar(500) comment '图片地址',
-    start_time           datetime comment '开始时间',
-    end_time             datetime comment '结束时间',
-    status               tinyint(1) comment '状态',
-    click_count          int comment '点击数',
-    url                  varchar(500) comment '广告详情连接地址',
-    note                 varchar(500) comment '备注',
-    sort                 int comment '排序',
-    publisher_id         bigint comment '发布者',
-    auth_id              bigint comment '审核者',
-    primary key (id)
-);
-
-alter table sms_home_adv comment '首页轮播广告';
-
-/*==============================================================*/
-/* Table: sms_home_subject                                      */
-/*==============================================================*/
-create table sms_home_subject
-(
-    id                   bigint not null auto_increment comment 'id',
-    name                 varchar(200) comment '专题名字',
-    title                varchar(255) comment '专题标题',
-    sub_title            varchar(255) comment '专题副标题',
-    status               tinyint(1) comment '显示状态',
-    url                  varchar(500) comment '详情连接',
-    sort                 int comment '排序',
-    img                  varchar(500) comment '专题图片地址',
-    primary key (id)
-);
-
-alter table sms_home_subject comment '首页专题表【jd首页下面很多专题，每个专题链接新的页面，展示专题商品信息】';
-
-/*==============================================================*/
-/* Table: sms_home_subject_spu                                  */
-/*==============================================================*/
-create table sms_home_subject_spu
-(
-    id                   bigint not null auto_increment comment 'id',
-    name                 varchar(200) comment '专题名字',
-    subject_id           bigint comment '专题id',
-    spu_id               bigint comment 'spu_id',
-    sort                 int comment '排序',
-    primary key (id)
-);
-
-alter table sms_home_subject_spu comment '专题商品';
-
-/*==============================================================*/
-/* Table: sms_member_price                                      */
-/*==============================================================*/
-create table sms_member_price
-(
-    id                   bigint not null auto_increment comment 'id',
-    sku_id               bigint comment 'sku_id',
-    member_level_id      bigint comment '会员等级id',
-    member_level_name    varchar(100) comment '会员等级名',
-    member_price         decimal(18,4) comment '会员对应价格',
-    add_other            tinyint(1) comment '可否叠加其他优惠[0-不可叠加优惠，1-可叠加]',
-    primary key (id)
-);
-
-alter table sms_member_price comment '商品会员价格';
-
-/*==============================================================*/
-/* Table: sms_seckill_promotion                                 */
-/*==============================================================*/
-create table sms_seckill_promotion
-(
-    id                   bigint not null auto_increment comment 'id',
-    title                varchar(255) comment '活动标题',
-    start_time           datetime comment '开始日期',
-    end_time             datetime comment '结束日期',
-    status               tinyint comment '上下线状态',
-    create_time          datetime comment '创建时间',
-    user_id              bigint comment '创建人',
-    primary key (id)
-);
-
-alter table sms_seckill_promotion comment '秒杀活动';
-
-/*==============================================================*/
-/* Table: sms_seckill_session                                   */
-/*==============================================================*/
-create table sms_seckill_session
-(
-    id                   bigint not null auto_increment comment 'id',
-    name                 varchar(200) comment '场次名称',
-    start_time           datetime comment '每日开始时间',
-    end_time             datetime comment '每日结束时间',
-    status               tinyint(1) comment '启用状态',
-    create_time          datetime comment '创建时间',
-    primary key (id)
-);
-
-alter table sms_seckill_session comment '秒杀活动场次';
-
-/*==============================================================*/
-/* Table: sms_seckill_sku_notice                                */
-/*==============================================================*/
-create table sms_seckill_sku_notice
-(
-    id                   bigint not null auto_increment comment 'id',
-    member_id            bigint comment 'member_id',
-    sku_id               bigint comment 'sku_id',
-    session_id           bigint comment '活动场次id',
-    subcribe_time        datetime comment '订阅时间',
-    send_time            datetime comment '发送时间',
-    notice_type          tinyint(1) comment '通知方式[0-短信，1-邮件]',
-    primary key (id)
-);
-
-alter table sms_seckill_sku_notice comment '秒杀商品通知订阅';
-
-/*==============================================================*/
-/* Table: sms_seckill_sku_relation                              */
-/*==============================================================*/
-create table sms_seckill_sku_relation
-(
-    id                   bigint not null auto_increment comment 'id',
-    promotion_id         bigint comment '活动id',
-    promotion_session_id bigint comment '活动场次id',
-    sku_id               bigint comment '商品id',
-    seckill_price        decimal comment '秒杀价格',
-    seckill_count        decimal comment '秒杀总量',
-    seckill_limit        decimal comment '每人限购数量',
-    seckill_sort         int comment '排序',
-    primary key (id)
-);
-
-alter table sms_seckill_sku_relation comment '秒杀活动商品关联';
-
-/*==============================================================*/
-/* Table: sms_sku_full_reduction                                */
-/*==============================================================*/
-create table sms_sku_full_reduction
-(
-    id                   bigint not null auto_increment comment 'id',
-    sku_id               bigint comment 'spu_id',
-    full_price           decimal(18,4) comment '满多少',
-    reduce_price         decimal(18,4) comment '减多少',
-    add_other            tinyint(1) comment '是否参与其他优惠',
-    primary key (id)
-);
-
-alter table sms_sku_full_reduction comment '商品满减信息';
-
-/*==============================================================*/
-/* Table: sms_sku_ladder                                        */
-/*==============================================================*/
-create table sms_sku_ladder
-(
-    id                   bigint not null auto_increment comment 'id',
-    sku_id               bigint comment 'spu_id',
-    full_count           int comment '满几件',
-    discount             decimal(4,2) comment '打几折',
-    price                decimal(18,4) comment '折后价',
-    add_other            tinyint(1) comment '是否叠加其他优惠[0-不可叠加，1-可叠加]',
-    primary key (id)
-);
-
-alter table sms_sku_ladder comment '商品阶梯价格';
-
-/*==============================================================*/
-/* Table: sms_spu_bounds                                        */
-/*==============================================================*/
-create table sms_spu_bounds
-(
-    id                   bigint not null auto_increment comment 'id',
-    spu_id               bigint,
-    grow_bounds          decimal(18,4) comment '成长积分',
-    buy_bounds           decimal(18,4) comment '购物积分',
-    work                 tinyint(1) comment '优惠生效情况[1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】]',
-    primary key (id)
-);
-
-alter table sms_spu_bounds comment '商品spu积分设置';
+SET FOREIGN_KEY_CHECKS = 1;
