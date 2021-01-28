@@ -34,7 +34,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway.version}</version>
                 <configuration>
-                    <url>jdbc:mysql://192.168.0.109:4306/gulimall_pms?serverTimezone=UTC</url>
+                    <url>jdbc:mysql://192.168.0.109:4306/gulimall_pms</url>
                     <user>root</user>
                     <password>123456</password>
                 </configuration>

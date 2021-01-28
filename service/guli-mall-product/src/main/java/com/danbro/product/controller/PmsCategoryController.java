@@ -1,10 +1,13 @@
 package com.danbro.product.controller;
 
+import java.util.List;
+import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.service.PmsCategoryService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,9 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @AllArgsConstructor
-@RequestMapping("pmsCategory")
+@RequestMapping("product/category")
 public class PmsCategoryController {
     @Autowired
-    private  PmsCategoryService pmsCategoryService;
- 
+    private PmsCategoryService categoryService;
+
+    //Todo 放缓存里
+    @GetMapping("list/tree")
+    public List<PmsCategoryVo> getCategoryTree() {
+        return categoryService.getCategoryTree();
+    }
+
 }
