@@ -23,10 +23,6 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
         <!--mybatis-plus代码生成器-->
         <dependency>
             <groupId>com.baomidou</groupId>
