@@ -31,6 +31,13 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
     }
 
+    /**
+     * 获取父分类的子分类
+     *
+     * @param root        父分类
+     * @param allCategory 所有分类列表
+     * @return 子分类
+     */
     private List<PmsCategoryVo> getChildren(PmsCategoryVo root, List<PmsCategory> allCategory) {
         return allCategory.stream().filter(e -> e.getParentCid().equals(root.getCatId())).map(m -> {
             PmsCategoryVo categoryVo = new PmsCategoryVo().convert(m);
