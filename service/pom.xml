@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
-    <artifactId>service</artifactId>
+    <artifactId>com.danbro.coupon.service</artifactId>
     <modules>
         <module>guli-mall-member</module>
         <module>guli-mall-coupon</module>

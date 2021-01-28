@@ -1,132 +1,111 @@
 package com.danbro.order.entity;
-import java.util.Date;
+
+import java.math.BigDecimal;
+import java.util.Locale;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 /**
  * @author makejava
- * @since 2021-01-27 21:30:18
+ * @since 2021-01-28 18:50:27
  */
 @Data
 @Accessors(chain = true)
 @ApiModel("订单退货申请")
 public class OmsOrderReturnApply implements Serializable {
-    private static final long serialVersionUID = -62439368070518765L;
-                    @ApiModelProperty("id")
-    @TableField("id")
+    private static final long serialVersionUID = 564261316689507248L;
+
+    @TableId
+    @ApiModelProperty("id")
     private Long id;
-    
-                    @ApiModelProperty("order_id")
-    @TableField("order_id")
+
+    @ApiModelProperty("order_id")
     private Long orderId;
-    
-                    @ApiModelProperty("退货商品id")
-    @TableField("sku_id")
+
+    @ApiModelProperty("退货商品id")
     private Long skuId;
-    
-                    @ApiModelProperty("订单编号")
-    @TableField("order_sn")
+
+    @ApiModelProperty("订单编号")
     private String orderSn;
-    
-                    @ApiModelProperty("申请时间")
-    @TableField("create_time")
-    private Date createTime;
-    
-                    @ApiModelProperty("会员用户名")
-    @TableField("member_username")
+
+    @TableField(fill = FieldFill.INSERT)
+    @ApiModelProperty("申请时间")
+    private Locale createTime;
+
+    @ApiModelProperty("会员用户名")
     private String memberUsername;
-    
-                    @ApiModelProperty("退款金额")
-    @TableField("return_amount")
-    private Double returnAmount;
-    
-                    @ApiModelProperty("退货人姓名")
-    @TableField("return_name")
+
+    @ApiModelProperty("退款金额")
+    private BigDecimal returnAmount;
+
+    @ApiModelProperty("退货人姓名")
     private String returnName;
-    
-                    @ApiModelProperty("退货人电话")
-    @TableField("return_phone")
+
+    @ApiModelProperty("退货人电话")
     private String returnPhone;
-    
-                    @ApiModelProperty("申请状态[0->待处理；1->退货中；2->已完成；3->已拒绝]")
-    @TableField("status")
-    private Object status;
-    
-                    @ApiModelProperty("处理时间")
-    @TableField("handle_time")
-    private Date handleTime;
-    
-                    @ApiModelProperty("商品图片")
-    @TableField("sku_img")
+
+    @ApiModelProperty("申请状态[0->待处理；1->退货中；2->已完成；3->已拒绝]")
+    private Integer status;
+
+    @ApiModelProperty("处理时间")
+    private Locale handleTime;
+
+    @ApiModelProperty("商品图片")
     private String skuImg;
-    
-                    @ApiModelProperty("商品名称")
-    @TableField("sku_name")
+
+    @ApiModelProperty("商品名称")
     private String skuName;
-    
-                    @ApiModelProperty("商品品牌")
-    @TableField("sku_brand")
+
+    @ApiModelProperty("商品品牌")
     private String skuBrand;
-    
-                    @ApiModelProperty("商品销售属性(JSON)")
-    @TableField("sku_attrs_vals")
+
+    @ApiModelProperty("商品销售属性(JSON)")
     private String skuAttrsVals;
-    
-                    @ApiModelProperty("退货数量")
-    @TableField("sku_count")
+
+    @ApiModelProperty("退货数量")
     private Integer skuCount;
-    
-                    @ApiModelProperty("商品单价")
-    @TableField("sku_price")
-    private Double skuPrice;
-    
-                    @ApiModelProperty("商品实际支付单价")
-    @TableField("sku_real_price")
-    private Double skuRealPrice;
-    
-                    @ApiModelProperty("原因")
-    @TableField("reason")
+
+    @ApiModelProperty("商品单价")
+    private BigDecimal skuPrice;
+
+    @ApiModelProperty("商品实际支付单价")
+    private BigDecimal skuRealPrice;
+
+    @ApiModelProperty("原因")
     private String reason;
-    
-                    @ApiModelProperty("描述")
-    @TableField("description述")
+
+    @ApiModelProperty("描述")
     private String description述;
-    
-                    @ApiModelProperty("凭证图片，以逗号隔开")
-    @TableField("desc_pics")
+
+    @ApiModelProperty("凭证图片，以逗号隔开")
     private String descPics;
-    
-                    @ApiModelProperty("处理备注")
-    @TableField("handle_note")
+
+    @ApiModelProperty("处理备注")
     private String handleNote;
-    
-                    @ApiModelProperty("处理人员")
-    @TableField("handle_man")
+
+    @ApiModelProperty("处理人员")
     private String handleMan;
-    
-                    @ApiModelProperty("收货人")
-    @TableField("receive_man")
+
+    @ApiModelProperty("收货人")
     private String receiveMan;
-    
-                    @ApiModelProperty("收货时间")
-    @TableField("receive_time")
-    private Date receiveTime;
-    
-                    @ApiModelProperty("收货备注")
-    @TableField("receive_note")
+
+    @ApiModelProperty("收货时间")
+    private Locale receiveTime;
+
+    @ApiModelProperty("收货备注")
     private String receiveNote;
-    
-                    @ApiModelProperty("收货电话")
-    @TableField("receive_phone")
+
+    @ApiModelProperty("收货电话")
     private String receivePhone;
-    
-                    @ApiModelProperty("公司收货地址")
-    @TableField("company_address")
+
+    @ApiModelProperty("公司收货地址")
     private String companyAddress;
-    
+
 
 }

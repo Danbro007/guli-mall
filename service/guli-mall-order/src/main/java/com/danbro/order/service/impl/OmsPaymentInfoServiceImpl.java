@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 支付信息表(OmsPaymentInfo)表服务实现类
  *
  * @author makejava
- * @since 2021-01-27 21:30:18
+ * @since 2021-01-28 18:50:27
  */
 @Service
 public class OmsPaymentInfoServiceImpl extends ServiceImpl<OmsPaymentInfoMapper, OmsPaymentInfo> implements OmsPaymentInfoService {

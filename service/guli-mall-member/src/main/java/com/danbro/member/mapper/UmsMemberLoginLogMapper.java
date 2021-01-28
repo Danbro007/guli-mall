@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 会员登录记录(UmsMemberLoginLog)表数据库访问层
  *
  * @author makejava
- * @since 2021-01-27 21:30:58
+ * @since 2021-01-28 19:03:18
  */
 @Mapper
 public interface UmsMemberLoginLogMapper extends BaseMapper<UmsMemberLoginLog>{

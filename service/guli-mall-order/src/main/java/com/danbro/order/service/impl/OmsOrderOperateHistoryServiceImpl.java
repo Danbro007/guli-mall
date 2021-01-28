@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 订单操作历史记录(OmsOrderOperateHistory)表服务实现类
  *
  * @author makejava
- * @since 2021-01-27 21:30:18
+ * @since 2021-01-28 18:50:27
  */
 @Service
 public class OmsOrderOperateHistoryServiceImpl extends ServiceImpl<OmsOrderOperateHistoryMapper, OmsOrderOperateHistory> implements OmsOrderOperateHistoryService {

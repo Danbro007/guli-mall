@@ -1,56 +1,52 @@
 package com.danbro.product.entity;
-import java.util.Date;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Locale;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiModel;
 
 /**
  * @author makejava
- * @since 2021-01-27 22:02:43
+ * @since 2021-01-28 18:56:55
  */
 @Data
 @Accessors(chain = true)
 @ApiModel("spu信息")
 public class PmsSpuInfo implements Serializable {
-    private static final long serialVersionUID = -54684891164820858L;
-                    @ApiModelProperty("商品id")
-    @TableField("id")
+    private static final long serialVersionUID = 954703514483777938L;
+
+    @TableId
+    @ApiModelProperty("商品id")
     private Long id;
-    
-                    @ApiModelProperty("商品名称")
-    @TableField("spu_name")
+
+    @ApiModelProperty("商品名称")
     private String spuName;
-    
-                    @ApiModelProperty("商品描述")
-    @TableField("spu_description")
+
+    @ApiModelProperty("商品描述")
     private String spuDescription;
-    
-                    @ApiModelProperty("所属分类id")
-    @TableField("catalog_id")
+
+    @ApiModelProperty("所属分类id")
     private Long catalogId;
-    
-                    @ApiModelProperty("品牌id")
-    @TableField("brand_id")
+
+    @ApiModelProperty("品牌id")
     private Long brandId;
-    
-                    @ApiModelProperty("$column.comment")
-    @TableField("weight")
-    private Double weight;
-    
-                    @ApiModelProperty("上架状态[0 - 下架，1 - 上架]")
-    @TableField("publish_status")
-    private Object publishStatus;
-    
-                    @ApiModelProperty("$column.comment")
-    @TableField("create_time")
-    private Date createTime;
-    
-                    @ApiModelProperty("$column.comment")
-    @TableField("update_time")
-    private Date updateTime;
-    
+
+    private BigDecimal weight;
+
+    @ApiModelProperty("上架状态[0 - 下架，1 - 上架]")
+    private Integer publishStatus;
+
+    @TableField(fill = FieldFill.INSERT)
+    private Locale createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Locale updateTime;
+
 
 }

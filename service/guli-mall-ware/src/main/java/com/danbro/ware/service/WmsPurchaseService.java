@@ -9,7 +9,7 @@ import com.danbro.ware.entity.WmsPurchase;
  * 采购信息(WmsPurchase)表服务实现类
  *
  * @author makejava
- * @since 2021-01-27 21:31:11
+ * @since 2021-01-28 19:06:15
  */
 public interface WmsPurchaseService extends IService<WmsPurchase> {
 }

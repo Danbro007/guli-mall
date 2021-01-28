@@ -1,47 +1,43 @@
 package com.danbro.product.entity;
+
 import java.io.Serializable;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiModel;
 
 /**
  * @author makejava
- * @since 2021-01-27 22:02:42
+ * @since 2021-01-28 18:56:54
  */
 @Data
 @Accessors(chain = true)
 @ApiModel("品牌")
 public class PmsBrand implements Serializable {
-    private static final long serialVersionUID = -96967064743429301L;
-                    @ApiModelProperty("品牌id")
-    @TableField("brand_id")
+    private static final long serialVersionUID = 702301661360306611L;
+
+    @TableId
+    @ApiModelProperty("品牌id")
     private Long brandId;
-    
-                    @ApiModelProperty("品牌名")
-    @TableField("name")
+
+    @ApiModelProperty("品牌名")
     private String name;
-    
-                    @ApiModelProperty("品牌logo地址")
-    @TableField("logo")
+
+    @ApiModelProperty("品牌logo地址")
     private String logo;
-    
-                    @ApiModelProperty("介绍")
-    @TableField("descript")
+
+    @ApiModelProperty("介绍")
     private Object descript;
-    
-                    @ApiModelProperty("显示状态[0-不显示；1-显示]")
-    @TableField("show_status")
-    private Object showStatus;
-    
-                    @ApiModelProperty("检索首字母")
-    @TableField("first_letter")
+
+    @ApiModelProperty("显示状态[0-不显示；1-显示]")
+    private Boolean showStatus;
+
+    @ApiModelProperty("检索首字母")
     private String firstLetter;
-    
-                    @ApiModelProperty("排序")
-    @TableField("sort")
+
+    @ApiModelProperty("排序")
     private Integer sort;
-    
+
 
 }

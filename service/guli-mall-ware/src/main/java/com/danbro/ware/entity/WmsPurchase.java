@@ -1,60 +1,58 @@
 package com.danbro.ware.entity;
-import java.util.Date;
+
+import java.math.BigDecimal;
+import java.util.Locale;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 /**
  * @author makejava
- * @since 2021-01-27 21:31:11
+ * @since 2021-01-28 19:06:15
  */
 @Data
 @Accessors(chain = true)
 @ApiModel("采购信息")
 public class WmsPurchase implements Serializable {
-    private static final long serialVersionUID = 982331839633424080L;
-                    @ApiModelProperty("采购单id")
-    @TableField("id")
+    private static final long serialVersionUID = -58208221687629002L;
+
+    @TableId
+    @ApiModelProperty("采购单id")
     private Long id;
-    
-                    @ApiModelProperty("采购人id")
-    @TableField("assignee_id")
+
+    @ApiModelProperty("采购人id")
     private Long assigneeId;
-    
-                    @ApiModelProperty("采购人名")
-    @TableField("assignee_name")
+
+    @ApiModelProperty("采购人名")
     private String assigneeName;
-    
-                    @ApiModelProperty("联系方式")
-    @TableField("phone")
+
+    @ApiModelProperty("联系方式")
     private String phone;
-    
-                    @ApiModelProperty("优先级")
-    @TableField("priority")
+
+    @ApiModelProperty("优先级")
     private Integer priority;
-    
-                    @ApiModelProperty("状态")
-    @TableField("status")
+
+    @ApiModelProperty("状态")
     private Integer status;
-    
-                    @ApiModelProperty("仓库id")
-    @TableField("ware_id")
+
+    @ApiModelProperty("仓库id")
     private Long wareId;
-    
-                    @ApiModelProperty("总金额")
-    @TableField("amount")
-    private Double amount;
-    
-                    @ApiModelProperty("创建日期")
-    @TableField("create_time")
-    private Date createTime;
-    
-                    @ApiModelProperty("更新日期")
-    @TableField("update_time")
-    private Date updateTime;
-    
+
+    @ApiModelProperty("总金额")
+    private BigDecimal amount;
+
+    @TableField(fill = FieldFill.INSERT)
+    @ApiModelProperty("创建日期")
+    private Locale createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty("更新日期")
+    private Locale updateTime;
+
 
 }

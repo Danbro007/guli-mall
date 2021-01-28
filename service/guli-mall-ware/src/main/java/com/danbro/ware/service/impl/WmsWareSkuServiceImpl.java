@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 商品库存(WmsWareSku)表服务实现类
  *
  * @author makejava
- * @since 2021-01-27 21:31:11
+ * @since 2021-01-28 19:06:16
  */
 @Service
 public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWareSku> implements WmsWareSkuService {

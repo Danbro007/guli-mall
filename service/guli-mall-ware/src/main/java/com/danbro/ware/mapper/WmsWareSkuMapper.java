@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 商品库存(WmsWareSku)表数据库访问层
  *
  * @author makejava
- * @since 2021-01-27 21:31:11
+ * @since 2021-01-28 19:06:16
  */
 @Mapper
 public interface WmsWareSkuMapper extends BaseMapper<WmsWareSku>{
