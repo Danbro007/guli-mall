@@ -3,6 +3,6 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:4306/gulimall_wms
+    url: jdbc:mysql://localhost:3306/gulimall_wms
 server:
   port: 8005
