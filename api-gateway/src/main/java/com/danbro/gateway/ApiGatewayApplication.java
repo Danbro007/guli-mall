@@ -2,6 +2,7 @@ package com.danbro.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * @author Danrbo
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Description TODO 网关主启动类
  * @Date 2021/1/29 13:50
  */
+@EnableDiscoveryClient
 @SpringBootApplication
 public class ApiGatewayApplication {
     public static void main(String[] args) {

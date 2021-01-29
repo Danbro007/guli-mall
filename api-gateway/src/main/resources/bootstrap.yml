@@ -1,0 +1,42 @@
+server:
+  port: 8222
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.109:8848
+    discovery:
+      enabled: true
+    gateway:
+      routes:
+        - id: service-oms
+          uri: lb://service-oms
+          predicates:
+            - Path=/oms/**
+
+        - id: service-ums
+          uri: lb://service-ums
+          predicates:
+            - Path=/ums/**
+
+        - id: service-pms
+          uri: lb://service-pms
+          predicates:
+            - Path=/pms/**
+
+        - id: service-sms
+          uri: lb://service-sms
+          predicates:
+            - Path=/sms/
+
+        - id: service-wms
+          uri: lb://service-wms
+          predicates:
+            - Path=/sms/
+
+        - id: renren-fast
+          uri: lb://renren-fast
+          predicates:
+            - Path=/renren-fast/**
