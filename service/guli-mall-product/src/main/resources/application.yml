@@ -6,5 +6,10 @@ spring:
     url: jdbc:mysql://192.168.0.109:4306/gulimall_pms
   application:
     name: service-pms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.109:8848
+        enabled: true
 server:
   port: 8004
