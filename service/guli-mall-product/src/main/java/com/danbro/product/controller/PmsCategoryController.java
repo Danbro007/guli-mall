@@ -5,6 +5,7 @@ import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.service.PmsCategoryService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import java.util.List;
 @Validated
 @RestController
 @AllArgsConstructor
-@RequestMapping("product/category")
+@RequestMapping("renren-fast/product/category")
 public class PmsCategoryController {
 
     private PmsCategoryService categoryService;

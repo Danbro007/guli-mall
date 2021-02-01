@@ -11,5 +11,10 @@ spring:
       discovery:
         server-addr: 192.168.0.109:8848
         enabled: true
+  redis:
+    host: 192.168.0.109
+    port: 6379
+    database: 0
+    password: 123456
 server:
   port: 8004
