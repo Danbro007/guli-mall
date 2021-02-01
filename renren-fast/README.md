@@ -25,7 +25,7 @@
 renren-fast
 ├─db  项目SQL语句
 │
-├─common 公共模块
+├─com.danbro.common 公共模块
 │  ├─aspect 系统日志
 │  ├─exception 异常处理
 │  ├─validator 后台校验

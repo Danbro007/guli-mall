@@ -234,7 +234,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.danbro</groupId>
-			<artifactId>common</artifactId>
+			<artifactId>com.danbro.common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

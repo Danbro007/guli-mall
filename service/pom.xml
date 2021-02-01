@@ -60,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>com.danbro</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>common-utils</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

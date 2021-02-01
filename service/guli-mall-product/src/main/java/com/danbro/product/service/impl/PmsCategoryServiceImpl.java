@@ -25,14 +25,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCategory> implements PmsCategoryService {
     @Autowired
-    private RedisTemplate<String, List<PmsCategoryVo>> redisTemplate;
-
+    private RedisTemplate<String, Object> redisTemplate;
     private static final String CATEGORY_TREE = "category-tree";
 
     @Override
     public List<PmsCategoryVo> getCategoryTree() {
         // 尝试到缓存去取
-        List<PmsCategoryVo> pmsCategoryVoListFromRedis = redisTemplate.opsForValue().get(CATEGORY_TREE);
+        List<PmsCategoryVo> pmsCategoryVoListFromRedis = (List<PmsCategoryVo>) redisTemplate.opsForValue().get(CATEGORY_TREE);
         if (!MyCollectionUtils.isEmpty(pmsCategoryVoListFromRedis)) {
             return pmsCategoryVoListFromRedis;
         }

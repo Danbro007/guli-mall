@@ -1385,7 +1385,7 @@ window.Docs = {
     // V8 are regular expression literals permitted as
     // reduce parameters, so it is desirable in the
     // general case for the shim to match the more
-    // strict and common behavior of rejecting regular
+    // strict and com.danbro.common behavior of rejecting regular
     // expressions.
 
     // ES5 15.4.4.18
@@ -8107,7 +8107,7 @@ function kMaxLength () {
  */
 function Buffer (arg) {
   if (!(this instanceof Buffer)) {
-    // Avoid going through an ArgumentsAdaptorTrampoline in the common case.
+    // Avoid going through an ArgumentsAdaptorTrampoline in the com.danbro.common case.
     if (arguments.length > 1) return new Buffer(arg, arguments[1])
     return new Buffer(arg)
   }
@@ -8120,7 +8120,7 @@ function Buffer (arg) {
     return fromNumber(this, arg)
   }
 
-  // Slightly less common case.
+  // Slightly less com.danbro.common case.
   if (typeof arg === 'string') {
     return fromString(this, arg, arguments.length > 1 ? arguments[1] : 'utf8')
   }
@@ -10187,7 +10187,7 @@ module.exports.extend         = extend;
 
 /*eslint-disable no-use-before-define*/
 
-var common              = require('./common');
+var common              = require('./com.danbro.common');
 var YAMLException       = require('./exception');
 var DEFAULT_FULL_SCHEMA = require('./schema/default_full');
 var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
@@ -11036,7 +11036,7 @@ module.exports = YAMLException;
 
 /*eslint-disable max-len,no-use-before-define*/
 
-var common              = require('./common');
+var common              = require('./com.danbro.common');
 var YAMLException       = require('./exception');
 var Mark                = require('./mark');
 var DEFAULT_SAFE_SCHEMA = require('./schema/default_safe');
@@ -12623,7 +12623,7 @@ module.exports.safeLoad    = safeLoad;
 'use strict';
 
 
-var common = require('./common');
+var common = require('./com.danbro.common');
 
 
 function Mark(name, buffer, position, line, column) {
@@ -12702,7 +12702,7 @@ module.exports = Mark;
 
 /*eslint-disable max-len*/
 
-var common        = require('./common');
+var common        = require('./com.danbro.common');
 var YAMLException = require('./exception');
 var Type          = require('./type');
 
@@ -13166,7 +13166,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
 },{"../type":32}],35:[function(require,module,exports){
 'use strict';
 
-var common = require('../common');
+var common = require('../com.danbro.common');
 var Type   = require('../type');
 
 var YAML_FLOAT_PATTERN = new RegExp(
@@ -13273,7 +13273,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
 },{"../common":21,"../type":32}],36:[function(require,module,exports){
 'use strict';
 
-var common = require('../common');
+var common = require('../com.danbro.common');
 var Type   = require('../type');
 
 function isHexCode(c) {
@@ -16843,7 +16843,7 @@ var nativeMin = Math.min;
  * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
  * augment function arguments, making the order in which they are executed important,
  * preventing the merging of metadata. However, we make an exception for a safe
- * common case where curried functions have `_.ary` and or `_.rearg` applied.
+ * com.danbro.common case where curried functions have `_.ary` and or `_.rearg` applied.
  *
  * @private
  * @param {Array} data The destination metadata.
@@ -19420,7 +19420,7 @@ function async(makeGenerator) {
  * The spawn function is a small wrapper around async that immediately
  * calls the generator and also ends the promise chain, so that any
  * unhandled errors are thrown instead of forwarded to the error
- * handler. This is useful because it's extremely common to run
+ * handler. This is useful because it's extremely com.danbro.common to run
  * generators at the top-level to work with libraries.
  */
 Q.spawn = spawn;
@@ -20553,7 +20553,7 @@ Response.prototype._parseBody = function(str){
  * specific, and `.statusType` is the class of error ranging from 1..5
  * sometimes useful for mapping respond colors etc.
  *
- * "sugar" properties are also defined for common cases. Currently providing:
+ * "sugar" properties are also defined for com.danbro.common cases. Currently providing:
  *
  *   - .noContent
  *   - .badRequest
