@@ -11,15 +11,7 @@
 
     <artifactId>guli-mall-product</artifactId>
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <properties>
@@ -27,5 +19,4 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-    <build></build>
 </project>

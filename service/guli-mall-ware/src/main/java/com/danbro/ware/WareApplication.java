@@ -3,6 +3,7 @@ package com.danbro.ware;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
@@ -14,6 +15,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableDiscoveryClient
 @EnableOpenApi
 @SpringBootApplication
+@ComponentScan(basePackages = "com.danbro")
 public class WareApplication {
     public static void main(String[] args) {
         SpringApplication.run(WareApplication.class, args);

@@ -48,7 +48,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
     @Override
-    public void deleteCategoryTreeById(String categoryId) {
+    public void deleteCategoryTreeById(Long categoryId) {
         // 先删除缓存
         redisTemplate.delete(CATEGORY_TREE);
         QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();

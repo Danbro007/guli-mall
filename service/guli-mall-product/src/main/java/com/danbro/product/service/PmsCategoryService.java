@@ -27,5 +27,5 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      *
      * @param categoryId 分类ID
      */
-    void deleteCategoryTreeById(String categoryId);
+    void deleteCategoryTreeById(Long categoryId);
 }

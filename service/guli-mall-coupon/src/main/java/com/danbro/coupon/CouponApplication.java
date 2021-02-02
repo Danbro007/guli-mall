@@ -3,6 +3,7 @@ package com.danbro.coupon;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
@@ -11,6 +12,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  * @Date 2021/1/28 19:18
  * @Created by Administrator
  */
+@ComponentScan(basePackages = "com.danbro")
 @EnableDiscoveryClient
 @EnableOpenApi
 @SpringBootApplication
