@@ -37,7 +37,7 @@ public class PmsCategoryController {
         return ResultBean.ofSuccess(categoryService.getCategoryTree());
     }
 
-    @ApiOperation("删除分类")
+    @ApiOperation("批量删除分类")
     @DeleteMapping("")
     public ResultBean<?> deleteCategoryById(@RequestBody String[] catIds) {
         categoryService.batchDeleteCategoryById(catIds);

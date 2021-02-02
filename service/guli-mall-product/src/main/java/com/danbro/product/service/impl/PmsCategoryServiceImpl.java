@@ -69,12 +69,12 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
     @Override
     public PmsCategory getCategoryInfo(Long categoryId) {
-        PmsCategory category = this.getById(categoryId);
-        return category;
+        return this.getById(categoryId);
     }
 
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
+        redisTemplate.delete(CATEGORY_TREE);
         this.updateBatchById(updateCategoryList);
     }
 

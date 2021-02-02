@@ -1,24 +1,21 @@
-package com.danbro.product.entity;
+package com.danbro.product.controller.vo;
 
-import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import io.swagger.annotations.ApiModel;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.product.entity.PmsBrand;
+import com.danbro.service.base.interfaces.ConvertToVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
- * @author makejava
- * @since 2021-01-28 18:56:54
+ * @Classname PmsBrandVo
+ * @Description TODO 品牌Vo
+ * @Date 2021/2/2 22:28
+ * @Created by Administrator
  */
 @Data
-@Accessors(chain = true)
-@ApiModel("品牌")
-public class PmsBrand implements Serializable {
-    private static final long serialVersionUID = 702301661360306611L;
-
-    @TableId
+public class PmsBrandVo implements ConvertToVo<PmsBrand, PmsBrandVo> {
     @ApiModelProperty("品牌id")
     private Long brandId;
 
@@ -41,4 +38,9 @@ public class PmsBrand implements Serializable {
     private Integer sort;
 
 
+    @Override
+    public PmsBrandVo convert(PmsBrand pmsBrand) {
+        MyBeanUtils.copyProperties(pmsBrand, this);
+        return this;
+    }
 }
