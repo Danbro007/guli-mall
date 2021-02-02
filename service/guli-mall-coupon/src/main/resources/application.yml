@@ -6,6 +6,9 @@ spring:
     url: jdbc:mysql://192.168.0.109:4306/gulimall_sms
   application:
     name: service-cms
-
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.109:8848
 server:
   port: 8001
