@@ -23,9 +23,31 @@ public interface PmsCategoryService extends IService<PmsCategory> {
     List<PmsCategoryVo> getCategoryTree();
 
     /**
-     * 通过分类ID删除分类（如果有子分类也要删除）
+     * 通过分类ID批量删除分类（如果有子分类也要删除）
+     *
+     * @param catIds 分类ID
+     */
+    void batchDeleteCategoryById(String[] catIds);
+
+    /**
+     * 更新或者添加分类
+     *
+     * @param category 添加或者更新的分类对象
+     */
+    void insertOrUpdateCategory(PmsCategory category);
+
+    /**
+     * 通过分类ID获取分类信息
      *
      * @param categoryId 分类ID
+     * @return 信息
      */
-    void deleteCategoryTreeById(Long categoryId);
+    PmsCategory getCategoryInfo(Long categoryId);
+
+    /**
+     * 批量更新分类
+     *
+     * @param updateCategoryList 带更新的分类列表
+     */
+    void batchUpdateCategory(List<PmsCategory> updateCategoryList);
 }

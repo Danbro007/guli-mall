@@ -45,16 +45,16 @@ public class OmsPaymentInfo implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("确认时间")
-    private Locale confirmTime;
+    private Date confirmTime;
 
     @ApiModelProperty("回调内容")
     private String callbackContent;
 
     @ApiModelProperty("回调时间")
-    private Locale callbackTime;
+    private Date callbackTime;
 
 
 }

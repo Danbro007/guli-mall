@@ -49,7 +49,7 @@ public class UmsMember implements Serializable {
     private Integer gender;
 
     @ApiModelProperty("生日")
-    private Locale birth;
+    private Date birth;
 
     @ApiModelProperty("所在城市")
     private String city;
@@ -74,7 +74,7 @@ public class UmsMember implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("注册时间")
-    private Locale createTime;
+    private Date createTime;
 
 
 }

@@ -1,9 +1,11 @@
 package com.danbro.product.service.impl;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.utils.MyCollectionUtils;
@@ -48,14 +50,32 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
     @Override
-    public void deleteCategoryTreeById(Long categoryId) {
+    public void batchDeleteCategoryById(String[] catIds) {
         // 先删除缓存
         redisTemplate.delete(CATEGORY_TREE);
+        List<String> catIdList = Arrays.asList(catIds);
         QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();
         // 删除 categoryId或者父级Id为要删除的分类Id的对象
-        queryWrapper.eq("cat_id", categoryId).or().eq("parent_cid", categoryId);
+        queryWrapper.in("cat_id", catIdList).or().in("parent_cid", catIdList);
         this.remove(queryWrapper);
         // 删除完毕就不建议立即主动建立缓存，可能建立的缓存次数比删除的次数少，降低效率。
+    }
+
+    @Override
+    public void insertOrUpdateCategory(PmsCategory category) {
+        redisTemplate.delete(CATEGORY_TREE);
+        this.saveOrUpdate(category);
+    }
+
+    @Override
+    public PmsCategory getCategoryInfo(Long categoryId) {
+        PmsCategory category = this.getById(categoryId);
+        return category;
+    }
+
+    @Override
+    public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
+        this.updateBatchById(updateCategoryList);
     }
 
 

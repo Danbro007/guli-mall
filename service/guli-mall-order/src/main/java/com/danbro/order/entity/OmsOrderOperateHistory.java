@@ -32,7 +32,7 @@ public class OmsOrderOperateHistory implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("操作时间")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】")
     private Integer orderStatus;

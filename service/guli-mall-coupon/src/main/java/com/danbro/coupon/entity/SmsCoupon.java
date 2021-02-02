@@ -45,10 +45,10 @@ public class SmsCoupon implements Serializable {
     private BigDecimal minPoint;
 
     @ApiModelProperty("开始时间")
-    private Locale startTime;
+    private Date startTime;
 
     @ApiModelProperty("结束时间")
-    private Locale endTime;
+    private Date endTime;
 
     @ApiModelProperty("使用类型[0->全场通用；1->指定分类；2->指定商品]")
     private Integer useType;
@@ -66,10 +66,10 @@ public class SmsCoupon implements Serializable {
     private Integer receiveCount;
 
     @ApiModelProperty("可以领取的开始日期")
-    private Locale enableStartTime;
+    private Date enableStartTime;
 
     @ApiModelProperty("可以领取的结束日期")
-    private Locale enableEndTime;
+    private Date enableEndTime;
 
     @ApiModelProperty("优惠码")
     private String code;

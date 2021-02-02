@@ -48,11 +48,11 @@ public class WmsPurchase implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建日期")
-    private Locale createTime;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty("更新日期")
-    private Locale updateTime;
+    private Date updateTime;
 
 
 }

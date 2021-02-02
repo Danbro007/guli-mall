@@ -29,7 +29,7 @@ public class UmsMemberLoginLog implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("ip")
     private String ip;

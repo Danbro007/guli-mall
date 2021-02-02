@@ -1,25 +1,19 @@
-package com.danbro.product.entity;
+package com.danbro.product.controller.param;
 
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import io.swagger.annotations.ApiModel;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.product.entity.PmsCategory;
+import com.danbro.service.base.interfaces.ConvertToEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
- * @author makejava
- * @since 2021-01-28 18:56:54
+ * @author Danrbo
+ * @Classname CategoryVo
+ * @Description TODO
+ * @Date 2021/2/2 12:43
  */
 @Data
-@Accessors(chain = true)
-@ApiModel("商品三级分类")
-public class PmsCategory implements Serializable {
-    private static final long serialVersionUID = -33860664199318566L;
-
-    @TableId
+public class CategoryParam implements ConvertToEntity<PmsCategory> {
     @ApiModelProperty("分类id")
     private Long catId;
 
@@ -32,7 +26,6 @@ public class PmsCategory implements Serializable {
     @ApiModelProperty("层级")
     private Integer catLevel;
 
-    @TableLogic(value = "1", delval = "0")
     @ApiModelProperty("是否显示[0-不显示，1显示]")
     private Boolean showStatus;
 
@@ -48,5 +41,10 @@ public class PmsCategory implements Serializable {
     @ApiModelProperty("商品数量")
     private Integer productCount;
 
-
+    @Override
+    public PmsCategory convertEntity() {
+        PmsCategory pmsCategory = new PmsCategory();
+        MyBeanUtils.copyProperties(this, pmsCategory);
+        return pmsCategory;
+    }
 }

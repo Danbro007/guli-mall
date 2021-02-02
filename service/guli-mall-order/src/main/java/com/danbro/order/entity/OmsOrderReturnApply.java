@@ -36,7 +36,7 @@ public class OmsOrderReturnApply implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("申请时间")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("会员用户名")
     private String memberUsername;
@@ -54,7 +54,7 @@ public class OmsOrderReturnApply implements Serializable {
     private Integer status;
 
     @ApiModelProperty("处理时间")
-    private Locale handleTime;
+    private Date handleTime;
 
     @ApiModelProperty("商品图片")
     private String skuImg;
@@ -96,7 +96,7 @@ public class OmsOrderReturnApply implements Serializable {
     private String receiveMan;
 
     @ApiModelProperty("收货时间")
-    private Locale receiveTime;
+    private Date receiveTime;
 
     @ApiModelProperty("收货备注")
     private String receiveNote;

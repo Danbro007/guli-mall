@@ -29,10 +29,10 @@ public class SmsHomeAdv implements Serializable {
     private String pic;
 
     @ApiModelProperty("开始时间")
-    private Locale startTime;
+    private Date startTime;
 
     @ApiModelProperty("结束时间")
-    private Locale endTime;
+    private Date endTime;
 
     @ApiModelProperty("状态")
     private Object status;

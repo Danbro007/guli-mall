@@ -1,23 +1,21 @@
 package com.danbro.product.controller.vo;
 
-import java.io.Serializable;
-import java.util.List;
-
-import com.danbro.service.base.interfaces.ConvertToVo;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsCategory;
+import com.danbro.service.base.interfaces.ConvertToVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
- * @author liweimo
- * @Classname PmsCategoryVo
- * @Description TODO
- * @Date 2021/1/28 21:26
- * @Created by Administrator
+ * @author Danrbo
+ * @Classname PmsCategoryInfoVo
+ * @Description TODO 分类详情
+ * @Date 2021/2/2 13:51
  */
 @Data
-public class PmsCategoryVo implements Serializable, ConvertToVo<PmsCategory, PmsCategoryVo> {
+public class PmsCategoryInfoVo implements Serializable, ConvertToVo<PmsCategory, PmsCategoryInfoVo> {
     @ApiModelProperty("分类id")
     private Long catId;
 
@@ -33,11 +31,17 @@ public class PmsCategoryVo implements Serializable, ConvertToVo<PmsCategory, Pms
     @ApiModelProperty("排序")
     private Integer sort;
 
-    @ApiModelProperty("子分类")
-    private List<PmsCategoryVo> children;
+    @ApiModelProperty("图标地址")
+    private String icon;
+
+    @ApiModelProperty("计量单位")
+    private String productUnit;
+
+    @ApiModelProperty("商品数量")
+    private Integer productCount;
 
     @Override
-    public PmsCategoryVo convert(PmsCategory pmsCategory) {
+    public PmsCategoryInfoVo convert(PmsCategory pmsCategory) {
         MyBeanUtils.copyProperties(pmsCategory, this);
         return this;
     }

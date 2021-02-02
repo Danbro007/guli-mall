@@ -2,6 +2,7 @@ package com.danbro.product.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Locale;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -43,10 +44,10 @@ public class PmsSpuInfo implements Serializable {
     private Integer publishStatus;
 
     @TableField(fill = FieldFill.INSERT)
-    private Locale createTime;
+    private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Locale updateTime;
+    private Date updateTime;
 
 
 }

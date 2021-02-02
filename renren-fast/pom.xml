@@ -233,10 +233,10 @@
 			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.danbro</groupId>
-			<artifactId>com.danbro.common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+            <groupId>com.danbro</groupId>
+            <artifactId>service-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 	</dependencies>
 
 	<build>

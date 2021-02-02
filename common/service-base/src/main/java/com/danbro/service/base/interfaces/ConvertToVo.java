@@ -1,4 +1,4 @@
-package com.danbro.common.interfaces;
+package com.danbro.service.base.interfaces;
 
 /**
  * @author Danrbo

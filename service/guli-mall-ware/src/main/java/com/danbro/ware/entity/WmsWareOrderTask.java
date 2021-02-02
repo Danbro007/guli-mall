@@ -56,7 +56,7 @@ public class WmsWareOrderTask implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("create_time")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("仓库id")
     private Long wareId;

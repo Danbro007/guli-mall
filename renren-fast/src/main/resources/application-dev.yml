@@ -2,8 +2,8 @@ spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         druid:
-            driver-class-name: com.mysql.jdbc.Driver
-            url: jdbc:mysql://192.168.0.109:4306/gulimall_admin?serverTimezone=Asia/Shanghai
+          driver-class-name: com.mysql.jdbc.Driver
+            url: jdbc:mysql://192.168.0.109:4306/gulimall_admin?autoReconnect=true&failOverReadOnly=false&maxReconnects=10
             username: root
             password: 123456
             initial-size: 10

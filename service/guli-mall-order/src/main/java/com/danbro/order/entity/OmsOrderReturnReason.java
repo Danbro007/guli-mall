@@ -35,7 +35,7 @@ public class OmsOrderReturnReason implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("create_time")
-    private Locale createTime;
+    private Date createTime;
 
 
 }

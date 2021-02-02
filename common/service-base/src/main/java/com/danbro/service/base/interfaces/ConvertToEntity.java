@@ -1,4 +1,4 @@
-package com.danbro.common.interfaces;
+package com.danbro.service.base.interfaces;
 
 /**
  * @author Danrbo
@@ -6,12 +6,12 @@ package com.danbro.common.interfaces;
  * @Description TODO Param 转换成 Entity 的接口
  * @Date 2021/1/29 11:00
  */
-public interface ConvertToEntity<E, P> {
+public interface ConvertToEntity<E> {
     /**
      * Param 转换成 Entity
      *
      * @param p Param
      * @return Entity
      */
-    E convertEntity(P p);
+    E convertEntity();
 }

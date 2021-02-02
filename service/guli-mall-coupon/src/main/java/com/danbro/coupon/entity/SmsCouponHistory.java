@@ -38,13 +38,13 @@ public class SmsCouponHistory implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("使用状态[0->未使用；1->已使用；2->已过期]")
     private Integer useType;
 
     @ApiModelProperty("使用时间")
-    private Locale useTime;
+    private Date useTime;
 
     @ApiModelProperty("订单id")
     private Long orderId;

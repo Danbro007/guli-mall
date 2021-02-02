@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: renren-test
   cloud:
     nacos:
       config:

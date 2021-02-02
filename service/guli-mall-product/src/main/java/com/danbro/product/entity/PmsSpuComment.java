@@ -1,6 +1,7 @@
 package com.danbro.product.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Locale;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -44,7 +45,7 @@ public class PmsSpuComment implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("显示状态[0-不显示，1-显示]")
     private Boolean showStatus;

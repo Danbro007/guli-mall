@@ -32,10 +32,10 @@ public class SmsSeckillSkuNotice implements Serializable {
     private Long sessionId;
 
     @ApiModelProperty("订阅时间")
-    private Locale subcribeTime;
+    private Date subcribeTime;
 
     @ApiModelProperty("发送时间")
-    private Locale sendTime;
+    private Date sendTime;
 
     @ApiModelProperty("通知方式[0-短信，1-邮件]")
     private Integer noticeType;

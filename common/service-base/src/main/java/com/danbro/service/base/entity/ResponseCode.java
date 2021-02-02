@@ -1,4 +1,4 @@
-package com.danbro.common.entity;
+package com.danbro.service.base.entity;
 
 /**
  * @author Danrbo

@@ -29,7 +29,7 @@ public class UmsGrowthChangeHistory implements Serializable {
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("create_time")
-    private Locale createTime;
+    private Date createTime;
 
     @ApiModelProperty("改变的值（正负计数）")
     private Integer changeCount;

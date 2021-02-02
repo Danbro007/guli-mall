@@ -28,17 +28,17 @@ public class SmsSeckillSession implements Serializable {
     private String name;
 
     @ApiModelProperty("每日开始时间")
-    private Locale startTime;
+    private Date startTime;
 
     @ApiModelProperty("每日结束时间")
-    private Locale endTime;
+    private Date endTime;
 
     @ApiModelProperty("启用状态")
     private Boolean status;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
-    private Locale createTime;
+    private Date createTime;
 
 
 }
