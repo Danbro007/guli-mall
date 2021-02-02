@@ -9,32 +9,16 @@ spring:
         enabled: true
     gateway:
       routes:
-        - id: service-oms
-          uri: lb://service-oms
-          predicates:
-            - Path=/oms/**
-
-        - id: service-ums
-          uri: lb://service-ums
-          predicates:
-            - Path=/ums/**
-
-        - id: service-pms
+        - id: product_route
           uri: lb://service-pms
           predicates:
-            - Path=/pms/**
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
 
-        - id: service-sms
-          uri: lb://service-sms
-          predicates:
-            - Path=/sms/
-
-        - id: service-wms
-          uri: lb://service-wms
-          predicates:
-            - Path=/sms/
-
-        - id: renren-fast
+        - id: admin_route
           uri: lb://renren-fast
           predicates:
-            - Path=/renren-fast/**
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
