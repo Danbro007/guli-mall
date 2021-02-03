@@ -44,7 +44,7 @@ public class PmsBrandController {
     }
 
     @ApiOperation("获取品牌的详细信息")
-    @GetMapping("{brandId}")
+    @GetMapping("info/{brandId}")
     public ResultBean<PmsBrandVo> getBrandInfo(@PathVariable Long brandId) {
         return ResultBean.ofSuccess(new PmsBrandVo().convert(pmsBrandService.getBrandInfoById(brandId)));
     }
