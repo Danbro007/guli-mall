@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>${springboot.version}</version>
+        <version>2.2.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -32,6 +32,7 @@
         <hutool.version>5.5.6</hutool.version>
         <gateway.version>2.2.1.RELEASE</gateway.version>
         <nacos.version>2.2.4.RELEASE</nacos.version>
+        <aliyun.oss.version>3.10.2</aliyun.oss.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -110,6 +111,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
                 <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.oss.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

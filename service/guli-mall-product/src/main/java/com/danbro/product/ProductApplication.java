@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
-import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * @Classname ProductApplication
@@ -13,7 +12,6 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  * @Created by Administrator
  */
 @EnableDiscoveryClient
-@EnableOpenApi
 @SpringBootApplication
 @ComponentScan(basePackages = "com.danbro")
 public class ProductApplication {
