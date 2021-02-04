@@ -14,7 +14,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  */
 @ComponentScan(basePackages = "com.danbro")
 @EnableDiscoveryClient
-@EnableOpenApi
+@EnableSwagger2
 @SpringBootApplication
 public class CouponApplication {
     public static void main(String[] args) {

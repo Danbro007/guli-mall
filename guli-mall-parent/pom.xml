@@ -25,14 +25,15 @@
         <java.version>1.8</java.version>
         <mysql.version>5.1.47</mysql.version>
         <mybatis-plus.version>3.4.1</mybatis-plus.version>
-        <springfox.version>3.0.0</springfox.version>
-        <knife4j.version>3.0.2</knife4j.version>
+        <!--        <springfox.version>3.0.0</springfox.version>-->
+        <!--        <knife4j.version>3.0.2</knife4j.version>-->
         <flyway.version>5.2.4</flyway.version>
         <lombok.version>1.18.16</lombok.version>
         <hutool.version>5.5.6</hutool.version>
         <gateway.version>2.2.1.RELEASE</gateway.version>
         <nacos.version>2.2.4.RELEASE</nacos.version>
         <aliyun.oss.version>3.10.2</aliyun.oss.version>
+        <swagger.version>2.9.2</swagger.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -60,18 +61,18 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
-            <!--swagger-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${springfox.version}</version>
-            </dependency>
-            <!--swagger-ui-->
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
+            <!--            &lt;!&ndash;swagger&ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.springfox</groupId>-->
+            <!--                <artifactId>springfox-boot-starter</artifactId>-->
+            <!--                <version>${springfox.version}</version>-->
+            <!--            </dependency>-->
+            <!--            &lt;!&ndash;swagger-ui&ndash;&gt;-->
+            <!--            <dependency>-->
+            <!--                <groupId>com.github.xiaoymin</groupId>-->
+            <!--                <artifactId>knife4j-spring-boot-starter</artifactId>-->
+            <!--                <version>${knife4j.version}</version>-->
+            <!--            </dependency>-->
             <!--flyway数据库版本控制-->
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -116,6 +117,18 @@
                 <groupId>com.aliyun.oss</groupId>
                 <artifactId>aliyun-sdk-oss</artifactId>
                 <version>${aliyun.oss.version}</version>
+            </dependency>
+            <!--swagger-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <!--swagger ui-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

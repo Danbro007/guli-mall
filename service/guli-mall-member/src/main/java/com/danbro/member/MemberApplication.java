@@ -12,7 +12,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  * @Created by Administrator
  */
 @EnableDiscoveryClient
-@EnableOpenApi
+@EnableSwagger2
 @SpringBootApplication
 public class MemberApplication {
     public static void main(String[] args) {

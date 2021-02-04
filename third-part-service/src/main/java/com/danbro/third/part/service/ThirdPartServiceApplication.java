@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
-import springfox.documentation.oas.annotations.EnableOpenApi;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+@EnableSwagger2
 @EnableDiscoveryClient
-@EnableOpenApi
 @ComponentScan(basePackages = "com.danbro")
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class ThirdPartServiceApplication {

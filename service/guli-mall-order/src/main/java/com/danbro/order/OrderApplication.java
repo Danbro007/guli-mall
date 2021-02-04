@@ -13,7 +13,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  * @Created by Administrator
  */
 @EnableDiscoveryClient
-@EnableOpenApi
+@EnableSwagger2
 @SpringBootApplication
 @ComponentScan(basePackages = "com.danbro")
 public class OrderApplication {

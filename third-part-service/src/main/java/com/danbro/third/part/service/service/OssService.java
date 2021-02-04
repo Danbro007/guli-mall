@@ -3,6 +3,7 @@ package com.danbro.third.part.service.service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @Classname OssService
@@ -14,10 +15,9 @@ import java.io.IOException;
 public interface OssService {
 
     /**
-     * 上传图片
+     * 获取上传凭证
      *
-     * @param file 图片文件
-     * @return 上传后图片的URL
+     * @throws IOException
      */
-    String uploadImage(MultipartFile file, String type) throws IOException;
+    Map<String, String> getPolicy() throws IOException;
 }
