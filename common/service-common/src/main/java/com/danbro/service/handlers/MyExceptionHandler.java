@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * @Classname MyExceptionHandler
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Slf4j
 @ResponseBody
-@ControllerAdvice
+@RestControllerAdvice
 public class MyExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
