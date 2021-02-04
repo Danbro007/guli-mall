@@ -62,12 +62,13 @@ public class PmsBrandController {
     @PutMapping("")
     public ResultBean<?> updateBrandInfo(@Validated(Update.class) @RequestBody BrandParam param) {
         pmsBrandService.insertOrUpdate(param.convertEntity());
+
         return ResultBean.ofSuccess();
     }
 
     @ApiOperation("添加品牌")
     @PostMapping("")
-    public ResultBean<?> insertBrandInfo(@Validated(Insert.class) @RequestBody BrandParam param) {
+    public ResultBean<?> insertBrandInfo(@Validated(value = Insert.class) @RequestBody BrandParam param) {
         pmsBrandService.insertOrUpdate(param.convertEntity());
         return ResultBean.ofSuccess();
     }

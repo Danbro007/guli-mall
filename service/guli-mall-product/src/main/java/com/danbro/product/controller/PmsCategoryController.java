@@ -9,7 +9,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
  * @since 2021-01-28 18:56:54
  */
 @Api(tags = "商品三级分类维护(PmsCategory)")
-@Validated
 @RestController
 @AllArgsConstructor
 @RequestMapping("product/category")
@@ -34,6 +32,7 @@ public class PmsCategoryController {
     @ApiOperation("获取所有分类（树形结构）")
     @GetMapping("list/tree")
     public ResultBean<List<PmsCategoryVo>> getCategoryTree() {
+
         return ResultBean.ofSuccess(categoryService.getCategoryTree());
     }
 

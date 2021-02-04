@@ -23,7 +23,6 @@ public class ResultBean<T> implements Serializable, Result<T> {
     private Integer code;
     private String message;
     private Boolean success;
-    private List<String> errorList;
 
     /**
      * 只返回响应代码和响应消息的成功响应体
@@ -61,18 +60,6 @@ public class ResultBean<T> implements Serializable, Result<T> {
         resultBean.setSuccess(false);
         resultBean.setCode(ResponseCode.SUCCESS.getCode());
         resultBean.setMessage(ResponseCode.SUCCESS.getMessage());
-        return resultBean;
-    }
-
-    /**
-     * 返回错误信息列表的失败响应体
-     *
-     * @param errorList 错误信息列表
-     * @return 响应体
-     */
-    public static <T> ResultBean<T> ofFailure(List<String> errorList) {
-        ResultBean<T> resultBean = ofFailure();
-        resultBean.setErrorList(errorList);
         return resultBean;
     }
 
