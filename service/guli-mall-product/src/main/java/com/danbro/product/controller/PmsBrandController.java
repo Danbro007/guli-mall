@@ -1,11 +1,14 @@
 package com.danbro.product.controller;
 
 import java.util.Arrays;
+
 import com.danbro.common.utils.PageUtils;
 import com.danbro.product.controller.param.BrandParam;
 import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.service.PmsBrandService;
 import com.danbro.service.base.entity.ResultBean;
+import com.danbro.service.common.validtors.groups.Insert;
+import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -19,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
  * @since 2021-01-28 18:56:54
  */
 @Api(tags = "品牌(PmsBrand)")
-@Validated
 @RestController
 @AllArgsConstructor
 @RequestMapping("product/brand")
@@ -38,7 +40,7 @@ public class PmsBrandController {
 
     @ApiOperation("修改品牌的显示状态")
     @PutMapping("status")
-    public ResultBean<?> updateBrandShowStatus(@RequestBody BrandParam param) {
+    public ResultBean<?> updateBrandShowStatus(@Validated(Update.class) @RequestBody BrandParam param) {
         pmsBrandService.insertOrUpdate(param.convertEntity());
         return ResultBean.ofSuccess();
     }
@@ -58,14 +60,14 @@ public class PmsBrandController {
 
     @ApiOperation("修改品牌的信息")
     @PutMapping("")
-    public ResultBean<?> updateBrandInfo(@RequestBody BrandParam param) {
+    public ResultBean<?> updateBrandInfo(@Validated(Update.class) @RequestBody BrandParam param) {
         pmsBrandService.insertOrUpdate(param.convertEntity());
         return ResultBean.ofSuccess();
     }
 
     @ApiOperation("添加品牌")
     @PostMapping("")
-    public ResultBean<?> insertBrandInfo(@RequestBody BrandParam param) {
+    public ResultBean<?> insertBrandInfo(@Validated(Insert.class) @RequestBody BrandParam param) {
         pmsBrandService.insertOrUpdate(param.convertEntity());
         return ResultBean.ofSuccess();
     }

@@ -1,7 +1,7 @@
 package com.danbro.coupon.entity;
 
 import java.math.BigDecimal;
-import java.util.Locale;
+import java.util.Date;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.experimental.Accessors;

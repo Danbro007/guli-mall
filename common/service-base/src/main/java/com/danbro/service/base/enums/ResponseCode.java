@@ -1,4 +1,6 @@
-package com.danbro.service.base.entity;
+package com.danbro.service.base.enums;
+
+import com.danbro.service.base.interfaces.ResultCode;
 
 /**
  * @author Danrbo
@@ -6,10 +8,11 @@ package com.danbro.service.base.entity;
  * @Description TODO 响应码枚举类
  * @Date 2021/1/29 10:49
  */
-public enum ResponseCode {
+public enum ResponseCode implements ResultCode {
     /**
      * 基本响应代码
      */
+    UNKNOWN_EXCEPTION("未知异常", 1000),
     SUCCESS("成功", 2000),
     FAILURE("失败", 4000);
 
@@ -21,6 +24,7 @@ public enum ResponseCode {
         this.code = code;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
@@ -29,6 +33,7 @@ public enum ResponseCode {
         this.message = message;
     }
 
+    @Override
     public Integer getCode() {
         return code;
     }

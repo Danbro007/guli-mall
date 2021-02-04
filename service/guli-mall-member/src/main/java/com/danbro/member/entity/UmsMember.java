@@ -1,6 +1,6 @@
 package com.danbro.member.entity;
 
-import java.util.Locale;
+import java.util.Date;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
