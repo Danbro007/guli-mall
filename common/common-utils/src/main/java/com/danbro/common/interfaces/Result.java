@@ -1,7 +1,4 @@
-package com.danbro.service.base.interfaces;
-
-import com.danbro.service.base.entity.ResultBean;
-import com.danbro.service.base.enums.ResponseCode;
+package com.danbro.common.interfaces;
 
 /**
  * @author Danrbo

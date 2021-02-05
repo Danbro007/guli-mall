@@ -1,6 +1,6 @@
 package com.danbro.third.part.service.controller;
 
-import com.danbro.service.base.entity.ResultBean;
+import com.danbro.common.entity.ResultBean;
 import com.danbro.third.part.service.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

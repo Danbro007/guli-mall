@@ -2,13 +2,14 @@ package com.danbro.product.controller;
 
 import com.danbro.product.controller.param.CategoryParam;
 import com.danbro.product.controller.vo.PmsCategoryInfoVo;
-import com.danbro.service.base.entity.ResultBean;
+import com.danbro.common.entity.ResultBean;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.service.PmsCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -45,14 +46,14 @@ public class PmsCategoryController {
 
     @ApiOperation("更新分类")
     @PutMapping("")
-    public ResultBean<?> updateCategory(@RequestBody CategoryParam categoryParam) {
+    public ResultBean<?> updateCategory(@Validated @RequestBody CategoryParam categoryParam) {
         categoryService.insertOrUpdateCategory(categoryParam.convertEntity());
         return ResultBean.ofSuccess();
     }
 
     @ApiOperation("添加分类")
     @PostMapping("")
-    public ResultBean<?> insertCategory(@RequestBody CategoryParam categoryParam) {
+    public ResultBean<?> insertCategory(@Validated @RequestBody CategoryParam categoryParam) {
         categoryService.insertOrUpdateCategory(categoryParam.convertEntity());
         return ResultBean.ofSuccess();
     }

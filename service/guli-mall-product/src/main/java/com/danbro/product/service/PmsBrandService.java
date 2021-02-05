@@ -28,7 +28,7 @@ public interface PmsBrandService extends IService<PmsBrand> {
      *
      * @param brand 品牌对象
      */
-    void insertOrUpdate(PmsBrand brand);
+    PmsBrand insertOrUpdate(PmsBrand brand);
 
     /**
      * 获取品牌的详细信息

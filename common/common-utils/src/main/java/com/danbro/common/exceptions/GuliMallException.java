@@ -1,8 +1,6 @@
-package com.danbro.service.exceptions;
+package com.danbro.common.exceptions;
 
-import com.danbro.service.base.enums.ResponseCode;
-import com.danbro.service.base.interfaces.ResultCode;
-import lombok.Data;
+import com.danbro.common.interfaces.ResultCode;
 
 /**
  * @author Danrbo

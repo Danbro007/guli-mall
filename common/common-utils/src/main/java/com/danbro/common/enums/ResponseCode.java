@@ -1,6 +1,6 @@
-package com.danbro.service.base.enums;
+package com.danbro.common.enums;
 
-import com.danbro.service.base.interfaces.ResultCode;
+import com.danbro.common.interfaces.ResultCode;
 
 /**
  * @author Danrbo
@@ -14,7 +14,17 @@ public enum ResponseCode implements ResultCode {
      */
     UNKNOWN_EXCEPTION("未知异常", 1000),
     SUCCESS("成功", 2000),
-    FAILURE("失败", 4000);
+    FAILURE("失败", 4000),
+
+    /**
+     * 业务代码
+     */
+    NOT_FOUND("查找的对象不存在！", 5000),
+    INSERT_FAILURE("添加失败！",5100),
+    UPDATE_FAILURE("修改失败！",5200),
+    DELETE_FAILURE("删除失败！",5300),
+    ;
+
 
     private String message;
     private Integer code;

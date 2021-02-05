@@ -3,7 +3,7 @@ package com.danbro.product.controller.vo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.danbro.service.base.interfaces.ConvertToVo;
+import com.danbro.common.interfaces.ConvertToVo;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsCategory;
 import io.swagger.annotations.ApiModelProperty;

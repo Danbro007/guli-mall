@@ -1,15 +1,11 @@
 package com.danbro.product.service.impl;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyStrUtils;
+import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsCategory;
 import com.danbro.product.mapper.PmsCategoryMapper;
@@ -17,6 +13,11 @@ import com.danbro.product.service.PmsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品三级分类(PmsCategory)表服务实现类
@@ -52,32 +53,35 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public void batchDeleteCategoryById(String[] catIds) {
         // 先删除缓存
-        redisTemplate.delete(CATEGORY_TREE);
+        if (MyObjectUtils.isEmpty(redisTemplate.opsForValue().get(CATEGORY_TREE))) {
+            redisTemplate.delete(CATEGORY_TREE);
+        }
         List<String> catIdList = Arrays.asList(catIds);
         QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();
         // 删除 categoryId或者父级Id为要删除的分类Id的对象
         queryWrapper.in("cat_id", catIdList).or().in("parent_cid", catIdList);
-        this.remove(queryWrapper);
-        // 删除完毕就不建议立即主动建立缓存，可能建立的缓存次数比删除的次数少，降低效率。
+        // 删除完毕就不建议立即主动建立缓存，因为可能建立的缓存次数比删除的次数少，降低效率。
+        MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
     }
 
     @Override
     public void insertOrUpdateCategory(PmsCategory category) {
         redisTemplate.delete(CATEGORY_TREE);
-        this.saveOrUpdate(category);
+        MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
     public PmsCategory getCategoryInfo(Long categoryId) {
-        return this.getById(categoryId);
+        return MyCurdUtils.selectOne(this.getById(categoryId), ResponseCode.NOT_FOUND);
     }
 
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
-        redisTemplate.delete(CATEGORY_TREE);
-        this.updateBatchById(updateCategoryList);
+        if (MyObjectUtils.isEmpty(redisTemplate.opsForValue().get(CATEGORY_TREE))) {
+            redisTemplate.delete(CATEGORY_TREE);
+        }
+        MyCurdUtils.batchInserOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
     }
-
 
     /**
      * 获取父分类的子分类

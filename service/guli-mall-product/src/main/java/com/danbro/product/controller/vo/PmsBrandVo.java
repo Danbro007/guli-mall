@@ -1,10 +1,8 @@
 package com.danbro.product.controller.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsBrand;
-import com.danbro.service.base.interfaces.ConvertToVo;
+import com.danbro.common.interfaces.ConvertToVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

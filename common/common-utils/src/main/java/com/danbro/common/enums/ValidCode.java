@@ -1,6 +1,6 @@
-package com.danbro.service.base.enums;
+package com.danbro.common.enums;
 
-import com.danbro.service.base.interfaces.ResultCode;
+import com.danbro.common.interfaces.ResultCode;
 
 /**
  * @author Danrbo
@@ -12,6 +12,7 @@ public enum ValidCode implements ResultCode {
     /**
      * 校验代码
      */
+    VALID_FORMAT_FAILURE(5001,"参数类型不正确！"),
     VALID_PARAM_FAILURE(5000, "参数校验异常！");
     private String message;
     private Integer code;

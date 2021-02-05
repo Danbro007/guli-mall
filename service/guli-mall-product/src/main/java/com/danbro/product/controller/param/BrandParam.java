@@ -1,18 +1,15 @@
 package com.danbro.product.controller.param;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsBrand;
-import com.danbro.service.base.interfaces.ConvertToEntity;
+import com.danbro.common.interfaces.ConvertToEntity;
 import com.danbro.service.common.validtors.anotations.IsBool;
-import com.danbro.service.common.validtors.anotations.IsPositive;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
-import javax.annotation.RegEx;
 import javax.validation.constraints.*;
 
 /**
@@ -47,7 +44,7 @@ public class BrandParam implements ConvertToEntity<PmsBrand> {
     private Boolean showStatus;
 
     @NotBlank(message = "添加时检索首字母必须存在！", groups = Insert.class)
-    @Pattern(regexp = "^[A-Za-z]$", message = "首字母必须是英文字母开头！", groups = {Insert.class, Update.class})
+    @Pattern(regexp = "^[A-Za-z]$", message = "检索首字母必须是一个英文字母！", groups = {Insert.class, Update.class})
     @ApiModelProperty("检索首字母")
     private String firstLetter;
 

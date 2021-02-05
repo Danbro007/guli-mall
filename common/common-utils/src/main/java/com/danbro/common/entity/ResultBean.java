@@ -1,13 +1,12 @@
-package com.danbro.service.base.entity;
+package com.danbro.common.entity;
 
-import com.danbro.service.base.enums.ResponseCode;
-import com.danbro.service.base.interfaces.Result;
-import com.danbro.service.base.interfaces.ResultCode;
+import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.interfaces.Result;
+import com.danbro.common.interfaces.ResultCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author liweimo
