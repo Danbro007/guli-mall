@@ -36,18 +36,16 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     public ResultPageBean getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
         // 分类ID 为 0 分页查询所有的属性分组
         IPage<PmsAttrGroup> page;
-        if (categoryId == 0) {
-            page = this.page(new Query<PmsAttrGroup>().getPage(param));
-        } else {
-            // 有分类ID
-            QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("catelog_id", categoryId);
-            // 看有没有关键字
-            if (!MyObjectUtils.isEmpty(key) && MyStrUtils.isNotEmpty(key)) {
-                queryWrapper.eq("attr_group_id", key).or().like("attr_group_name", key);
-            }
-            page = this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper);
+        QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
+        // 有关键字
+        if (!MyObjectUtils.isEmpty(key) && MyStrUtils.isNotEmpty(key)) {
+            queryWrapper.eq("attr_group_id", key).or().like("attr_group_name", key);
         }
+        // f分类ID > 0
+        if (categoryId > 0) {
+            queryWrapper.eq("catelog_id", categoryId);
+        }
+        page = this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper);
         return ResultPageBean.ofSuccess(new PageUtils<>(page));
     }
 }
