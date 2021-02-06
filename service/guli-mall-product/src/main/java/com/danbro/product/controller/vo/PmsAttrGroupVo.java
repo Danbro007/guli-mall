@@ -36,8 +36,6 @@ public class PmsAttrGroupVo implements Serializable, ConvertToVo<PmsAttrGroup, P
     @ApiModelProperty("所属分类id")
     private Long catelogId;
 
-    @ApiModelProperty("分类完整路径")
-    private List<Long> catelogPath;
 
     @Override
     public PmsAttrGroupVo convert(PmsAttrGroup pmsAttrGroup) {

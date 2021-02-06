@@ -12,8 +12,9 @@ public enum ValidCode implements ResultCode {
     /**
      * 校验代码
      */
-    VALID_FORMAT_FAILURE(5001,"参数类型不正确！"),
-    VALID_PARAM_FAILURE(5000, "参数校验异常！");
+    VALID_PARAM_FAILURE(5000, "参数校验异常！"),
+    VALID_FORMAT_FAILURE(5001, "参数类型不正确！"),
+    CONTAIN_ILLEGAL_CHARACTER(5002, "包含非法字符串！");
     private String message;
     private Integer code;
 

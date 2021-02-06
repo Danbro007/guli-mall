@@ -33,7 +33,6 @@ public class PmsCategoryController {
     @ApiOperation("获取所有分类（树形结构）")
     @GetMapping("list/tree")
     public ResultBean<List<PmsCategoryVo>> getCategoryTree() {
-
         return ResultBean.ofSuccess(categoryService.getCategoryTree());
     }
 

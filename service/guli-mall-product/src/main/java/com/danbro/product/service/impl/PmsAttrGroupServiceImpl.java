@@ -1,18 +1,27 @@
 package com.danbro.product.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.entity.ResultPageBean;
+import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.pms.OrderType;
+import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.common.utils.PageUtils;
+import com.danbro.common.utils.Query;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
 import com.danbro.product.entity.PmsAttrGroup;
-import com.danbro.product.entity.PmsCategory;
 import com.danbro.product.mapper.PmsAttrGroupMapper;
 import com.danbro.product.service.PmsAttrGroupService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 属性分组(PmsAttrGroup)表服务实现类
@@ -24,33 +33,21 @@ import org.springframework.stereotype.Service;
 public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, PmsAttrGroup> implements PmsAttrGroupService {
 
     @Override
-    public ResultPageBean getAttrGroupList(Long categoryId, Long page, Long limit, String sidx, String order, String key) {
-        QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
-        // 分类ID
-        queryWrapper.eq("catelog_id", categoryId);
-        // 升序还是降序，按字段排序
-        if (OrderType.ASC.getType().equals(order)) {
-            if (MyStrUtils.IsNotEmpty(sidx)) {
-                queryWrapper.orderByAsc(sidx);
-            } else {
-                queryWrapper.orderByAsc("attr_group_name");
-            }
+    public ResultPageBean getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
+        // 分类ID 为 0 分页查询所有的属性分组
+        IPage<PmsAttrGroup> page;
+        if (categoryId == 0) {
+            page = this.page(new Query<PmsAttrGroup>().getPage(param));
         } else {
-            if (MyStrUtils.IsNotEmpty(sidx)) {
-                queryWrapper.orderByDesc(sidx);
-            } else {
-                queryWrapper.orderByDesc("attr_group_name");
+            // 有分类ID
+            QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("catelog_id", categoryId);
+            // 看有没有关键字
+            if (!MyObjectUtils.isEmpty(key) && MyStrUtils.isNotEmpty(key)) {
+                queryWrapper.eq("attr_group_id", key).or().like("attr_group_name", key);
             }
+            page = this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper);
         }
-        // 关键字查询
-        if (MyStrUtils.IsNotEmpty(key)) {
-            queryWrapper.like("attr_group_name", key);
-        }
-        PageUtils<PmsAttrGroup> pageUtils = new PageUtils<>(this.page(new Page<>(page, limit), queryWrapper));
-        pageUtils.getList().forEach(e->{
-            PmsAttrGroupVo vo = new PmsAttrGroupVo().convert(e);
-
-        });
-        return ResultPageBean.ofSuccess(new PageUtils(this.page(new Page<>(page, limit), queryWrapper)));
+        return ResultPageBean.ofSuccess(new PageUtils<>(page));
     }
 }
