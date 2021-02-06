@@ -4,6 +4,8 @@ import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsBrand;
 import com.danbro.common.interfaces.ConvertToVo;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -13,6 +15,8 @@ import lombok.Data;
  * @Created by Administrator
  */
 @Data
+@AllArgsConstructor
+@Builder
 public class PmsBrandVo implements ConvertToVo<PmsBrand, PmsBrandVo> {
     @ApiModelProperty("品牌id")
     private Long brandId;

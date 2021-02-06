@@ -19,10 +19,25 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class PageParam<T> {
+    /**
+     * 当前页数
+     */
     private Long page;
+    /**
+     * 每页显示的数据数量
+     */
     private Long limit;
+    /**
+     * 排序字段
+     */
     private String sidx;
+    /**
+     * 降序还是升序
+     */
     private String order;
+    /**
+     * 分页数据对象
+     */
     private Page<T> pageObject;
 
 

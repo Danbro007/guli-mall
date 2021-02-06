@@ -2,6 +2,7 @@ package com.danbro.product.controller;
 
 import java.util.Arrays;
 
+import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.utils.PageUtils;
 import com.danbro.product.controller.param.BrandParam;
 import com.danbro.product.controller.vo.PmsBrandVo;
@@ -32,24 +33,22 @@ public class PmsBrandController {
 
     @ApiOperation("分页查询品牌")
     @GetMapping("list")
-    public ResultBean<PageUtils> getBrandList(@RequestParam Long page,
-                                              @RequestParam Long limit,
-                                              @RequestParam(required = false) String key) {
+    public ResultBean<PageUtils<PmsBrand>> getBrandList(@RequestParam Long page,
+                                                        @RequestParam Long limit,
+                                                        @RequestParam(required = false) String key) {
         return ResultBean.ofSuccess(pmsBrandService.queryPage(page, limit, key));
     }
 
     @ApiOperation("修改品牌的显示状态")
     @PutMapping("status")
     public ResultBean<?> updateBrandShowStatus(@Validated(Update.class) @RequestBody BrandParam param) {
-        PmsBrand pmsBrand = pmsBrandService.insertOrUpdate(param.convertEntity());
-        return ResultBean.ofSuccess(new PmsBrandVo().convert(pmsBrand));
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insertOrUpdate(param.convertEntity())));
     }
 
     @ApiOperation("获取品牌的详细信息")
     @GetMapping("info/{brandId}")
     public ResultBean<PmsBrandVo> getBrandInfo(@PathVariable Long brandId) {
-        PmsBrand pmsBrand = pmsBrandService.getBrandInfoById(brandId);
-        return ResultBean.ofSuccess(new PmsBrandVo().convert(pmsBrand));
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.getBrandInfoById(brandId)));
     }
 
     @ApiOperation("批量删除品牌")
@@ -62,14 +61,12 @@ public class PmsBrandController {
     @ApiOperation("修改品牌的信息")
     @PutMapping("")
     public ResultBean<?> updateBrandInfo(@Validated(Update.class) @RequestBody BrandParam param) {
-        PmsBrand pmsBrand = pmsBrandService.insertOrUpdate(param.convertEntity());
-        return ResultBean.ofSuccess(new PmsBrandVo().convert(pmsBrand));
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insertOrUpdate(param.convertEntity())));
     }
 
     @ApiOperation("添加品牌")
     @PostMapping("")
     public ResultBean<?> insertBrandInfo(@Validated(Insert.class) @RequestBody BrandParam param) {
-        PmsBrand pmsBrand = pmsBrandService.insertOrUpdate(param.convertEntity());
-        return ResultBean.ofSuccess(new PmsBrandVo().convert(pmsBrand));
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insertOrUpdate(param.convertEntity())));
     }
 }

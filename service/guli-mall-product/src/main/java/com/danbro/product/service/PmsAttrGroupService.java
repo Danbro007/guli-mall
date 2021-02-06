@@ -23,4 +23,12 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @return 分页查询结果
      */
     ResultPageBean getAttrGroupList(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
+
+    /**
+     * 添加或者更新属性分组
+     *
+     * @param attrGroup 属性分组对象
+     * @return 添加或者更新完毕后的属性分组对象
+     */
+    PmsAttrGroup insertOrUpdate(PmsAttrGroup attrGroup);
 }

@@ -6,6 +6,9 @@ import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.entity.PmsCategory;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,6 +19,9 @@ import java.util.List;
  * @Description TODO
  * @Date 2021/2/5 22:22
  */
+@Data
+@Builder
+@AllArgsConstructor
 public class PmsAttrGroupVo implements Serializable, ConvertToVo<PmsAttrGroup, PmsAttrGroupVo> {
 
     @ApiModelProperty("分组id")
@@ -35,6 +41,7 @@ public class PmsAttrGroupVo implements Serializable, ConvertToVo<PmsAttrGroup, P
 
     @ApiModelProperty("所属分类id")
     private Long catelogId;
+
 
 
     @Override

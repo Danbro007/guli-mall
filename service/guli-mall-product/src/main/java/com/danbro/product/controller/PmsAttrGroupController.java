@@ -1,13 +1,16 @@
 package com.danbro.product.controller;
 
+import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
+import com.danbro.product.controller.param.AttrGroupParam;
+import com.danbro.product.controller.vo.PmsAttrGroupVo;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.service.PmsAttrGroupService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -32,6 +35,11 @@ public class PmsAttrGroupController {
                                            @RequestParam(value = "key", required = false) String key) {
         PageParam<PmsAttrGroup> pageParam = new PageParam<>(page, limit, sidx, order);
         return pmsAttrGroupService.getAttrGroupList(pageParam, categoryId, key);
+    }
+
+    @PostMapping("")
+    public ResultBean<PmsAttrGroupVo> insertAttrGroup(@Validated @RequestBody AttrGroupParam param) {
+        return ResultBean.ofSuccess(PmsAttrGroupVo.builder().build().convert(pmsAttrGroupService.insertOrUpdate(param.convertEntity())));
     }
 
 }

@@ -6,6 +6,8 @@ import com.danbro.common.interfaces.ConvertToEntity;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
@@ -21,6 +23,8 @@ import javax.validation.constraints.Null;
  * @Date 2021/2/2 12:43
  */
 @Data
+@Builder
+@AllArgsConstructor
 public class CategoryParam implements ConvertToEntity<PmsCategory> {
     @NotNull(message = "修改时分类ID必须存在！", groups = Update.class)
     @Null(message = "添加时分类ID不能存在！", groups = Insert.class)

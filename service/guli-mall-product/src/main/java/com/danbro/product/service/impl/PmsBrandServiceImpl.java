@@ -22,15 +22,15 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
 
 
     @Override
-    public PageUtils queryPage(Long page, Long limit, String key) {
+    public PageUtils<PmsBrand> queryPage(Long page, Long limit, String key) {
         QueryWrapper<PmsBrand> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("brand_id", key).or().like("name", key);
-        return new PageUtils(this.page(new Page<>(page, limit), queryWrapper));
+        return new PageUtils<>(this.page(new Page<>(page, limit), queryWrapper));
     }
 
     @Override
     public PmsBrand insertOrUpdate(PmsBrand brand) {
-        return MyCurdUtils.insertOrUpdate(brand, this.saveOrUpdate(brand), ResponseCode.INSERT_FAILURE);
+        return MyCurdUtils.insertOrUpdate(brand, this.saveOrUpdate(brand), ResponseCode.INSERT_OR_UPDATE_FAILURE);
     }
 
     @Override

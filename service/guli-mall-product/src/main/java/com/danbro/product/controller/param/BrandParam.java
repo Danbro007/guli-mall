@@ -7,6 +7,8 @@ import com.danbro.service.common.validtors.anotations.IsBool;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
@@ -19,6 +21,8 @@ import javax.validation.constraints.*;
  * @Date 2021/2/2 23:09
  */
 @Data
+@Builder
+@AllArgsConstructor
 public class BrandParam implements ConvertToEntity<PmsBrand> {
 
     @NotNull(message = "修改时品牌ID必须存在！", groups = Update.class)
