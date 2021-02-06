@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-public class ResultBean<T> implements Serializable, Result<T> {
+public class ResultBean<T> implements Serializable, Result {
 
     private T data;
     private Integer code;
@@ -54,11 +54,11 @@ public class ResultBean<T> implements Serializable, Result<T> {
      *
      * @return 响应体
      */
-    public static <T> ResultBean<T> ofFailure() {
-        ResultBean<T> resultBean = new ResultBean<T>();
+    public static <T> ResultBean<T> ofFailure(ResultCode resultCode) {
+        ResultBean<T> resultBean = new ResultBean<>();
         resultBean.setSuccess(false);
-        resultBean.setCode(ResponseCode.SUCCESS.getCode());
-        resultBean.setMessage(ResponseCode.SUCCESS.getMessage());
+        resultBean.setCode(resultCode.getCode());
+        resultBean.setMessage(resultCode.getMessage());
         return resultBean;
     }
 

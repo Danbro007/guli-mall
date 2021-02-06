@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 
-import java.util.Map;
-
 /**
  * @author Danrbo
  * @Classname ControllerAop
@@ -42,8 +40,8 @@ public abstract class ControllerAop {
      * @param e         异常
      * @return 失败结果
      */
-    protected Result<Map<String, String>> handleException(ProceedingJoinPoint joinPoint, Throwable e) {
-        Result<Map<String, String>> result = this.createResult();
+    protected Result handleException(ProceedingJoinPoint joinPoint, Throwable e) {
+        Result result = this.createResult();
         // 已知的普通异常
         if (e instanceof GuliMallException) {
             GuliMallException guliMallException = (GuliMallException) e;
@@ -62,5 +60,5 @@ public abstract class ControllerAop {
     }
 
 
-    protected abstract Result<Map<String, String>> createResult();
+    protected abstract Result createResult();
 }

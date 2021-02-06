@@ -13,7 +13,7 @@ public enum ResponseCode implements ResultCode {
      * 基本响应代码
      */
     UNKNOWN_EXCEPTION("未知异常", 1000),
-    SUCCESS("成功", 2000),
+    SUCCESS("成功", 0),
     FAILURE("失败", 4000),
 
     /**

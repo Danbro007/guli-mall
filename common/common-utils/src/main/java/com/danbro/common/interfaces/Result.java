@@ -6,9 +6,20 @@ package com.danbro.common.interfaces;
  * @Description TODO
  * @Date 2021/2/4 13:12
  */
-public interface Result<T> {
-
+public interface Result {
+    /**
+     * 是否成功
+     *
+     * @param bool 响应结果
+     */
     void setSuccess(Boolean bool);
+
+    /**
+     * 获取成功结果
+     *
+     * @return 结果
+     */
+    Boolean getSuccess();
 
     /**
      * 设置状态码对象
@@ -18,14 +29,30 @@ public interface Result<T> {
     void setResultCode(ResultCode resultCode);
 
     /**
-     * 设置返回的数据
+     * 设置返回的消息
      *
-     * @param t 数据
+     * @param message 消息内容
      */
-    void setData(T t);
-
     void setMessage(String message);
 
+    /**
+     * 返回消息内容
+     *
+     * @return 消息内容
+     */
+    String getMessage();
+
+    /**
+     * 设置状态码
+     *
+     * @param code 状态码
+     */
     void setCode(Integer code);
 
+    /**
+     * 获取状态码
+     *
+     * @return 响应状态码
+     */
+    Integer getCode();
 }

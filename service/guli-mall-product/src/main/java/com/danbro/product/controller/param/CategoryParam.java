@@ -46,8 +46,7 @@ public class CategoryParam implements ConvertToEntity<PmsCategory> {
     @ApiModelProperty("排序")
     private Integer sort;
 
-    @URL(message = "图标地址不符合格式！", groups = {Insert.class, Update.class})
-    @NotBlank(message = "添加时图标地址名必须存在！", groups = Insert.class)
+    @NotBlank(message = "添加时图标地址必须存在！", groups = Insert.class)
     @ApiModelProperty("图标地址")
     private String icon;
 

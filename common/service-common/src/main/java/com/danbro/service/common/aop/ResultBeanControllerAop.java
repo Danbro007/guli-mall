@@ -6,8 +6,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 /**
  * @author Danrbo
  * @Classname ResultBeanControllerAop
@@ -24,7 +22,7 @@ public class ResultBeanControllerAop extends ControllerAop {
     }
 
     @Override
-    protected Result<Map<String, String>> createResult() {
+    protected Result createResult() {
         return new ResultBean<>();
     }
 }
