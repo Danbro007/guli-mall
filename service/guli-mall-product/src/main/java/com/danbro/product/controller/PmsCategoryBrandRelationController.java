@@ -1,12 +1,17 @@
 package com.danbro.product.controller;
 
+import java.util.List;
+import com.danbro.common.entity.ResultBean;
+import com.danbro.product.controller.param.CategoryBrandRelationParam;
+import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
+import com.danbro.service.common.validtors.groups.Insert;
+import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -17,9 +22,30 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @AllArgsConstructor
-@RequestMapping("pmsCategoryBrandRelation")
+@RequestMapping("product/categorybrandrelation")
+@Setter
 public class PmsCategoryBrandRelationController {
-    @Autowired
-    private  PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
- 
+    private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
+
+    @PostMapping("")
+    public ResultBean<?> insertCategoryBrandRelation(@Validated(Insert.class) @RequestBody CategoryBrandRelationParam param) {
+        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insertOrUpdateCategoryBrandRelation(param.convertEntity())));
+    }
+
+    @PutMapping("")
+    public ResultBean<?> updateCategoryBrandRelation(@Validated(Update.class) @RequestBody CategoryBrandRelationParam param) {
+        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insertOrUpdateCategoryBrandRelation(param.convertEntity())));
+    }
+
+    @GetMapping("catelog/list")
+    public ResultBean<List<PmsCategoryBrandRelationVo>> getBrandCategoryList(@RequestParam Long brandId) {
+        return ResultBean.ofSuccess(pmsCategoryBrandRelationService.getBrandRelationList(brandId));
+    }
+
+    @DeleteMapping("")
+    public ResultBean<?> deleteCategoryBrandRelation(@RequestBody Long[] ids) {
+        pmsCategoryBrandRelationService.batchRemove(ids);
+        return ResultBean.ofSuccess();
+    }
+
 }
