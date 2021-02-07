@@ -3,6 +3,8 @@ package com.danbro.product.entity;
 import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 public class PmsBrand implements Serializable {
     private static final long serialVersionUID = 702301661360306611L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId
     @ApiModelProperty("品牌id")
     private Long brandId;

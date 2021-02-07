@@ -33,7 +33,7 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     private PmsCategoryService pmsCategoryService;
 
     @Override
-    public PmsCategoryBrandRelation insertOrUpdateCategoryBrandRelation(PmsCategoryBrandRelation param) {
+    public PmsCategoryBrandRelation insert(PmsCategoryBrandRelation param) {
         PmsBrand brand = pmsBrandService.getBrandInfoById(param.getBrandId());
         PmsCategory category = pmsCategoryService.getCategoryInfo(param.getCatelogId());
         param.setBrandName(brand.getName()).setCatelogName(category.getName());

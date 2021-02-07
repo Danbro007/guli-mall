@@ -1,14 +1,22 @@
 package com.danbro.product.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danbro.common.entity.ResultPageBean;
+import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.PageUtils;
+import com.danbro.common.utils.Query;
+import com.danbro.product.controller.vo.PmsAttrGroupVo;
+import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.entity.PmsBrand;
 import com.danbro.product.entity.PmsCategoryBrandRelation;
 import com.danbro.product.mapper.PmsBrandMapper;
@@ -30,10 +38,11 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
 
     @Override
-    public PageUtils<PmsBrand> queryPage(Long page, Long limit, String key) {
+    public PageUtils<PmsBrand> queryPage(PageParam<PmsBrand> pageParam, String key) {
         QueryWrapper<PmsBrand> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("brand_id", key).or().like("name", key);
-        return new PageUtils<>(this.page(new Page<>(page, limit), queryWrapper));
+        IPage<PmsBrand> page = this.page(new Query<PmsBrand>().getPage(pageParam), queryWrapper);
+        return new PageUtils<>(page);
     }
 
     @Override
@@ -57,7 +66,7 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDeleteBrand(Long[] ids) {
-        MyCurdUtils.batchDelete(this.removeByIds(Arrays.asList(ids)),ResponseCode.DELETE_FAILURE);
+        MyCurdUtils.batchDelete(this.removeByIds(Arrays.asList(ids)), ResponseCode.DELETE_FAILURE);
         // 同步删除 CategoryBrandRelation 里的数据
         pmsCategoryBrandRelationService.batchDeleteByBrandId(ids);
     }

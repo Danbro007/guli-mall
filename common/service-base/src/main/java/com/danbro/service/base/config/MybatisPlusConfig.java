@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author Danrbo
  * @Classname MybatisPlusConfig
- * @Description TODO
+ * @Description TODO MybatisPlus 配置类
  * @Date 2021/2/2 13:17
  */
 @Configuration
@@ -19,7 +19,7 @@ public class MybatisPlusConfig {
     /**
      * 分页插件
      *
-     * @return
+     * @return 分页插件
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

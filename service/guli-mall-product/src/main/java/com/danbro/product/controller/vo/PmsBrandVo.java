@@ -3,6 +3,8 @@ package com.danbro.product.controller.vo;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsBrand;
 import com.danbro.common.interfaces.ConvertToVo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +20,8 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class PmsBrandVo implements ConvertToVo<PmsBrand, PmsBrandVo> {
+
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("品牌id")
     private Long brandId;
 

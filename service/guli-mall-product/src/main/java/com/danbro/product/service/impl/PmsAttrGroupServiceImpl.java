@@ -32,7 +32,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     private PmsCategoryService pmsCategoryService;
 
     @Override
-    public ResultPageBean getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
+    public PageUtils<PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
         // 分类ID 为 0 分页查询所有的属性分组
         IPage<PmsAttrGroup> page;
         QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
@@ -44,16 +44,8 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
         if (categoryId > 0) {
             queryWrapper.eq("catelog_id", categoryId);
         }
-        page = this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper);
-        Page<PmsAttrGroupVo> groupVoPage = new Page<>();
-        MyBeanUtils.copyProperties(page, groupVoPage, "records");
-        List<PmsAttrGroupVo> records = new ArrayList<>(page.getRecords().size());
-        page.getRecords().forEach(e -> {
-            PmsAttrGroupVo vo = PmsAttrGroupVo.builder().build().convert(e);
-            records.add(vo);
-        });
-        groupVoPage.setRecords(records);
-        return ResultPageBean.ofSuccess(new PageUtils<>(groupVoPage));
+        return new PageUtils<>(this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper));
+
     }
 
     @Override

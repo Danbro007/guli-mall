@@ -29,12 +29,12 @@ public class PmsCategoryBrandRelationController {
 
     @PostMapping("")
     public ResultBean<?> insertCategoryBrandRelation(@Validated(Insert.class) @RequestBody CategoryBrandRelationParam param) {
-        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insertOrUpdateCategoryBrandRelation(param.convertEntity())));
+        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insert(param.convertEntity())));
     }
 
     @PutMapping("")
     public ResultBean<?> updateCategoryBrandRelation(@Validated(Update.class) @RequestBody CategoryBrandRelationParam param) {
-        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insertOrUpdateCategoryBrandRelation(param.convertEntity())));
+        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insert(param.convertEntity())));
     }
 
     @GetMapping("catelog/list")

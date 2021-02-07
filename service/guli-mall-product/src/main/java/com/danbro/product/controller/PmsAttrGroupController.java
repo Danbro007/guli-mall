@@ -29,14 +29,14 @@ public class PmsAttrGroupController {
     private PmsAttrGroupService pmsAttrGroupService;
 
     @GetMapping("list/{categoryId}")
-    public ResultPageBean getAttrGroupList(@PathVariable Long categoryId,
-                                           @RequestParam("page") Long page,
-                                           @RequestParam("limit") Long limit,
-                                           @RequestParam(value = "sidx", required = false) String sidx,
-                                           @RequestParam(value = "order", required = false) String order,
-                                           @RequestParam(value = "key", required = false) String key) {
+    public ResultPageBean<PmsAttrGroup> getAttrGroupList(@PathVariable Long categoryId,
+                                                         @RequestParam("page") Long page,
+                                                         @RequestParam("limit") Long limit,
+                                                         @RequestParam(value = "sidx", required = false) String sidx,
+                                                         @RequestParam(value = "order", required = false) String order,
+                                                         @RequestParam(value = "key", required = false) String key) {
         PageParam<PmsAttrGroup> pageParam = new PageParam<>(page, limit, sidx, order);
-        return pmsAttrGroupService.getAttrGroupList(pageParam, categoryId, key);
+        return ResultPageBean.ofSuccess(pmsAttrGroupService.getAttrGroupList(pageParam, categoryId, key));
     }
 
     @PostMapping("")
@@ -50,12 +50,12 @@ public class PmsAttrGroupController {
     }
 
     @GetMapping("info/{attrGroupId}")
-    public ResultBean<PmsAttrGroupVo> getAttrGroupInfo(@PathVariable Long attrGroupId){
+    public ResultBean<PmsAttrGroupVo> getAttrGroupInfo(@PathVariable Long attrGroupId) {
         return ResultBean.ofSuccess(pmsAttrGroupService.getAttrGroupInfo(attrGroupId));
     }
 
     @DeleteMapping("")
-    public ResultBean<?> batchDeleteAttrGroup(@RequestBody Long[] ids){
+    public ResultBean<?> batchDeleteAttrGroup(@RequestBody Long[] ids) {
         pmsAttrGroupService.batchDeleteAttrGroup(ids);
         return ResultBean.ofSuccess();
     }

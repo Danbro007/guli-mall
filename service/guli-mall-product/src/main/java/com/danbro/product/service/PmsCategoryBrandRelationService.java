@@ -21,7 +21,7 @@ public interface PmsCategoryBrandRelationService extends IService<PmsCategoryBra
      * @param param 分类和品牌的关系数据
      * @return 添加或者更新完毕后的分类和品牌关系数据
      */
-    PmsCategoryBrandRelation insertOrUpdateCategoryBrandRelation(PmsCategoryBrandRelation param);
+    PmsCategoryBrandRelation insert(PmsCategoryBrandRelation param);
 
     /**
      * 获取品牌的所有所属分类

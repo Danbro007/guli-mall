@@ -7,6 +7,8 @@ import com.danbro.common.interfaces.ConvertToVo;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsCategory;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,12 +27,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class PmsCategoryVo implements Serializable, ConvertToVo<PmsCategory, PmsCategoryVo> {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("分类id")
     private Long catId;
 
     @ApiModelProperty("分类名称")
     private String name;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("父分类id")
     private Long parentCid;
 
