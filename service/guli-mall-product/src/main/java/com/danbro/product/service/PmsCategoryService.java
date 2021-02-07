@@ -30,11 +30,18 @@ public interface PmsCategoryService extends IService<PmsCategory> {
     void batchDeleteCategoryById(String[] catIds);
 
     /**
-     * 更新或者添加分类
+     * 添加分类
      *
-     * @param category 添加或者更新的分类对象
+     * @param category 添加的分类对象
      */
-    void insertOrUpdateCategory(PmsCategory category);
+    PmsCategory insert(PmsCategory category);
+
+    /**
+     * 更新分类
+     *
+     * @param category 更新的分类对象
+     */
+    PmsCategory update(PmsCategory category);
 
     /**
      * 通过分类ID获取分类信息

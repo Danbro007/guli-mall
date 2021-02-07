@@ -5,6 +5,8 @@ import com.danbro.product.controller.vo.PmsCategoryInfoVo;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.service.PmsCategoryService;
+import com.danbro.service.common.validtors.groups.Insert;
+import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -45,16 +47,14 @@ public class PmsCategoryController {
 
     @ApiOperation("更新分类")
     @PutMapping("")
-    public ResultBean<?> updateCategory(@Validated @RequestBody CategoryParam categoryParam) {
-        categoryService.insertOrUpdateCategory(categoryParam.convertEntity());
-        return ResultBean.ofSuccess();
+    public ResultBean<PmsCategoryVo> updateCategory(@Validated(Update.class) @RequestBody CategoryParam categoryParam) {
+        return ResultBean.ofSuccess(PmsCategoryVo.builder().build().convert(categoryService.update(categoryParam.convertEntity())));
     }
 
     @ApiOperation("添加分类")
     @PostMapping("")
-    public ResultBean<?> insertCategory(@Validated @RequestBody CategoryParam categoryParam) {
-        categoryService.insertOrUpdateCategory(categoryParam.convertEntity());
-        return ResultBean.ofSuccess();
+    public ResultBean<PmsCategoryVo> insertCategory(@Validated(Insert.class) @RequestBody CategoryParam categoryParam) {
+        return ResultBean.ofSuccess(PmsCategoryVo.builder().build().convert(categoryService.insert(categoryParam.convertEntity())));
     }
 
     @ApiOperation("获取分类的详细信息")

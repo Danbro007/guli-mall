@@ -24,11 +24,19 @@ public interface PmsBrandService extends IService<PmsBrand> {
     PageUtils<PmsBrand> queryPage(Long page, Long limit, String key);
 
     /**
-     * 添加或者修改品牌信息
+     * 添加品牌信息
      *
      * @param brand 品牌对象
      */
-    PmsBrand insertOrUpdate(PmsBrand brand);
+    PmsBrand insert(PmsBrand brand);
+
+
+    /**
+     * 修改品牌信息
+     *
+     * @param brand 品牌对象
+     */
+    PmsBrand update(PmsBrand brand);
 
     /**
      * 获取品牌的详细信息

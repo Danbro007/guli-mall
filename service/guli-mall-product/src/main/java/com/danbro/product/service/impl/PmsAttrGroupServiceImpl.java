@@ -12,7 +12,6 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
-import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.mapper.PmsAttrGroupMapper;
 import com.danbro.product.service.PmsAttrGroupService;
@@ -60,7 +59,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
 
     @Override
     public PmsAttrGroup insertOrUpdate(PmsAttrGroup attrGroup) {
-        return MyCurdUtils.insertOrUpdate(attrGroup, this.saveOrUpdate(attrGroup), ResponseCode.INSERT_OR_UPDATE_FAILURE);
+        return MyCurdUtils.insertOrUpdate(attrGroup, this.saveOrUpdate(attrGroup), ResponseCode.INSERT_FAILURE);
     }
 
     @Override

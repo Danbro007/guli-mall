@@ -42,7 +42,6 @@ public class CategoryParam implements ConvertToEntity<PmsCategory> {
     @ApiModelProperty("层级")
     private Integer catLevel;
 
-
     @ApiModelProperty("是否显示[0-不显示，1显示]")
     private Boolean showStatus;
 

@@ -3,16 +3,19 @@ package com.danbro.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.enums.pms.CatSortType;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsCategory;
 import com.danbro.product.mapper.PmsCategoryMapper;
+import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +32,10 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCategory> implements PmsCategoryService {
+
+    @Autowired
+    private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     private static final String CATEGORY_TREE = "category-tree";
@@ -36,15 +43,15 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public List<PmsCategoryVo> getCategoryTree() {
         // 尝试到缓存去取
-        List<PmsCategoryVo> pmsCategoryVoListFromRedis = (List<PmsCategoryVo>) redisTemplate.opsForValue().get(CATEGORY_TREE);
-        if (!MyCollectionUtils.isEmpty(pmsCategoryVoListFromRedis)) {
-            return pmsCategoryVoListFromRedis;
+        List<PmsCategoryVo> pmsCategoryListFromCache = (List<PmsCategoryVo>) redisTemplate.opsForValue().get(CATEGORY_TREE);
+        if (!MyCollectionUtils.isEmpty(pmsCategoryListFromCache)) {
+            return pmsCategoryListFromCache;
         }
         // 缓存没有到数据库去取然后放入 redis 中
         // 先找所有的一级分类
         List<PmsCategory> allPmsCategory = this.list();
         List<PmsCategoryVo> pmsCategoryVos = allPmsCategory.stream().filter(e -> 0 == e.getParentCid()).map(m -> {
-            PmsCategoryVo categoryVo = new PmsCategoryVo().convert(m);
+            PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convert(m);
             categoryVo.setChildren(getChildren(categoryVo, allPmsCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
@@ -65,9 +72,21 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
     @Override
-    public void insertOrUpdateCategory(PmsCategory category) {
+    public PmsCategory insert(PmsCategory category) {
         redisTemplate.delete(CATEGORY_TREE);
-        MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.INSERT_OR_UPDATE_FAILURE);
+        return MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.INSERT_FAILURE);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public PmsCategory update(PmsCategory category) {
+        redisTemplate.delete(CATEGORY_TREE);
+        PmsCategory pmsCategory = MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.UPDATE_FAILURE);
+        // 如果是三级分类则同步更新 CategoryBrandRelation
+        if (pmsCategory.getCatLevel().equals(CatSortType.THREE)) {
+            pmsCategoryBrandRelationService.updateCategory(pmsCategory.getCatId(), pmsCategory.getName());
+        }
+        return pmsCategory;
     }
 
     @Override
@@ -78,7 +97,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
         redisTemplate.delete(CATEGORY_TREE);
-        MyCurdUtils.batchInserOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.INSERT_OR_UPDATE_FAILURE);
+        MyCurdUtils.batchInserOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
     }
 
     @Override
@@ -112,7 +131,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
      */
     private List<PmsCategoryVo> getChildren(PmsCategoryVo root, List<PmsCategory> allCategory) {
         return allCategory.stream().filter(e -> e.getParentCid().equals(root.getCatId())).map(m -> {
-            PmsCategoryVo categoryVo = new PmsCategoryVo().convert(m);
+            PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convert(m);
             categoryVo.setChildren(getChildren(categoryVo, allCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());

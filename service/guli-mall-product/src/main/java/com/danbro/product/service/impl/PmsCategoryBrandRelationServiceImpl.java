@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.product.controller.param.CategoryBrandRelationParam;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
 import com.danbro.product.entity.PmsBrand;
 import com.danbro.product.entity.PmsCategory;
@@ -37,7 +37,7 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
         PmsBrand brand = pmsBrandService.getBrandInfoById(param.getBrandId());
         PmsCategory category = pmsCategoryService.getCategoryInfo(param.getCatelogId());
         param.setBrandName(brand.getName()).setCatelogName(category.getName());
-        return MyCurdUtils.insertOrUpdate(param, this.saveOrUpdate(param), ResponseCode.INSERT_OR_UPDATE_FAILURE);
+        return MyCurdUtils.insertOrUpdate(param, this.saveOrUpdate(param), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
@@ -56,5 +56,21 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     @Override
     public void batchRemove(Long[] ids) {
         MyCurdUtils.batchInserOrUpdate(Arrays.asList(ids), this.removeByIds(Arrays.asList(ids)), ResponseCode.DELETE_FAILURE);
+    }
+
+    @Override
+    public PmsCategoryBrandRelation updateBrand(Long brandId, String brandName) {
+        UpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<>();
+        PmsCategoryBrandRelation brandRelation = new PmsCategoryBrandRelation().setBrandId(brandId).setBrandName(brandName);
+        updateWrapper.eq("brand_id",brandId);
+        return MyCurdUtils.insertOrUpdate(brandRelation,this.update(brandRelation,updateWrapper),ResponseCode.UPDATE_FAILURE);
+    }
+
+    @Override
+    public PmsCategoryBrandRelation updateCategory(Long categoryId, String categoryName) {
+        UpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<>();
+        PmsCategoryBrandRelation brandRelation = new PmsCategoryBrandRelation().setCatelogName(categoryName);
+        updateWrapper.eq("catelog_id",categoryId);
+        return MyCurdUtils.insertOrUpdate(brandRelation,this.update(brandRelation,updateWrapper),ResponseCode.UPDATE_FAILURE);
     }
 }

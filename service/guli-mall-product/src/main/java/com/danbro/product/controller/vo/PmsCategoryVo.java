@@ -8,7 +8,10 @@ import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsCategory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author liweimo
@@ -18,6 +21,9 @@ import lombok.Data;
  * @Created by Administrator
  */
 @Data
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class PmsCategoryVo implements Serializable, ConvertToVo<PmsCategory, PmsCategoryVo> {
     @ApiModelProperty("分类id")
     private Long catId;

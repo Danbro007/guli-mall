@@ -41,8 +41,8 @@ public class PmsBrandController {
 
     @ApiOperation("修改品牌的显示状态")
     @PutMapping("status")
-    public ResultBean<?> updateBrandShowStatus(@Validated(Update.class) @RequestBody BrandParam param) {
-        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insertOrUpdate(param.convertEntity())));
+    public ResultBean<PmsBrandVo> updateBrandShowStatus(@Validated(Update.class) @RequestBody BrandParam param) {
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.update(param.convertEntity())));
     }
 
     @ApiOperation("获取品牌的详细信息")
@@ -60,13 +60,13 @@ public class PmsBrandController {
 
     @ApiOperation("修改品牌的信息")
     @PutMapping("")
-    public ResultBean<?> updateBrandInfo(@Validated(Update.class) @RequestBody BrandParam param) {
-        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insertOrUpdate(param.convertEntity())));
+    public ResultBean<PmsBrandVo> updateBrandInfo(@Validated(Update.class) @RequestBody BrandParam param) {
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.update(param.convertEntity())));
     }
 
     @ApiOperation("添加品牌")
     @PostMapping("")
-    public ResultBean<?> insertBrandInfo(@Validated(Insert.class) @RequestBody BrandParam param) {
-        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insertOrUpdate(param.convertEntity())));
+    public ResultBean<PmsBrandVo> insertBrandInfo(@Validated(Insert.class) @RequestBody BrandParam param) {
+        return ResultBean.ofSuccess(PmsBrandVo.builder().build().convert(pmsBrandService.insert(param.convertEntity())));
     }
 }
