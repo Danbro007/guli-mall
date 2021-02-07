@@ -39,4 +39,11 @@ public class MyCurdUtils {
         }
         throw new GuliMallException(resultCode);
     }
+
+
+    public static void batchDelete(Boolean bool, ResultCode resultCode) {
+        if (!bool) {
+            throw new GuliMallException(resultCode);
+        }
+    }
 }

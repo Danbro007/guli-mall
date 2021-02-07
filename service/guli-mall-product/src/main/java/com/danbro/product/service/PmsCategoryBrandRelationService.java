@@ -36,7 +36,7 @@ public interface PmsCategoryBrandRelationService extends IService<PmsCategoryBra
      *
      * @param ids 品牌分类关系ID列表
      */
-    void batchRemove(Long[] ids);
+    void batchDeleteCategoryBrandRelation(Long[] ids);
 
     /**
      * 更新品牌与分类关系里的品牌名
@@ -53,4 +53,16 @@ public interface PmsCategoryBrandRelationService extends IService<PmsCategoryBra
      * @param categoryName 分类名
      */
     PmsCategoryBrandRelation updateCategory(Long categoryId, String categoryName);
+
+    /**
+     * 通过分类ID批量删除
+     * @param ids 分类ID数组
+     */
+    void batchDeleteByCategoryId(Long[] ids);
+
+    /**
+     * 通过品牌ID批量删除
+     * @param ids 品牌ID数组
+     */
+    void batchDeleteByBrandId(Long[] ids);
 }

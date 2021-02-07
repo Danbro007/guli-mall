@@ -44,7 +44,7 @@ public class PmsCategoryBrandRelationController {
 
     @DeleteMapping("")
     public ResultBean<?> deleteCategoryBrandRelation(@RequestBody Long[] ids) {
-        pmsCategoryBrandRelationService.batchRemove(ids);
+        pmsCategoryBrandRelationService.batchDeleteCategoryBrandRelation(ids);
         return ResultBean.ofSuccess();
     }
 

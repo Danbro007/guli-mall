@@ -40,7 +40,7 @@ public class PmsCategoryController {
 
     @ApiOperation("批量删除分类")
     @DeleteMapping("")
-    public ResultBean<?> deleteCategoryById(@RequestBody String[] catIds) {
+    public ResultBean<?> deleteCategoryById(@RequestBody Long[] catIds) {
         categoryService.batchDeleteCategoryById(catIds);
         return ResultBean.ofSuccess();
     }

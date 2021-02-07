@@ -45,7 +45,6 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
             queryWrapper.eq("catelog_id", categoryId);
         }
         page = this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper);
-
         Page<PmsAttrGroupVo> groupVoPage = new Page<>();
         MyBeanUtils.copyProperties(page, groupVoPage, "records");
         List<PmsAttrGroupVo> records = new ArrayList<>(page.getRecords().size());

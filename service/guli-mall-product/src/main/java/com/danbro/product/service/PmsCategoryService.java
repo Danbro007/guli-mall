@@ -27,7 +27,7 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      *
      * @param catIds 分类ID
      */
-    void batchDeleteCategoryById(String[] catIds);
+    void batchDeleteCategoryById(Long[] catIds);
 
     /**
      * 添加分类

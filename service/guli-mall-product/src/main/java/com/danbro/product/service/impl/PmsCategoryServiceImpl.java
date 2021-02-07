@@ -38,6 +38,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
     private static final String CATEGORY_TREE = "category-tree";
 
     @Override
@@ -55,20 +56,24 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
             categoryVo.setChildren(getChildren(categoryVo, allPmsCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
+        // 找到的数据放入缓存中
         redisTemplate.opsForValue().set(CATEGORY_TREE, pmsCategoryVos);
         return pmsCategoryVos;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public void batchDeleteCategoryById(String[] catIds) {
+    public void batchDeleteCategoryById(Long[] catIds) {
         // 先删除缓存
         redisTemplate.delete(CATEGORY_TREE);
-        List<String> catIdList = Arrays.asList(catIds);
+        List<Long> catIdList = Arrays.asList(catIds);
         QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();
         // 删除 categoryId或者父级Id为要删除的分类Id的对象
         queryWrapper.in("cat_id", catIdList).or().in("parent_cid", catIdList);
         // 删除完毕就不建议立即主动建立缓存，因为可能建立的缓存次数比删除的次数少，降低效率。
         MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
+        // 同步删除 CategoryBrandRelation 里的数据
+        pmsCategoryBrandRelationService.batchDeleteByCategoryId(catIds);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.danbro.product.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -43,13 +45,20 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     @Override
     public PmsBrand update(PmsBrand brand) {
         PmsBrand pmsBrand = MyCurdUtils.insertOrUpdate(brand, this.saveOrUpdate(brand), ResponseCode.UPDATE_FAILURE);
-        pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(),pmsBrand.getName());
+        pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(), pmsBrand.getName());
         return pmsBrand;
     }
-
 
     @Override
     public PmsBrand getBrandInfoById(Long brandId) {
         return MyCurdUtils.selectOne(this.getById(brandId), ResponseCode.NOT_FOUND);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void batchDeleteBrand(Long[] ids) {
+        MyCurdUtils.batchDelete(this.removeByIds(Arrays.asList(ids)),ResponseCode.DELETE_FAILURE);
+        // 同步删除 CategoryBrandRelation 里的数据
+        pmsCategoryBrandRelationService.batchDeleteByBrandId(ids);
     }
 }

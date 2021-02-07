@@ -2,6 +2,7 @@ package com.danbro.product;
 
 
 import java.util.List;
+import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,10 +21,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ProductTest {
     @Autowired
     PmsCategoryService pmsCategoryService;
+    @Autowired
+    PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
 
     @Test
     public void test1() {
-        System.out.println("123");
+        Long[] catIds = new Long[]{500L,333L};
+        pmsCategoryBrandRelationService.batchDeleteByCategoryId(catIds);
     }
 
     @Test

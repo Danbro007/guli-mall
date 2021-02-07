@@ -1,6 +1,7 @@
 package com.danbro.product.service;
 
 
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.utils.PageUtils;
 import com.danbro.product.entity.PmsBrand;
@@ -45,4 +46,10 @@ public interface PmsBrandService extends IService<PmsBrand> {
      * @return 品牌对象
      */
     PmsBrand getBrandInfoById(Long brandId);
+
+    /**
+     * 批量删除品牌
+     * @param ids 品牌ID数组
+     */
+    void batchDeleteBrand(Long[] ids);
 }

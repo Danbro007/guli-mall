@@ -53,8 +53,8 @@ public class PmsBrandController {
 
     @ApiOperation("批量删除品牌")
     @DeleteMapping("")
-    public ResultBean<?> batchDeleteBrand(@RequestBody String[] brandIds) {
-        pmsBrandService.removeByIds(Arrays.asList(brandIds));
+    public ResultBean<?> batchDeleteBrand(@RequestBody Long[] brandIds) {
+        pmsBrandService.batchDeleteBrand(brandIds);
         return ResultBean.ofSuccess();
     }
 

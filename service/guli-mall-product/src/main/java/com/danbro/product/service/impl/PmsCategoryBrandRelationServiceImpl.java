@@ -54,23 +54,37 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     }
 
     @Override
-    public void batchRemove(Long[] ids) {
-        MyCurdUtils.batchInserOrUpdate(Arrays.asList(ids), this.removeByIds(Arrays.asList(ids)), ResponseCode.DELETE_FAILURE);
+    public void batchDeleteCategoryBrandRelation(Long[] ids) {
+        MyCurdUtils.batchDelete(this.removeByIds(Arrays.asList(ids)), ResponseCode.DELETE_FAILURE);
     }
 
     @Override
     public PmsCategoryBrandRelation updateBrand(Long brandId, String brandName) {
         UpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<>();
         PmsCategoryBrandRelation brandRelation = new PmsCategoryBrandRelation().setBrandId(brandId).setBrandName(brandName);
-        updateWrapper.eq("brand_id",brandId);
-        return MyCurdUtils.insertOrUpdate(brandRelation,this.update(brandRelation,updateWrapper),ResponseCode.UPDATE_FAILURE);
+        updateWrapper.eq("brand_id", brandId);
+        return MyCurdUtils.insertOrUpdate(brandRelation, this.update(brandRelation, updateWrapper), ResponseCode.UPDATE_FAILURE);
     }
 
     @Override
     public PmsCategoryBrandRelation updateCategory(Long categoryId, String categoryName) {
         UpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<>();
         PmsCategoryBrandRelation brandRelation = new PmsCategoryBrandRelation().setCatelogName(categoryName);
-        updateWrapper.eq("catelog_id",categoryId);
-        return MyCurdUtils.insertOrUpdate(brandRelation,this.update(brandRelation,updateWrapper),ResponseCode.UPDATE_FAILURE);
+        updateWrapper.eq("catelog_id", categoryId);
+        return MyCurdUtils.insertOrUpdate(brandRelation, this.update(brandRelation, updateWrapper), ResponseCode.UPDATE_FAILURE);
+    }
+
+    @Override
+    public void batchDeleteByCategoryId(Long[] ids) {
+        QueryWrapper<PmsCategoryBrandRelation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("catelog_id", Arrays.asList(ids));
+        MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
+    }
+
+    @Override
+    public void batchDeleteByBrandId(Long[] ids) {
+        QueryWrapper<PmsCategoryBrandRelation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("brand_id", Arrays.asList(ids));
+        MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
     }
 }
