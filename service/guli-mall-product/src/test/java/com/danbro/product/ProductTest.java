@@ -1,7 +1,8 @@
 package com.danbro.product;
 
-import com.danbro.product.entity.PmsCategoryBrandRelation;
-import com.danbro.product.mapper.PmsCategoryBrandRelationMapper;
+
+import java.util.List;
+import com.danbro.product.service.PmsCategoryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,19 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @Created by Administrator
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest()
+@SpringBootTest
 public class ProductTest {
     @Autowired
-    PmsCategoryBrandRelationMapper relationMapper;
+    PmsCategoryService pmsCategoryService;
 
     @Test
-    public void test1(){
-        PmsCategoryBrandRelation pmsCategoryBrandRelation = new PmsCategoryBrandRelation();
-        pmsCategoryBrandRelation.setCatelogName("123");
-        relationMapper.insert(pmsCategoryBrandRelation);
+    public void test1() {
+        System.out.println("123");
+    }
+
+    @Test
+    public void test2() {
+        List<Long> cateLogPath = pmsCategoryService.findCateLogPath(255L);
+        System.out.println(cateLogPath);
     }
 }

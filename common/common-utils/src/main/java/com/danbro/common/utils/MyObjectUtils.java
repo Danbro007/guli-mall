@@ -13,4 +13,7 @@ public class MyObjectUtils {
     public static Boolean isEmpty(Object o){
         return ObjectUtil.isEmpty(o);
     }
+    public static Boolean isNotEmpty(Object o){
+        return !ObjectUtil.isEmpty(o);
+    }
 }

@@ -50,4 +50,12 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      * @param updateCategoryList 带更新的分类列表
      */
     void batchUpdateCategory(List<PmsCategory> updateCategoryList);
+
+    /**
+     * 通过属性分组的三级分类ID查找属性分组的分类路径（父类及祖父的ID）
+     *
+     * @param cateLogId 属性分组所属的三级分类ID
+     * @return 属性分组的分类路径ID数组
+     */
+    List<Long> findCateLogPath(Long cateLogId);
 }

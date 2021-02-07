@@ -6,6 +6,7 @@ import java.util.List;
 import com.danbro.common.interfaces.ConvertToVo;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsCategory;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -33,6 +34,7 @@ public class PmsCategoryVo implements Serializable, ConvertToVo<PmsCategory, Pms
     @ApiModelProperty("排序")
     private Integer sort;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ApiModelProperty("子分类")
     private List<PmsCategoryVo> children;
 

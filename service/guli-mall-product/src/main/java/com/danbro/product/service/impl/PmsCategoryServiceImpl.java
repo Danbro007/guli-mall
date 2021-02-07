@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,9 +55,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public void batchDeleteCategoryById(String[] catIds) {
         // 先删除缓存
-        if (MyObjectUtils.isEmpty(redisTemplate.opsForValue().get(CATEGORY_TREE))) {
-            redisTemplate.delete(CATEGORY_TREE);
-        }
+        redisTemplate.delete(CATEGORY_TREE);
         List<String> catIdList = Arrays.asList(catIds);
         QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();
         // 删除 categoryId或者父级Id为要删除的分类Id的对象
@@ -67,7 +67,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public void insertOrUpdateCategory(PmsCategory category) {
         redisTemplate.delete(CATEGORY_TREE);
-        MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.INSERT_FAILURE);
+        MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.INSERT_OR_UPDATE_FAILURE);
     }
 
     @Override
@@ -77,11 +77,31 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
-        if (MyObjectUtils.isEmpty(redisTemplate.opsForValue().get(CATEGORY_TREE))) {
-            redisTemplate.delete(CATEGORY_TREE);
-        }
-        MyCurdUtils.batchInserOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
+        redisTemplate.delete(CATEGORY_TREE);
+        MyCurdUtils.batchInserOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.INSERT_OR_UPDATE_FAILURE);
     }
+
+    @Override
+    public List<Long> findCateLogPath(Long cateLogId) {
+        List<Long> cateLogPath = new ArrayList<>();
+        PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(cateLogId), ResponseCode.NOT_FOUND);
+        // 判断有没有父类有的话继续查找，直到没有。
+        if (MyObjectUtils.isNotEmpty(pmsCategory) && pmsCategory.getParentCid() != 0) {
+            cateLogPath.add(cateLogId);
+            findParentCateLogId(pmsCategory.getParentCid(), cateLogPath);
+        }
+        Collections.reverse(cateLogPath);
+        return cateLogPath;
+    }
+
+    private void findParentCateLogId(Long cateLogId, List<Long> cateLogPath) {
+        cateLogPath.add(cateLogId);
+        PmsCategory pmsCategory = this.getById(cateLogId);
+        if (MyObjectUtils.isNotEmpty(pmsCategory.getParentCid()) && pmsCategory.getParentCid() != 0) {
+            findParentCateLogId(pmsCategory.getParentCid(), cateLogPath);
+        }
+    }
+
 
     /**
      * 获取父分类的子分类
@@ -96,6 +116,5 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
             categoryVo.setChildren(getChildren(categoryVo, allCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
-
     }
 }

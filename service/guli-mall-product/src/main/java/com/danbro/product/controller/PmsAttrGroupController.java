@@ -7,6 +7,8 @@ import com.danbro.product.controller.param.AttrGroupParam;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.service.PmsAttrGroupService;
+import com.danbro.service.common.validtors.groups.Insert;
+import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -38,8 +40,24 @@ public class PmsAttrGroupController {
     }
 
     @PostMapping("")
-    public ResultBean<PmsAttrGroupVo> insertAttrGroup(@Validated @RequestBody AttrGroupParam param) {
+    public ResultBean<PmsAttrGroupVo> insertAttrGroup(@Validated(Insert.class) @RequestBody AttrGroupParam param) {
         return ResultBean.ofSuccess(PmsAttrGroupVo.builder().build().convert(pmsAttrGroupService.insertOrUpdate(param.convertEntity())));
+    }
+
+    @PutMapping("")
+    public ResultBean<PmsAttrGroupVo> updateAttrGroup(@Validated(Update.class) @RequestBody AttrGroupParam param) {
+        return ResultBean.ofSuccess(PmsAttrGroupVo.builder().build().convert(pmsAttrGroupService.insertOrUpdate(param.convertEntity())));
+    }
+
+    @GetMapping("info/{attrGroupId}")
+    public ResultBean<PmsAttrGroupVo> getAttrGroupInfo(@PathVariable Long attrGroupId){
+        return ResultBean.ofSuccess(pmsAttrGroupService.getAttrGroupInfo(attrGroupId));
+    }
+
+    @DeleteMapping("")
+    public ResultBean<?> batchDeleteAttrGroup(@RequestBody Long[] ids){
+        pmsAttrGroupService.batchDeleteAttrGroup(ids);
+        return ResultBean.ofSuccess();
     }
 
 }

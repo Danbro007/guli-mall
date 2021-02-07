@@ -21,7 +21,7 @@ public enum ResponseCode implements ResultCode {
      */
     NOT_FOUND("查找的对象不存在！", 5000),
     INSERT_OR_UPDATE_FAILURE("添加或者修改失败！",5100),
-    UPDATE_FAILURE("修改失败！",5200),
+    DELETE_FAILURE("删除失败！",5200),
     ;
 
 

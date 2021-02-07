@@ -4,6 +4,8 @@ package com.danbro.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
+import com.danbro.product.controller.vo.PmsAttrGroupVo;
+import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsAttrGroup;
 
 
@@ -31,4 +33,18 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @return 添加或者更新完毕后的属性分组对象
      */
     PmsAttrGroup insertOrUpdate(PmsAttrGroup attrGroup);
+
+    /**
+     * 获取详细的属性分组信息
+     *
+     * @param attrGroupId 属性分组ID
+     * @return 属性分组信息
+     */
+    PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId);
+
+    /**
+     * 删除指定的属性分组
+     * @param ids 属性分组的ID数组
+     */
+    void batchDeleteAttrGroup(Long[] ids);
 }

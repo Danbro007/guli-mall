@@ -3,15 +3,15 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.43.109:4306/gulimall_pms
+    url: jdbc:mysql://192.168.0.109:4306/gulimall_pms
   application:
     name: service-pms
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.43.109:8848
+        server-addr: 192.168.0.109:8848
   redis:
-    host: 192.168.43.109
+    host: 192.168.0.109
     port: 6379
 server:
   port: 8004

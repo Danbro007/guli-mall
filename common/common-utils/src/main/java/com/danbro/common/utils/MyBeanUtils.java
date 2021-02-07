@@ -1,6 +1,7 @@
 package com.danbro.common.utils;
 
-import org.springframework.beans.BeanUtils;
+
+import cn.hutool.core.bean.BeanUtil;
 
 /**
  * @Classname BeanUtils
@@ -10,7 +11,7 @@ import org.springframework.beans.BeanUtils;
  */
 public class MyBeanUtils {
 
-    public static void copyProperties(Object source, Object target) {
-        BeanUtils.copyProperties(source, target);
+    public static void copyProperties(Object source, Object target, String... ignoreProperties) {
+        BeanUtil.copyProperties(source, target,ignoreProperties);
     }
 }
