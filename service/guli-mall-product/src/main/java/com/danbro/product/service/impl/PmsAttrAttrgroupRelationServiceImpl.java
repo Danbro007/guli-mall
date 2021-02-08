@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 import com.danbro.product.mapper.PmsAttrAttrgroupRelationMapper;
@@ -29,7 +30,7 @@ public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttr
     public PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId) {
         QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("attr_id", attrId);
-        PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = this.getOne(queryWrapper);
+        PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = MyCurdUtils.selectOne(this.getOne(queryWrapper),ResponseCode.NOT_FOUND);
         return PmsAttrAttrgroupRelationVo.builder().build().convertToVo(pmsAttrAttrgroupRelation);
     }
 

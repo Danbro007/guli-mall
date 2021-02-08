@@ -65,17 +65,21 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         List<PmsAttrBaseInfoVo> list = page.getRecords().stream().map(attr -> {
             PmsAttrBaseInfoVo infoVo = PmsAttrBaseInfoVo.builder().build().convertToVo(attr);
             // 找到属性对应的属性分组
-            PmsAttrAttrgroupRelationVo relation = attrgroupRelationService.getAttrAttrRelationByAttrId(infoVo.getAttrId());
-            if (MyObjectUtils.isNotEmpty(relation)) {
-                PmsAttrGroupVo groupInfo = pmsAttrGroupService.getAttrGroupInfo(relation.getAttrGroupId());
-                if (MyObjectUtils.isNotEmpty(groupInfo)) {
-                    infoVo.setGroupName(groupInfo.getAttrGroupName());
+            if (MyObjectUtils.isNotEmpty(attr.getAttrId())) {
+                PmsAttrAttrgroupRelationVo relation = attrgroupRelationService.getAttrAttrRelationByAttrId(infoVo.getAttrId());
+                if (MyObjectUtils.isNotEmpty(relation)) {
+                    PmsAttrGroupVo groupInfo = pmsAttrGroupService.getAttrGroupInfo(relation.getAttrGroupId());
+                    if (MyObjectUtils.isNotEmpty(groupInfo)) {
+                        infoVo.setGroupName(groupInfo.getAttrGroupName());
+                    }
                 }
             }
             // 再查找属性对应的分类
-            PmsCategoryVo categoryInfo = pmsCategoryService.getCategoryInfo(attr.getCatelogId());
-            if (MyObjectUtils.isNotEmpty(categoryInfo)) {
-                infoVo.setCatelogName(categoryInfo.getName());
+            if (MyObjectUtils.isNotEmpty(attr.getCatelogId())) {
+                PmsCategoryVo categoryInfo = pmsCategoryService.getCategoryInfo(attr.getCatelogId());
+                if (MyObjectUtils.isNotEmpty(categoryInfo)) {
+                    infoVo.setCatelogName(categoryInfo.getName());
+                }
             }
             return infoVo;
         }).collect(Collectors.toList());
