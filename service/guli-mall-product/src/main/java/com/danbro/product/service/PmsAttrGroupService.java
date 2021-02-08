@@ -2,11 +2,9 @@ package com.danbro.product.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
-import com.danbro.common.utils.PageUtils;
+import com.danbro.common.utils.Pagination;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
-import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsAttrGroup;
 
 
@@ -25,7 +23,7 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @param key        关键字
      * @return 分页查询结果
      */
-    PageUtils<PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
+    Pagination<PmsAttrGroupVo,PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
 
     /**
      * 添加或者更新属性分组

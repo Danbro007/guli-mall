@@ -1,13 +1,10 @@
 package com.danbro.product.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
@@ -32,7 +29,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     private PmsCategoryService pmsCategoryService;
 
     @Override
-    public PageUtils<PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
+    public Pagination<PmsAttrGroupVo,PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
         // 分类ID 为 0 分页查询所有的属性分组
         IPage<PmsAttrGroup> page;
         QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
@@ -44,7 +41,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
         if (categoryId > 0) {
             queryWrapper.eq("catelog_id", categoryId);
         }
-        return new PageUtils<>(this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper));
+        return new Pagination<>(this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper),PmsAttrGroupVo.class);
 
     }
 

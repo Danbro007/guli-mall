@@ -1,12 +1,9 @@
 package com.danbro.product.service;
 
 
-import java.util.List;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
-import com.danbro.common.utils.PageUtils;
+import com.danbro.common.utils.Pagination;
 import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.entity.PmsBrand;
 
@@ -25,7 +22,7 @@ public interface PmsBrandService extends IService<PmsBrand> {
      * @param key       关键字
      * @return 查询结果
      */
-    PageUtils<PmsBrand> queryPage(PageParam<PmsBrand> pageParam, String key);
+    Pagination<PmsBrandVo,PmsBrand> queryPage(PageParam<PmsBrand> pageParam, String key);
 
     /**
      * 添加品牌信息

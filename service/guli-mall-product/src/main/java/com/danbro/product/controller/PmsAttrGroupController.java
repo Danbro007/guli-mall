@@ -29,7 +29,7 @@ public class PmsAttrGroupController {
     private PmsAttrGroupService pmsAttrGroupService;
 
     @GetMapping("list/{categoryId}")
-    public ResultPageBean<PmsAttrGroup> getAttrGroupList(@PathVariable Long categoryId,
+    public ResultPageBean<PmsAttrGroupVo,PmsAttrGroup> getAttrGroupList(@PathVariable Long categoryId,
                                                          @RequestParam("page") Long page,
                                                          @RequestParam("limit") Long limit,
                                                          @RequestParam(value = "sidx", required = false) String sidx,

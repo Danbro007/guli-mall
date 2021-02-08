@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Classname PmsBrandVo
@@ -19,6 +20,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class PmsBrandVo implements ConvertToVo<PmsBrand, PmsBrandVo> {
 
     @JsonSerialize(using = ToStringSerializer.class)

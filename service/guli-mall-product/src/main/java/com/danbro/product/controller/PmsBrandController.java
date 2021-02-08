@@ -1,10 +1,7 @@
 package com.danbro.product.controller;
 
-import java.util.Arrays;
-
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
-import com.danbro.common.utils.PageUtils;
 import com.danbro.product.controller.param.BrandParam;
 import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.entity.PmsBrand;
@@ -34,7 +31,7 @@ public class PmsBrandController {
 
     @ApiOperation("分页查询品牌")
     @GetMapping("list")
-    public ResultPageBean<PmsBrand> getBrandList(@RequestParam Long page,
+    public ResultPageBean<PmsBrandVo,PmsBrand> getBrandList(@RequestParam Long page,
                                                         @RequestParam Long limit,
                                                         @RequestParam(required = false) String key){
         PageParam<PmsBrand> pageParam = new PageParam<PmsBrand>().setLimit(limit).setPage(page);

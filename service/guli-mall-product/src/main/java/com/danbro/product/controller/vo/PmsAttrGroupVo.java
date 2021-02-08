@@ -1,19 +1,17 @@
 package com.danbro.product.controller.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
+import java.util.List;
 import com.danbro.common.interfaces.ConvertToVo;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsAttrGroup;
-import com.danbro.product.entity.PmsCategory;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Danrbo
@@ -23,6 +21,7 @@ import java.util.List;
  */
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class PmsAttrGroupVo implements Serializable, ConvertToVo<PmsAttrGroup, PmsAttrGroupVo> {
 

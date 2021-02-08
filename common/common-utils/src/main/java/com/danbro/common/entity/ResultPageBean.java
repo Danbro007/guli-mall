@@ -1,19 +1,9 @@
 package com.danbro.common.entity;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import cn.hutool.core.util.ReflectUtil;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.interfaces.Result;
 import com.danbro.common.interfaces.ResultCode;
-import com.danbro.common.utils.MyBeanUtils;
-import com.danbro.common.utils.MyReflectUtils;
-import com.danbro.common.utils.PageUtils;
+import com.danbro.common.utils.Pagination;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,11 +17,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResultPageBean<V> implements Result {
+public class ResultPageBean<V,E> implements Result {
     private String message;
     private Boolean success;
     private Integer code;
-    private PageUtils<V> page;
+    private Pagination<V,E> page;
 
     @Override
     public void setResultCode(ResultCode resultCode) {
@@ -45,22 +35,22 @@ public class ResultPageBean<V> implements Result {
      * @param <V>  分页对象的Class
      * @return 分页结果
      */
-    public static <V> ResultPageBean<V> ofSuccess() {
-        ResultPageBean<V> resultPageBean = new ResultPageBean<>();
+    public static <V,E> ResultPageBean<V,E> ofSuccess() {
+        ResultPageBean<V,E> resultPageBean = new ResultPageBean<>();
         resultPageBean.setSuccess(true);
         resultPageBean.setResultCode(ResponseCode.SUCCESS);
         return resultPageBean;
     }
 
-    public static <V> ResultPageBean<V> ofSuccess(PageUtils<V> pageUtils) {
-        ResultPageBean<V> resultPageBean = ofSuccess();
-        resultPageBean.setPage(pageUtils);
+    public static <V,E> ResultPageBean<V,E> ofSuccess(Pagination<V,E> pagination) {
+        ResultPageBean<V,E> resultPageBean = ofSuccess();
+        resultPageBean.setPage(pagination);
         return resultPageBean;
     }
 
 
-    public static ResultPageBean<?> ofFailure(ResultCode resultCode) {
-        ResultPageBean<?> resultPageBean = new ResultPageBean<>();
+    public static ResultPageBean<?,?> ofFailure(ResultCode resultCode) {
+        ResultPageBean<?,?> resultPageBean = new ResultPageBean<>();
         resultPageBean.setSuccess(false);
         resultPageBean.setResultCode(resultCode);
         return resultPageBean;
