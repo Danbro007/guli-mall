@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.Pagination;
 import com.danbro.common.utils.Query;
@@ -30,29 +31,31 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
 
     @Override
-    public Pagination<PmsBrandVo,PmsBrand> queryPage(PageParam<PmsBrand> pageParam, String key) {
+    public Pagination<PmsBrandVo, PmsBrand> queryPage(PageParam<PmsBrand> pageParam, String key) {
         QueryWrapper<PmsBrand> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("brand_id", key).or().like("name", key);
         IPage<PmsBrand> page = this.page(new Query<PmsBrand>().getPage(pageParam), queryWrapper);
-        return new Pagination<>(page,PmsBrandVo.class);
+        return new Pagination<>(page, PmsBrandVo.class);
     }
 
     @Override
-    public PmsBrand insert(PmsBrand brand) {
-        return MyCurdUtils.insertOrUpdate(brand, this.saveOrUpdate(brand), ResponseCode.INSERT_FAILURE);
+    public PmsBrandVo insert(PmsBrandVo brand) {
+        return MyCurdUtils.insertOrUpdate(brand, this.saveOrUpdate(brand.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public PmsBrand update(PmsBrand brand) {
-        PmsBrand pmsBrand = MyCurdUtils.insertOrUpdate(brand, this.saveOrUpdate(brand), ResponseCode.UPDATE_FAILURE);
+    public PmsBrandVo update(PmsBrandVo brand) {
+        PmsBrand pmsBrand = MyCurdUtils.insertOrUpdate(brand.convertToEntity(), this.saveOrUpdate(brand.convertToEntity()), ResponseCode.UPDATE_FAILURE);
         pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(), pmsBrand.getName());
-        return pmsBrand;
+        return brand;
     }
 
     @Override
-    public PmsBrand getBrandInfoById(Long brandId) {
-        return MyCurdUtils.selectOne(this.getById(brandId), ResponseCode.NOT_FOUND);
+    public PmsBrandVo getBrandInfoById(Long brandId) {
+        PmsBrand pmsBrand = MyCurdUtils.selectOne(this.getById(brandId), ResponseCode.NOT_FOUND);
+        PmsBrandVo pmsBrandVo = new PmsBrandVo();
+        return pmsBrandVo.convertToVo(pmsBrand);
     }
 
     @Transactional(rollbackFor = Exception.class)

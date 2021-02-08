@@ -52,7 +52,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         // 先找所有的一级分类
         List<PmsCategory> allPmsCategory = this.list();
         List<PmsCategoryVo> pmsCategoryVos = allPmsCategory.stream().filter(e -> 0 == e.getParentCid()).map(m -> {
-            PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convert(m);
+            PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convertToVo(m);
             categoryVo.setChildren(getChildren(categoryVo, allPmsCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
@@ -77,26 +77,28 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
     @Override
-    public PmsCategory insert(PmsCategory category) {
+    public PmsCategoryVo insert(PmsCategoryVo category) {
         redisTemplate.delete(CATEGORY_TREE);
-        return MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.INSERT_FAILURE);
+        return MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public PmsCategory update(PmsCategory category) {
+    public PmsCategoryVo update(PmsCategoryVo category) {
+        // 请清空缓存
         redisTemplate.delete(CATEGORY_TREE);
-        PmsCategory pmsCategory = MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category), ResponseCode.UPDATE_FAILURE);
+        PmsCategoryVo pmsCategoryVo = MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category.convertToEntity()), ResponseCode.UPDATE_FAILURE);
         // 如果是三级分类则同步更新 CategoryBrandRelation
-        if (pmsCategory.getCatLevel().equals(CatSortType.THREE)) {
-            pmsCategoryBrandRelationService.updateCategory(pmsCategory.getCatId(), pmsCategory.getName());
+        if (pmsCategoryVo.getCatLevel().equals(CatSortType.THREE)) {
+            pmsCategoryBrandRelationService.updateCategory(pmsCategoryVo.getCatId(), pmsCategoryVo.getName());
         }
-        return pmsCategory;
+        return pmsCategoryVo;
     }
 
     @Override
-    public PmsCategory getCategoryInfo(Long categoryId) {
-        return MyCurdUtils.selectOne(this.getById(categoryId), ResponseCode.NOT_FOUND);
+    public PmsCategoryVo getCategoryInfo(Long categoryId) {
+        PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(categoryId), ResponseCode.NOT_FOUND);
+        return PmsCategoryVo.builder().build().convertToVo(pmsCategory);
     }
 
     @Override
@@ -106,20 +108,22 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
     @Override
-    public List<Long> findCateLogPath(Long cateLogId) {
-        List<Long> cateLogPath = new ArrayList<>();
+    public String[] findCateLogPath(Long cateLogId) {
+        List<String> cateLogPath = new ArrayList<>();
         PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(cateLogId), ResponseCode.NOT_FOUND);
         // 判断有没有父类有的话继续查找，直到没有。
         if (MyObjectUtils.isNotEmpty(pmsCategory) && pmsCategory.getParentCid() != 0) {
-            cateLogPath.add(cateLogId);
+            cateLogPath.add(Long.toString(cateLogId));
             findParentCateLogId(pmsCategory.getParentCid(), cateLogPath);
         }
         Collections.reverse(cateLogPath);
-        return cateLogPath;
+        String[] array = new String[cateLogPath.size()];
+        cateLogPath.toArray(array);
+        return array;
     }
 
-    private void findParentCateLogId(Long cateLogId, List<Long> cateLogPath) {
-        cateLogPath.add(cateLogId);
+    private void findParentCateLogId(Long cateLogId, List<String> cateLogPath) {
+        cateLogPath.add(Long.toString(cateLogId));
         PmsCategory pmsCategory = this.getById(cateLogId);
         if (MyObjectUtils.isNotEmpty(pmsCategory.getParentCid()) && pmsCategory.getParentCid() != 0) {
             findParentCateLogId(pmsCategory.getParentCid(), cateLogPath);
@@ -136,7 +140,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
      */
     private List<PmsCategoryVo> getChildren(PmsCategoryVo root, List<PmsCategory> allCategory) {
         return allCategory.stream().filter(e -> e.getParentCid().equals(root.getCatId())).map(m -> {
-            PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convert(m);
+            PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convertToVo(m);
             categoryVo.setChildren(getChildren(categoryVo, allCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());

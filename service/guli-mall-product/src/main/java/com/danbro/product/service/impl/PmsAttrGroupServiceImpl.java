@@ -29,7 +29,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     private PmsCategoryService pmsCategoryService;
 
     @Override
-    public Pagination<PmsAttrGroupVo,PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
+    public Pagination<PmsAttrGroupVo,PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
         // 分类ID 为 0 分页查询所有的属性分组
         IPage<PmsAttrGroup> page;
         QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
@@ -46,15 +46,15 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     }
 
     @Override
-    public PmsAttrGroup insertOrUpdate(PmsAttrGroup attrGroup) {
-        return MyCurdUtils.insertOrUpdate(attrGroup, this.saveOrUpdate(attrGroup), ResponseCode.INSERT_FAILURE);
+    public PmsAttrGroupVo insertOrUpdate(PmsAttrGroupVo attrGroup) {
+        return MyCurdUtils.insertOrUpdate(attrGroup, this.saveOrUpdate(attrGroup.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
     public PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId) {
         PmsAttrGroup pmsAttrGroup = MyCurdUtils.selectOne(this.getById(attrGroupId), ResponseCode.NOT_FOUND);
-        PmsAttrGroupVo attrGroupVo = PmsAttrGroupVo.builder().build().convert(pmsAttrGroup);
-        List<Long> cateLogPath = pmsCategoryService.findCateLogPath(attrGroupVo.getCatelogId());
+        PmsAttrGroupVo attrGroupVo = PmsAttrGroupVo.builder().build().convertToVo(pmsAttrGroup);
+        String[] cateLogPath = pmsCategoryService.findCateLogPath(attrGroupVo.getCatelogId());
         attrGroupVo.setCatelogPath(cateLogPath);
         return attrGroupVo;
     }

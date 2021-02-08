@@ -29,7 +29,7 @@ public interface PmsBrandService extends IService<PmsBrand> {
      *
      * @param brand 品牌对象
      */
-    PmsBrand insert(PmsBrand brand);
+    PmsBrandVo insert(PmsBrandVo brand);
 
 
     /**
@@ -37,7 +37,7 @@ public interface PmsBrandService extends IService<PmsBrand> {
      *
      * @param brand 品牌对象
      */
-    PmsBrand update(PmsBrand brand);
+    PmsBrandVo update(PmsBrandVo brand);
 
     /**
      * 获取品牌的详细信息
@@ -45,7 +45,7 @@ public interface PmsBrandService extends IService<PmsBrand> {
      * @param brandId 品牌ID
      * @return 品牌对象
      */
-    PmsBrand getBrandInfoById(Long brandId);
+    PmsBrandVo getBrandInfoById(Long brandId);
 
     /**
      * 批量删除品牌

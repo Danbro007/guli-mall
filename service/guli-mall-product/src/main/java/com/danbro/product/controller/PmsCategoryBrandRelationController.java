@@ -2,7 +2,6 @@ package com.danbro.product.controller;
 
 import java.util.List;
 import com.danbro.common.entity.ResultBean;
-import com.danbro.product.controller.param.CategoryBrandRelationParam;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.service.common.validtors.groups.Insert;
@@ -28,13 +27,8 @@ public class PmsCategoryBrandRelationController {
     private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
 
     @PostMapping("")
-    public ResultBean<?> insertCategoryBrandRelation(@Validated(Insert.class) @RequestBody CategoryBrandRelationParam param) {
-        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insert(param.convertEntity())));
-    }
-
-    @PutMapping("")
-    public ResultBean<?> updateCategoryBrandRelation(@Validated(Update.class) @RequestBody CategoryBrandRelationParam param) {
-        return ResultBean.ofSuccess(PmsCategoryBrandRelationVo.builder().build().convert(pmsCategoryBrandRelationService.insert(param.convertEntity())));
+    public ResultBean<PmsCategoryBrandRelationVo> insertCategoryBrandRelation(@Validated(Insert.class) @RequestBody PmsCategoryBrandRelationVo param) {
+        return ResultBean.ofSuccess((pmsCategoryBrandRelationService.insert(param)));
     }
 
     @GetMapping("catelog/list")

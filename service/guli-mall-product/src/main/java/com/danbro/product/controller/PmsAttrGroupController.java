@@ -3,7 +3,6 @@ package com.danbro.product.controller;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
-import com.danbro.product.controller.param.AttrGroupParam;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.service.PmsAttrGroupService;
@@ -29,24 +28,24 @@ public class PmsAttrGroupController {
     private PmsAttrGroupService pmsAttrGroupService;
 
     @GetMapping("list/{categoryId}")
-    public ResultPageBean<PmsAttrGroupVo,PmsAttrGroup> getAttrGroupList(@PathVariable Long categoryId,
-                                                         @RequestParam("page") Long page,
-                                                         @RequestParam("limit") Long limit,
-                                                         @RequestParam(value = "sidx", required = false) String sidx,
-                                                         @RequestParam(value = "order", required = false) String order,
-                                                         @RequestParam(value = "key", required = false) String key) {
+    public ResultPageBean<PmsAttrGroupVo, PmsAttrGroup> getAttrGroupList(@PathVariable Long categoryId,
+                                                                         @RequestParam("page") Long page,
+                                                                         @RequestParam("limit") Long limit,
+                                                                         @RequestParam(value = "sidx", required = false) String sidx,
+                                                                         @RequestParam(value = "order", required = false) String order,
+                                                                         @RequestParam(value = "key", required = false) String key) {
         PageParam<PmsAttrGroup> pageParam = new PageParam<>(page, limit, sidx, order);
-        return ResultPageBean.ofSuccess(pmsAttrGroupService.getAttrGroupList(pageParam, categoryId, key));
+        return ResultPageBean.ofSuccess(pmsAttrGroupService.queryPage(pageParam, categoryId, key));
     }
 
     @PostMapping("")
-    public ResultBean<PmsAttrGroupVo> insertAttrGroup(@Validated(Insert.class) @RequestBody AttrGroupParam param) {
-        return ResultBean.ofSuccess(PmsAttrGroupVo.builder().build().convert(pmsAttrGroupService.insertOrUpdate(param.convertEntity())));
+    public ResultBean<PmsAttrGroupVo> insertAttrGroup(@Validated(Insert.class) @RequestBody PmsAttrGroupVo param) {
+        return ResultBean.ofSuccess(pmsAttrGroupService.insertOrUpdate(param));
     }
 
     @PutMapping("")
-    public ResultBean<PmsAttrGroupVo> updateAttrGroup(@Validated(Update.class) @RequestBody AttrGroupParam param) {
-        return ResultBean.ofSuccess(PmsAttrGroupVo.builder().build().convert(pmsAttrGroupService.insertOrUpdate(param.convertEntity())));
+    public ResultBean<PmsAttrGroupVo> updateAttrGroup(@Validated(Update.class) @RequestBody PmsAttrGroupVo param) {
+        return ResultBean.ofSuccess(pmsAttrGroupService.insertOrUpdate(param));
     }
 
     @GetMapping("info/{attrGroupId}")

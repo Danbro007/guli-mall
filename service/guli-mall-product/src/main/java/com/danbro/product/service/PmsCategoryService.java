@@ -34,14 +34,14 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      *
      * @param category 添加的分类对象
      */
-    PmsCategory insert(PmsCategory category);
+    PmsCategoryVo insert(PmsCategoryVo category);
 
     /**
      * 更新分类
      *
      * @param category 更新的分类对象
      */
-    PmsCategory update(PmsCategory category);
+    PmsCategoryVo update(PmsCategoryVo category);
 
     /**
      * 通过分类ID获取分类信息
@@ -49,7 +49,7 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      * @param categoryId 分类ID
      * @return 信息
      */
-    PmsCategory getCategoryInfo(Long categoryId);
+    PmsCategoryVo getCategoryInfo(Long categoryId);
 
     /**
      * 批量更新分类
@@ -64,5 +64,5 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      * @param cateLogId 属性分组所属的三级分类ID
      * @return 属性分组的分类路径ID数组
      */
-    List<Long> findCateLogPath(Long cateLogId);
+    String[] findCateLogPath(Long cateLogId);
 }

@@ -23,7 +23,7 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @param key        关键字
      * @return 分页查询结果
      */
-    Pagination<PmsAttrGroupVo,PmsAttrGroup> getAttrGroupList(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
+    Pagination<PmsAttrGroupVo,PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
 
     /**
      * 添加或者更新属性分组
@@ -31,7 +31,7 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @param attrGroup 属性分组对象
      * @return 添加或者更新完毕后的属性分组对象
      */
-    PmsAttrGroup insertOrUpdate(PmsAttrGroup attrGroup);
+    PmsAttrGroupVo insertOrUpdate(PmsAttrGroupVo attrGroup);
 
     /**
      * 获取详细的属性分组信息

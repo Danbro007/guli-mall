@@ -8,7 +8,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
+import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsBrand;
 import com.danbro.product.entity.PmsCategory;
 import com.danbro.product.entity.PmsCategoryBrandRelation;
@@ -33,11 +35,11 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     private PmsCategoryService pmsCategoryService;
 
     @Override
-    public PmsCategoryBrandRelation insert(PmsCategoryBrandRelation param) {
-        PmsBrand brand = pmsBrandService.getBrandInfoById(param.getBrandId());
-        PmsCategory category = pmsCategoryService.getCategoryInfo(param.getCatelogId());
+    public PmsCategoryBrandRelationVo insert(PmsCategoryBrandRelationVo param) {
+        PmsBrandVo brand = pmsBrandService.getBrandInfoById(param.getBrandId());
+        PmsCategoryVo category = pmsCategoryService.getCategoryInfo(param.getCatelogId());
         param.setBrandName(brand.getName()).setCatelogName(category.getName());
-        return MyCurdUtils.insertOrUpdate(param, this.saveOrUpdate(param), ResponseCode.INSERT_FAILURE);
+        return MyCurdUtils.insertOrUpdate(param, this.saveOrUpdate(param.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
         List<PmsCategoryBrandRelation> brandRelations = this.list(queryWrapper);
         ArrayList<PmsCategoryBrandRelationVo> relationVos = new ArrayList<>();
         brandRelations.forEach(e -> {
-            PmsCategoryBrandRelationVo vo = PmsCategoryBrandRelationVo.builder().build().convert(e);
+            PmsCategoryBrandRelationVo vo = PmsCategoryBrandRelationVo.builder().build().convertToVo(e);
             relationVos.add(vo);
         });
         return relationVos;

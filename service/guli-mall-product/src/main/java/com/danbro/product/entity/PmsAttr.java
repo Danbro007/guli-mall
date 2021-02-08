@@ -37,7 +37,7 @@ public class PmsAttr implements Serializable {
     private Integer attrType;
 
     @ApiModelProperty("启用状态[0 - 禁用，1 - 启用]")
-    private Long enable;
+    private Boolean enable;
 
     @ApiModelProperty("所属分类")
     private Long catelogId;

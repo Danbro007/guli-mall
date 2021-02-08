@@ -1,7 +1,8 @@
 package com.danbro.product.controller;
 
-import com.danbro.product.controller.param.CategoryParam;
-import com.danbro.product.controller.vo.PmsCategoryInfoVo;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.service.PmsCategoryService;
@@ -13,10 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -47,27 +44,27 @@ public class PmsCategoryController {
 
     @ApiOperation("更新分类")
     @PutMapping("")
-    public ResultBean<PmsCategoryVo> updateCategory(@Validated(Update.class) @RequestBody CategoryParam categoryParam) {
-        return ResultBean.ofSuccess(PmsCategoryVo.builder().build().convert(categoryService.update(categoryParam.convertEntity())));
+    public ResultBean<PmsCategoryVo> updateCategory(@Validated(Update.class) @RequestBody PmsCategoryVo categoryParam) {
+        return ResultBean.ofSuccess((categoryService.update(categoryParam)));
     }
 
     @ApiOperation("添加分类")
     @PostMapping("")
-    public ResultBean<PmsCategoryVo> insertCategory(@Validated(Insert.class) @RequestBody CategoryParam categoryParam) {
-        return ResultBean.ofSuccess(PmsCategoryVo.builder().build().convert(categoryService.insert(categoryParam.convertEntity())));
+    public ResultBean<PmsCategoryVo> insertCategory(@Validated(Insert.class) @RequestBody PmsCategoryVo categoryParam) {
+        return ResultBean.ofSuccess(categoryService.insert(categoryParam));
     }
 
     @ApiOperation("获取分类的详细信息")
     @GetMapping("info/{categoryId}")
-    public ResultBean<PmsCategoryInfoVo> getCategoryInfo(@PathVariable Long categoryId) {
-        return ResultBean.ofSuccess(new PmsCategoryInfoVo().convert(categoryService.getCategoryInfo(categoryId)));
+    public ResultBean<PmsCategoryVo> getCategoryInfo(@PathVariable Long categoryId) {
+        return ResultBean.ofSuccess((categoryService.getCategoryInfo(categoryId)));
     }
 
     @ApiOperation("更新分类的位置")
     @PutMapping("sort")
-    public ResultBean<?> updateCategorySort(@RequestBody CategoryParam[] categoryArrays) {
-        List<CategoryParam> categoryParamList = Arrays.asList(categoryArrays);
-        categoryService.batchUpdateCategory(categoryParamList.stream().map(CategoryParam::convertEntity).collect(Collectors.toList()));
+    public ResultBean<?> updateCategorySort(@RequestBody PmsCategoryVo[] categoryArrays) {
+        List<PmsCategoryVo> categoryParamList = Arrays.asList(categoryArrays);
+        categoryService.batchUpdateCategory(categoryParamList.stream().map(PmsCategoryVo::convertToEntity).collect(Collectors.toList()));
         return ResultBean.ofSuccess();
     }
 }

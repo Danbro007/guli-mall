@@ -3,7 +3,6 @@ package com.danbro.product.service;
 
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.danbro.product.controller.param.CategoryBrandRelationParam;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
 import com.danbro.product.entity.PmsCategoryBrandRelation;
 
@@ -16,12 +15,12 @@ import com.danbro.product.entity.PmsCategoryBrandRelation;
  */
 public interface PmsCategoryBrandRelationService extends IService<PmsCategoryBrandRelation> {
     /**
-     * 添加或更新分类和品牌的关系
+     * 添加分类和品牌的关系
      *
      * @param param 分类和品牌的关系数据
-     * @return 添加或者更新完毕后的分类和品牌关系数据
+     * @return 添加完毕后的分类和品牌关系数据
      */
-    PmsCategoryBrandRelation insert(PmsCategoryBrandRelation param);
+    PmsCategoryBrandRelationVo insert(PmsCategoryBrandRelationVo param);
 
     /**
      * 获取品牌的所有所属分类

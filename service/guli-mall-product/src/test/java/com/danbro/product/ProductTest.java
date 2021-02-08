@@ -1,6 +1,7 @@
 package com.danbro.product;
 
 
+import java.util.Arrays;
 import java.util.List;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
@@ -32,7 +33,5 @@ public class ProductTest {
 
     @Test
     public void test2() {
-        List<Long> cateLogPath = pmsCategoryService.findCateLogPath(255L);
-        System.out.println(cateLogPath);
     }
 }
