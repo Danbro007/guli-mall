@@ -4,7 +4,8 @@ package com.danbro.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
-import com.danbro.product.controller.vo.PmsAttrVo;
+import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
+import com.danbro.product.controller.vo.PmsAttrDetailVo;
 import com.danbro.product.entity.PmsAttr;
 
 
@@ -23,7 +24,7 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param categoryId 三级分类ID
      * @return 分页查询结果
      */
-    Pagination<PmsAttrVo, PmsAttr> queryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId);
+    Pagination<PmsAttrBaseInfoVo, PmsAttr> queryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId);
 
     /**
      * 添加属性
@@ -31,7 +32,7 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param param 添加的参数
      * @return 添加完毕后的结果
      */
-    PmsAttrVo insertAttr(PmsAttrVo param);
+    PmsAttrDetailVo insertAttr(PmsAttrDetailVo param);
 
 
     /**
@@ -40,12 +41,18 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param param 修改的属性
      * @return 修改完毕后的结果
      */
-    PmsAttrVo updateAttr(PmsAttrVo param);
+    PmsAttrDetailVo updateAttr(PmsAttrDetailVo param);
 
     /**
      * 通过属性ID获取属相数据
      * @param attrId 属性参数
      * @return 属性数据
      */
-    PmsAttrVo getAttrById(Long attrId);
+    PmsAttrDetailVo getAttrById(Long attrId);
+
+    /**
+     * 批量删除属性
+     * @param ids 删除的属性ID列表
+     */
+    void batchDeleteAttr(Long[] ids);
 }

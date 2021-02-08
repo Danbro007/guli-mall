@@ -9,12 +9,15 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
+import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.mapper.PmsAttrGroupMapper;
+import com.danbro.product.service.PmsAttrAttrgroupRelationService;
 import com.danbro.product.service.PmsAttrGroupService;
 import com.danbro.product.service.PmsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 属性分组(PmsAttrGroup)表服务实现类
@@ -27,9 +30,11 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
 
     @Autowired
     private PmsCategoryService pmsCategoryService;
+    @Autowired
+    private PmsAttrAttrgroupRelationService attrAttrgroupRelationService;
 
     @Override
-    public Pagination<PmsAttrGroupVo,PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
+    public Pagination<PmsAttrGroupVo, PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
         // 分类ID 为 0 分页查询所有的属性分组
         IPage<PmsAttrGroup> page;
         QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
@@ -41,7 +46,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
         if (categoryId > 0) {
             queryWrapper.eq("catelog_id", categoryId);
         }
-        return new Pagination<>(this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper),PmsAttrGroupVo.class);
+        return new Pagination<>(this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper), PmsAttrGroupVo.class);
 
     }
 
@@ -59,8 +64,12 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
         return attrGroupVo;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDeleteAttrGroup(Long[] ids) {
+        // 到 attr-attrgroup-relation 表删除数据
+        attrAttrgroupRelationService.batchDeleteByAttrGroupId(ids);
+        // 到 attrGroup 表删除数据
         MyCurdUtils.delete(this.removeByIds(Arrays.asList(ids)), ResponseCode.DELETE_FAILURE);
     }
 }

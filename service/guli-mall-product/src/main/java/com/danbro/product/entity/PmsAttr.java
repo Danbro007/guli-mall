@@ -42,6 +42,9 @@ public class PmsAttr implements Serializable {
     @ApiModelProperty("所属分类")
     private Long catelogId;
 
+    @ApiModelProperty("属性是否有多个值，1：是 0：否")
+    private Integer valueType;
+
     @ApiModelProperty("快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整")
     private Boolean showDesc;
 

@@ -68,6 +68,15 @@ public class Pagination<V, E> implements Serializable {
         this.list = copyList(page.getRecords());
     }
 
+    public Pagination(IPage<V> page) {
+        this.totalCount = (int) page.getTotal();
+        this.pageSize = (int) page.getSize();
+        this.currPage = (int) page.getCurrent();
+        this.totalPage = (int) page.getPages();
+        this.list = page.getRecords();
+    }
+
+
     /**
      * 复制List
      *

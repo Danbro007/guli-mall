@@ -1,8 +1,6 @@
 package com.danbro.product;
 
 
-import java.util.Arrays;
-import java.util.List;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
 import org.junit.Test;
