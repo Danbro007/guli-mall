@@ -1,10 +1,13 @@
 package com.danbro.product.service;
 
 
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
+import com.danbro.product.entity.PmsAttr;
 import com.danbro.product.entity.PmsAttrGroup;
 
 
@@ -23,7 +26,7 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @param key        关键字
      * @return 分页查询结果
      */
-    Pagination<PmsAttrGroupVo,PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
+    Pagination<PmsAttrGroupVo, PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> pageParam, Long categoryId, String key);
 
     /**
      * 添加或者更新属性分组
@@ -36,14 +39,38 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
     /**
      * 获取详细的属性分组信息
      *
-     * @param attrGroupId 属性分组ID
+     * @param attrGroupId    属性分组ID
+     * @param throwException 查找失败是否抛出异常
      * @return 属性分组信息
      */
-    PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId,Boolean throwException);
+    PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId, Boolean throwException);
 
     /**
      * 删除指定的属性分组
+     *
      * @param ids 属性分组的ID数组
      */
     void batchDeleteAttrGroup(Long[] ids);
+
+    /**
+     * 通过属性分组 ID 查找属性分组下所有属性
+     *
+     * @param attrGroupId    属性分组ID
+     * @param throwException 找不到是否抛出异常
+     * @return 查找到的属性列表
+     */
+    List<PmsAttrBaseInfoVo> getAttrListByAttrGroupId(Long attrGroupId, Boolean throwException);
+
+    /**
+     * 通过属性分组 ID 查分页查找不在属性分组下所有属性
+     *
+     * @param pageParam      属性分组分页参数
+     * @param attrGroupId    属性分组ID
+     * @param throwException 找不到是否抛出异常
+     * @param key            关键字
+     * @return 查找到的属性列表
+     */
+    Pagination<PmsAttrBaseInfoVo, PmsAttr> getNoAttrListByAttrGroupId(PageParam<PmsAttr> pageParam, Long attrGroupId, String key, Boolean throwException);
+
+
 }

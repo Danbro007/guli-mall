@@ -1,6 +1,7 @@
 package com.danbro.product.service;
 
 
+import java.time.chrono.IsoEra;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
@@ -23,7 +24,7 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param pageParam  分页参数
      * @param key        关键字
      * @param categoryId 三级分类ID
-     * @param attrType 属性类型
+     * @param attrType   属性类型
      * @return 分页查询结果
      */
     Pagination<PmsAttrBaseInfoVo, PmsAttr> attrQueryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId, String attrType);
@@ -59,4 +60,25 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param ids 删除的属性ID列表
      */
     void batchDeleteAttr(Long[] ids);
+
+    /**
+     * 通过属性数组批量获取属性
+     *
+     * @param ids            属性数组
+     * @param throwException 找不到的话是否抛出异常
+     * @return 查询结果
+     */
+    List<PmsAttrBaseInfoVo> getListInIds(Long[] ids, Boolean throwException);
+
+    /**
+     * 通过属性数组分页批量获取不在属性数组里的属性
+     *
+     * @param pageParam      分页参数
+     * @param ids            排除的属性ID数组
+     * @param key            关键字
+     * @param throwException 找不到的话是否抛出异常
+     * @return 查询结果
+     */
+    Pagination<PmsAttrBaseInfoVo,PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key,Boolean throwException);
+
 }

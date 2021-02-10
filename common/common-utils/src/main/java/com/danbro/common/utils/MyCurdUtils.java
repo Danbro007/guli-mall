@@ -42,6 +42,7 @@ public class MyCurdUtils {
         return t;
     }
 
+
     /**
      * 负责添加或者更新单个数据的处理
      *
@@ -92,7 +93,7 @@ public class MyCurdUtils {
      * @param resultCode 状态码
      * @return 添加或者更新的结果
      */
-    public static List<?> batchInsertOrUpdate(List<?> list, Boolean bool, ResultCode resultCode) {
+    public static <T> List<T> batchInsertOrUpdate(List<T> list, Boolean bool, ResultCode resultCode) {
         return batchInsertOrUpdate(list, bool, resultCode, true);
     }
 
@@ -106,7 +107,7 @@ public class MyCurdUtils {
      * @param throwException 是否需要抛出异常
      * @return 添加或者更新的结果
      */
-    public static List<?> batchInsertOrUpdate(List<?> list, Boolean bool, ResultCode resultCode, Boolean throwException) {
+    public static <T> List<T> batchInsertOrUpdate(List<T> list, Boolean bool, ResultCode resultCode, Boolean throwException) {
         if (bool) {
             return list;
         }

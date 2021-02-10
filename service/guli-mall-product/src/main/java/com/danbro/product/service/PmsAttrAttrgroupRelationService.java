@@ -1,8 +1,10 @@
 package com.danbro.product.service;
 
 
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
+import com.danbro.product.controller.vo.PmsAttrRelationListVo;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 
 
@@ -21,6 +23,15 @@ public interface PmsAttrAttrgroupRelationService extends IService<PmsAttrAttrgro
      * @return 添加完毕后的关系
      */
     PmsAttrAttrgroupRelationVo insertAttrAttrRelation(PmsAttrAttrgroupRelationVo relation);
+
+    /**
+     * 批量添加属性与属性分组之间的关系数据
+     *
+     * @param relationVoList 多个关系数据
+     * @return 添加完毕后的关系
+     */
+    List<PmsAttrAttrgroupRelationVo> batchInsertAttrAttrRelation(List<PmsAttrAttrgroupRelationVo> relationVoList);
+
 
     /**
      * 通过属性ID找到属性与属性分组之间的关系
@@ -47,4 +58,9 @@ public interface PmsAttrAttrgroupRelationService extends IService<PmsAttrAttrgro
      */
     void batchDeleteByAttrGroupId(Long[] ids, Boolean throwException);
 
+    /**
+     * 批量删除属性与属性分组的关系
+     * @param paramList 删除条件
+     */
+    void batchDeleteByAttrIdAndAttrGroupId(List<PmsAttrAttrgroupRelationVo> paramList);
 }

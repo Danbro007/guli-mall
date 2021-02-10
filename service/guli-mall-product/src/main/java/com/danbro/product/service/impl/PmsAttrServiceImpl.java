@@ -1,6 +1,5 @@
 package com.danbro.product.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -160,5 +159,23 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         Long[] idArray = new Long[deleteList.size()];
         // 到 pms_attr_attr_group_relation 里删除
         attrgroupRelationService.batchDeleteByAttrId(deleteList.toArray(idArray), true);
+    }
+
+    @Override
+    public List<PmsAttrBaseInfoVo> getListInIds(Long[] ids, Boolean throwException) {
+        QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("attr_id", Arrays.asList(ids));
+        List<PmsAttr> pmsAttrs = MyCurdUtils.selectOne(this.list(queryWrapper), ResponseCode.NOT_FOUND, throwException);
+        return pmsAttrs.stream().map(attr -> PmsAttrBaseInfoVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Pagination<PmsAttrBaseInfoVo, PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key, Boolean throwException) {
+        QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
+        queryWrapper.notIn("attr_id", Arrays.asList(ids));
+        if (MyStrUtils.isNotEmpty(key)) {
+            queryWrapper.like("attr_id", key).or().like("attr_name", key);
+        }
+        return new Pagination<>(this.page(new Query<PmsAttr>().getPage(pageParam), queryWrapper), PmsAttrBaseInfoVo.class);
     }
 }

@@ -6,6 +6,7 @@ import javax.validation.constraints.Null;
 import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
+import com.danbro.service.common.validtors.groups.Delete;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -34,10 +35,12 @@ public class PmsAttrAttrgroupRelationVo implements Serializable, Converter<PmsAt
     private Long id;
 
     @NotNull(message = "添加时属性ID必须存在！", groups = Insert.class)
+    @NotNull(message = "删除时属性ID必须存在！", groups = Delete.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("属性id")
     private Long attrId;
 
+    @NotNull(message = "删除时属性分组ID必须存在！", groups = Delete.class)
     @NotNull(message = "添加时属性分组ID必须存在！", groups = Insert.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("属性分组id")
