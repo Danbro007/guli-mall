@@ -3,8 +3,10 @@ package com.danbro.product.service.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
@@ -34,6 +36,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
 
     @Autowired
     private PmsCategoryService pmsCategoryService;
+
     @Autowired
     private PmsAttrAttrgroupRelationService attrAttrgroupRelationService;
 
@@ -43,14 +46,14 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     @Override
     public Pagination<PmsAttrGroupVo, PmsAttrGroup> queryPage(PageParam<PmsAttrGroup> param, Long categoryId, String key) {
         // 分类ID 为 0 分页查询所有的属性分组
-        QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<PmsAttrGroup> queryWrapper = new LambdaQueryWrapper<>();
         // 有关键字
         if (!MyObjectUtils.isNull(key) && MyStrUtils.isNotEmpty(key)) {
-            queryWrapper.eq("attr_group_id", key).or().like("attr_group_name", key);
+            queryWrapper.eq(PmsAttrGroup::getAttrGroupId, key).or().like(PmsAttrGroup::getAttrGroupName, key);
         }
         // 分类ID > 0
         if (categoryId > 0) {
-            queryWrapper.eq("catelog_id", categoryId);
+            queryWrapper.eq(PmsAttrGroup::getCatelogId, categoryId);
         }
         return new Pagination<>(this.page(new Query<PmsAttrGroup>().getPage(param), queryWrapper), PmsAttrGroupVo.class);
 
@@ -84,10 +87,11 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
 
     @Override
     public List<PmsAttrBaseInfoVo> getAttrListByAttrGroupId(Long attrGroupId, Boolean throwException) {
-        QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("attr_group_id", attrGroupId);
         // 先到关系表查询到属性分组下面的所有属性ID，找不到则返回null
-        List<PmsAttrAttrgroupRelation> relations = MyCurdUtils.selectOne(attrAttrgroupRelationService.list(queryWrapper), ResponseCode.NOT_FOUND, false);
+        List<PmsAttrAttrgroupRelation> relations = MyCurdUtils.selectOne(attrAttrgroupRelationService.list(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().
+                        eq(PmsAttrAttrgroupRelation::getAttrGroupId, attrGroupId)),
+                ResponseCode.NOT_FOUND,
+                false);
         if (MyCollectionUtils.isEmpty(relations)) {
             return null;
         }
@@ -97,18 +101,25 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
 
     @Override
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> getNoAttrListByAttrGroupId(PageParam<PmsAttr> param, Long attrGroupId, String key, Boolean throwException) {
-        QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("attr_group_id", attrGroupId);
-
-        // 先到关系表查询到属性分组下面的所有属性ID，找不到则返回所有的属性
-        List<PmsAttrAttrgroupRelation> relations = MyCurdUtils.selectOne(attrAttrgroupRelationService.list(queryWrapper), ResponseCode.NOT_FOUND, false);
-        if (MyCollectionUtils.isEmpty(relations)) {        QueryWrapper<PmsAttr> attrQueryWrapper = new QueryWrapper<>();
-            if (MyStrUtils.isNotEmpty(key)){
-                attrQueryWrapper.like("attr_id",key).or().like("attr_name",key);
-            }
-            return new Pagination<>(pmsAttrService.page(new Query<PmsAttr>().getPage(param),attrQueryWrapper), PmsAttrBaseInfoVo.class);
-        }
-        // 有属性关系则通过属性分组ID列表找到不在属性分组下的属性
-        return pmsAttrService.getListNotInIds(param, relations.stream().map(PmsAttrAttrgroupRelation::getAttrId).toArray(Long[]::new),key, throwException);
+        // 1、查找当前属性分组的分类ID
+        PmsAttrGroup pmsAttrGroup = MyCurdUtils.selectOne(this.getById(attrGroupId), ResponseCode.NOT_FOUND);
+        // 2、查找分类ID下其他的属性分组（不包括当前的属性分组）
+        List<PmsAttrGroup> pmsAttrGroupList = this.list(new QueryWrapper<PmsAttrGroup>()
+                .lambda()
+                .eq(PmsAttrGroup::getCatelogId, pmsAttrGroup.getCatelogId())
+                .ne(PmsAttrGroup::getAttrGroupId, attrGroupId));
+        // 3、再查找这些属性分组下的所有属性
+        List<PmsAttrAttrgroupRelation> relations = attrAttrgroupRelationService.list(new QueryWrapper<PmsAttrAttrgroupRelation>().
+                lambda().
+                in(PmsAttrAttrgroupRelation::getAttrGroupId,
+                        pmsAttrGroupList.stream().map(PmsAttrGroup::getAttrGroupId).collect(Collectors.toList())
+                ));
+        List<Long> attrIdList = relations.stream().map(PmsAttrAttrgroupRelation::getAttrId).collect(Collectors.toList());
+        // 4、再通过排除这些已被当前分类属性组分配的属性，找到还没有被当前分组分配的属性
+        return new Pagination<>(pmsAttrService.page(new Query<PmsAttr>().getPage(param),
+                new QueryWrapper<PmsAttr>().lambda().
+                        eq(PmsAttr::getCatelogId, pmsAttrGroup.getCatelogId()).
+                        notIn(PmsAttr::getAttrId, attrIdList)),
+                PmsAttrBaseInfoVo.class);
     }
 }

@@ -173,8 +173,8 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key, Boolean throwException) {
         QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
         queryWrapper.notIn("attr_id", Arrays.asList(ids));
-        if (MyStrUtils.isNotEmpty(key)) {
-            queryWrapper.like("attr_id", key).or().like("attr_name", key);
+        if (MyStrUtils.isNotEmpty(key)){
+            queryWrapper.like("attr_id",key).or().like("attr_name",key);
         }
         return new Pagination<>(this.page(new Query<PmsAttr>().getPage(pageParam), queryWrapper), PmsAttrBaseInfoVo.class);
     }
