@@ -11,12 +11,12 @@ import cn.hutool.core.util.ReflectUtil;
  */
 public class MyObjectUtils {
 
-    public static Boolean isEmpty(Object o) {
-        return ObjectUtil.isEmpty(o);
+    public static Boolean isNull(Object o) {
+        return ObjectUtil.isNull(o);
     }
 
-    public static Boolean isNotEmpty(Object o) {
-        return !ObjectUtil.isEmpty(o);
+    public static Boolean isNotNull(Object o) {
+        return !ObjectUtil.isNull(o);
     }
 
 

@@ -22,29 +22,34 @@ import org.springframework.stereotype.Service;
 public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttrgroupRelationMapper, PmsAttrAttrgroupRelation> implements PmsAttrAttrgroupRelationService {
 
     @Override
-    public PmsAttrAttrgroupRelationVo insertAttrAttrRelation(PmsAttrAttrgroupRelationVo attrgroupRelation) {
-        return MyCurdUtils.insertOrUpdate(attrgroupRelation, this.save(attrgroupRelation.convertToEntity()), ResponseCode.INSERT_FAILURE);
+    public PmsAttrAttrgroupRelationVo insertAttrAttrRelation(PmsAttrAttrgroupRelationVo relation) {
+        return MyCurdUtils.insertOrUpdate(relation, this.save(relation.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
-    public PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId) {
+    public PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId, Boolean throwException) {
         QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("attr_id", attrId);
-        PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = MyCurdUtils.selectOne(this.getOne(queryWrapper),ResponseCode.NOT_FOUND);
-        return PmsAttrAttrgroupRelationVo.builder().build().convertToVo(pmsAttrAttrgroupRelation);
+        PmsAttrAttrgroupRelation relation = this.getOne(queryWrapper);
+        PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = MyCurdUtils.selectOne(relation, ResponseCode.NOT_FOUND, throwException);
+        if (MyObjectUtils.isNotNull(pmsAttrAttrgroupRelation)) {
+            return PmsAttrAttrgroupRelationVo.builder().build().convertToVo(pmsAttrAttrgroupRelation);
+        }
+        return null;
     }
 
     @Override
-    public void batchDeleteByAttrId(Long[] ids) {
+    public void batchDeleteByAttrId(Long[] ids, Boolean throwException) {
         QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("attr_id", Arrays.asList(ids));
         MyCurdUtils.batchDelete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
     }
 
     @Override
-    public void batchDeleteByAttrGroupId(Long[] ids) {
+    public void batchDeleteByAttrGroupId(Long[] ids, Boolean throwException) {
         QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("attr_group_id", Arrays.asList(ids));
-        MyCurdUtils.batchDelete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
+        // 如果是销售属性删除则到关系表里删除失败也不抛出异常。
+        MyCurdUtils.batchDelete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE, throwException);
     }
 }

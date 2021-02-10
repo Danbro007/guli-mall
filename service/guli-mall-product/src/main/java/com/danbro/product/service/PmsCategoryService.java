@@ -49,7 +49,7 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      * @param categoryId 分类ID
      * @return 信息
      */
-    PmsCategoryVo getCategoryInfo(Long categoryId);
+    PmsCategoryVo getCategoryInfo(Long categoryId,Boolean throwException);
 
     /**
      * 批量更新分类

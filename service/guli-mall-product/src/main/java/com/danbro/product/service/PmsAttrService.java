@@ -1,6 +1,7 @@
 package com.danbro.product.service;
 
 
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
@@ -22,9 +23,10 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param pageParam  分页参数
      * @param key        关键字
      * @param categoryId 三级分类ID
+     * @param attrType 属性类型
      * @return 分页查询结果
      */
-    Pagination<PmsAttrBaseInfoVo, PmsAttr> queryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId);
+    Pagination<PmsAttrBaseInfoVo, PmsAttr> attrQueryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId, String attrType);
 
     /**
      * 添加属性
@@ -45,13 +47,15 @@ public interface PmsAttrService extends IService<PmsAttr> {
 
     /**
      * 通过属性ID获取属相数据
+     *
      * @param attrId 属性参数
      * @return 属性数据
      */
     PmsAttrDetailVo getAttrById(Long attrId);
 
     /**
-     * 批量删除属性
+     * 批量删除属性同时要到 pmsAttrAttrGroupRelation 表删除
+     *
      * @param ids 删除的属性ID列表
      */
     void batchDeleteAttr(Long[] ids);

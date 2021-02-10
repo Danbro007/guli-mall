@@ -37,7 +37,7 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     @Override
     public PmsCategoryBrandRelationVo insert(PmsCategoryBrandRelationVo param) {
         PmsBrandVo brand = pmsBrandService.getBrandInfoById(param.getBrandId());
-        PmsCategoryVo category = pmsCategoryService.getCategoryInfo(param.getCatelogId());
+        PmsCategoryVo category = pmsCategoryService.getCategoryInfo(param.getCatelogId(),true);
         param.setBrandName(brand.getName()).setCatelogName(category.getName());
         return MyCurdUtils.insertOrUpdate(param, this.saveOrUpdate(param.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }

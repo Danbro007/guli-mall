@@ -39,7 +39,7 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
      * @param attrGroupId 属性分组ID
      * @return 属性分组信息
      */
-    PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId);
+    PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId,Boolean throwException);
 
     /**
      * 删除指定的属性分组

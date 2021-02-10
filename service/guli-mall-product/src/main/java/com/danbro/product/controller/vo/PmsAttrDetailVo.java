@@ -8,6 +8,7 @@ import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsAttr;
 import com.danbro.service.common.validtors.anotations.IsBool;
+import com.danbro.service.common.validtors.anotations.ListValue;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -53,6 +54,7 @@ public class PmsAttrDetailVo implements Converter<PmsAttr, PmsAttrDetailVo> {
     @ApiModelProperty("可选值列表[用逗号分隔]")
     private String valueSelect;
 
+    @ListValue(values = {0, 1, 2}, message = "添加或者修改的属性必须是基本属性！", groups = {Insert.class, Update.class})
     @NotNull(message = "添加时属性类型必须存在！", groups = Insert.class)
     @ApiModelProperty("属性类型[0-销售属性，1-基本属性，2-既是销售属性又是基本属性]")
     private Integer attrType;

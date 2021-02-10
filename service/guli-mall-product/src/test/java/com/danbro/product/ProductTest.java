@@ -1,6 +1,9 @@
 package com.danbro.product;
 
 
+import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
+import com.danbro.product.service.PmsAttrAttrgroupRelationService;
+import com.danbro.product.service.PmsAttrService;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
 import org.junit.Test;
@@ -22,6 +25,11 @@ public class ProductTest {
     PmsCategoryService pmsCategoryService;
     @Autowired
     PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
+    @Autowired
+    PmsAttrAttrgroupRelationService pmsAttrAttrgroupRelationServicel;
+
+    @Autowired
+    PmsAttrService attrService;
 
     @Test
     public void test1() {
@@ -31,5 +39,6 @@ public class ProductTest {
 
     @Test
     public void test2() {
+        attrService.batchDeleteAttr(new Long[]{11L});
     }
 }

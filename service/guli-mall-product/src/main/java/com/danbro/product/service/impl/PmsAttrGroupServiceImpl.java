@@ -1,7 +1,6 @@
 package com.danbro.product.service.impl;
 
 import java.util.Arrays;
-import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,12 +8,12 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
-import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.product.mapper.PmsAttrGroupMapper;
 import com.danbro.product.service.PmsAttrAttrgroupRelationService;
 import com.danbro.product.service.PmsAttrGroupService;
 import com.danbro.product.service.PmsCategoryService;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
         IPage<PmsAttrGroup> page;
         QueryWrapper<PmsAttrGroup> queryWrapper = new QueryWrapper<>();
         // 有关键字
-        if (!MyObjectUtils.isEmpty(key) && MyStrUtils.isNotEmpty(key)) {
+        if (!MyObjectUtils.isNull(key) && MyStrUtils.isNotEmpty(key)) {
             queryWrapper.eq("attr_group_id", key).or().like("attr_group_name", key);
         }
         // 分类ID > 0
@@ -56,19 +55,22 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     }
 
     @Override
-    public PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId) {
-        PmsAttrGroup pmsAttrGroup = MyCurdUtils.selectOne(this.getById(attrGroupId), ResponseCode.NOT_FOUND);
-        PmsAttrGroupVo attrGroupVo = PmsAttrGroupVo.builder().build().convertToVo(pmsAttrGroup);
-        String[] cateLogPath = pmsCategoryService.findCateLogPath(attrGroupVo.getCatelogId());
-        attrGroupVo.setCatelogPath(cateLogPath);
-        return attrGroupVo;
+    public PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId, Boolean throwException) {
+        PmsAttrGroup pmsAttrGroup = MyCurdUtils.selectOne(this.getById(attrGroupId), ResponseCode.NOT_FOUND, throwException);
+        if (MyObjectUtils.isNotNull(pmsAttrGroup)) {
+            PmsAttrGroupVo attrGroupVo = PmsAttrGroupVo.builder().build().convertToVo(pmsAttrGroup);
+            String[] cateLogPath = pmsCategoryService.findCateLogPath(attrGroupVo.getCatelogId());
+            attrGroupVo.setCatelogPath(cateLogPath);
+            return attrGroupVo;
+        }
+        return null;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDeleteAttrGroup(Long[] ids) {
         // 到 attr-attrgroup-relation 表删除数据
-        attrAttrgroupRelationService.batchDeleteByAttrGroupId(ids);
+        attrAttrgroupRelationService.batchDeleteByAttrGroupId(ids, true);
         // 到 attrGroup 表删除数据
         MyCurdUtils.delete(this.removeByIds(Arrays.asList(ids)), ResponseCode.DELETE_FAILURE);
     }

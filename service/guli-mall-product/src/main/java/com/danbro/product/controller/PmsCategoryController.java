@@ -57,7 +57,7 @@ public class PmsCategoryController {
     @ApiOperation("获取分类的详细信息")
     @GetMapping("info/{categoryId}")
     public ResultBean<PmsCategoryVo> getCategoryInfo(@PathVariable Long categoryId) {
-        return ResultBean.ofSuccess((categoryService.getCategoryInfo(categoryId)));
+        return ResultBean.ofSuccess((categoryService.getCategoryInfo(categoryId,true)));
     }
 
     @ApiOperation("更新分类的位置")

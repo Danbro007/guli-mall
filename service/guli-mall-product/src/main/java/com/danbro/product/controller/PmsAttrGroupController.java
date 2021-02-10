@@ -50,7 +50,7 @@ public class PmsAttrGroupController {
 
     @GetMapping("info/{attrGroupId}")
     public ResultBean<PmsAttrGroupVo> getAttrGroupInfo(@PathVariable Long attrGroupId) {
-        return ResultBean.ofSuccess(pmsAttrGroupService.getAttrGroupInfo(attrGroupId));
+        return ResultBean.ofSuccess(pmsAttrGroupService.getAttrGroupInfo(attrGroupId,true));
     }
 
     @DeleteMapping("")

@@ -1,6 +1,6 @@
 package com.danbro.product.service;
- 
- 
+
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
@@ -15,28 +15,36 @@ import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 public interface PmsAttrAttrgroupRelationService extends IService<PmsAttrAttrgroupRelation> {
 
     /**
-     * 添加属性与属性分组之间的关系
-     * @param attrgroupRelation 关系数据
+     * 添加属性与属性分组之间的关系数据
+     *
+     * @param relation 关系数据
      * @return 添加完毕后的关系
      */
-    PmsAttrAttrgroupRelationVo insertAttrAttrRelation(PmsAttrAttrgroupRelationVo attrgroupRelation);
+    PmsAttrAttrgroupRelationVo insertAttrAttrRelation(PmsAttrAttrgroupRelationVo relation);
 
     /**
      * 通过属性ID找到属性与属性分组之间的关系
-     * @param attrId 属性ID
+     *
+     * @param attrId         属性ID
+     * @param throwException 查找不到是否跑出异常
      * @return 属性与属性分组的关系
      */
-    PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId);
+    PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId, Boolean throwException);
 
     /**
      * 通过属性数组批量删除
-     * @param ids 属性ID数组
+     *
+     * @param ids            属性ID数组
+     * @param throwException 删除失败是否需要抛出异常
      */
-    void batchDeleteByAttrId(Long ids[]);
+    void batchDeleteByAttrId(Long[] ids, Boolean throwException);
+
     /**
      * 通过属性分组的数组批量删除
-     * @param ids 属性分组的ID数组
+     *
+     * @param ids            属性分组的ID数组
+     * @param throwException 删除失败是否需要抛出异常
      */
-    void batchDeleteByAttrGroupId(Long ids[]);
+    void batchDeleteByAttrGroupId(Long[] ids, Boolean throwException);
 
 }

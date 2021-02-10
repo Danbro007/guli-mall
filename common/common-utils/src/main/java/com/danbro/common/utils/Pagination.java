@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 /**
@@ -37,6 +39,7 @@ public class Pagination<V, E> implements Serializable {
     /**
      * Page里的数据类型
      */
+    @JsonIgnore
     private Class<V> clazz;
 
     /**

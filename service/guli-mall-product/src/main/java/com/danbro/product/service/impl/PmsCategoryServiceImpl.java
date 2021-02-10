@@ -10,6 +10,7 @@ import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsCategory;
 import com.danbro.product.mapper.PmsCategoryMapper;
+import com.danbro.product.service.PmsAttrService;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
     @Autowired
     private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
+
+    @Autowired
+    private PmsAttrService pmsAttrService;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -72,8 +76,10 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         queryWrapper.in("cat_id", catIdList).or().in("parent_cid", catIdList);
         // 删除完毕就不建议立即主动建立缓存，因为可能建立的缓存次数比删除的次数少，降低效率。
         MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
-        // 同步删除 CategoryBrandRelation 里的数据
+        // 同步删除 pms_category_brand_relation 里的数据
         pmsCategoryBrandRelationService.batchDeleteByCategoryId(catIds);
+        // 同步删除 pms_attr 表的数据
+        pmsAttrService.batchDeleteAttr(catIds);
     }
 
     @Override
@@ -96,15 +102,18 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
     @Override
-    public PmsCategoryVo getCategoryInfo(Long categoryId) {
-        PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(categoryId), ResponseCode.NOT_FOUND);
-        return PmsCategoryVo.builder().build().convertToVo(pmsCategory);
+    public PmsCategoryVo getCategoryInfo(Long categoryId, Boolean throwException) {
+        PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(categoryId), ResponseCode.NOT_FOUND, false);
+        if (MyObjectUtils.isNotNull(pmsCategory)) {
+            return PmsCategoryVo.builder().build().convertToVo(pmsCategory);
+        }
+        return null;
     }
 
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
         redisTemplate.delete(CATEGORY_TREE);
-        MyCurdUtils.batchInserOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
+        MyCurdUtils.batchInsertOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
     }
 
     @Override
@@ -112,7 +121,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         List<String> cateLogPath = new ArrayList<>();
         PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(cateLogId), ResponseCode.NOT_FOUND);
         // 判断有没有父类有的话继续查找，直到没有。
-        if (MyObjectUtils.isNotEmpty(pmsCategory) && pmsCategory.getParentCid() != 0) {
+        if (MyObjectUtils.isNotNull(pmsCategory) && pmsCategory.getParentCid() != 0) {
             cateLogPath.add(Long.toString(cateLogId));
             findParentCateLogId(pmsCategory.getParentCid(), cateLogPath);
         }
@@ -125,7 +134,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     private void findParentCateLogId(Long cateLogId, List<String> cateLogPath) {
         cateLogPath.add(Long.toString(cateLogId));
         PmsCategory pmsCategory = this.getById(cateLogId);
-        if (MyObjectUtils.isNotEmpty(pmsCategory.getParentCid()) && pmsCategory.getParentCid() != 0) {
+        if (MyObjectUtils.isNotNull(pmsCategory.getParentCid()) && pmsCategory.getParentCid() != 0) {
             findParentCateLogId(pmsCategory.getParentCid(), cateLogPath);
         }
     }
