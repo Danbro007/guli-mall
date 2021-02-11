@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * @Classname PmsAttrAttrgroupRelation
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Accessors(chain = true)
 public class PmsAttrAttrgroupRelationVo implements Serializable, Converter<PmsAttrAttrgroupRelation, PmsAttrAttrgroupRelationVo> {
     @NotNull(message = "修改时ID必须存在！", groups = Update.class)
     @Null(message = "添加时ID不能存在！", groups = Insert.class)

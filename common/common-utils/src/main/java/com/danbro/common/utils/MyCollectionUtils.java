@@ -25,6 +25,10 @@ public class MyCollectionUtils {
         return CollectionUtil.isEmpty(collection);
     }
 
+    public static Boolean isNotEmpty(Collection<?> collection) {
+        return !CollectionUtil.isEmpty(collection);
+    }
+
     /**
      * 新建一个列表
      *

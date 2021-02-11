@@ -67,4 +67,6 @@ public class PmsBrandController {
     public ResultBean<PmsBrandVo> insertBrandInfo(@Validated(Insert.class) @RequestBody PmsBrandVo param) {
         return ResultBean.ofSuccess(pmsBrandService.insert(param));
     }
+    
+
 }

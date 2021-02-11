@@ -90,4 +90,10 @@ public class PmsAttrGroupController {
         return ResultPageBean.ofSuccess(pmsAttrGroupService.getNoAttrListByAttrGroupId(pageParam, attrGroupId, key, true));
     }
 
+    @ApiOperation("获取分类下所有分组关联的基本属性")
+    @GetMapping("{catId}/withattr")
+    public ResultBean<List<PmsAttrGroupVo>> getAttrGroupAndAttr(@PathVariable Long catId){
+        return ResultBean.ofSuccess(pmsAttrGroupService.getAttrGroupAndAttrByCatId(catId));
+    }
+
 }

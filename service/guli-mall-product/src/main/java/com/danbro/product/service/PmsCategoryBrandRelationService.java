@@ -3,6 +3,8 @@ package com.danbro.product.service;
 
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.common.entity.ResultBean;
+import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
 import com.danbro.product.entity.PmsCategoryBrandRelation;
 
@@ -42,8 +44,9 @@ public interface PmsCategoryBrandRelationService extends IService<PmsCategoryBra
      *
      * @param brandId   品牌ID
      * @param brandName 要更新的品牌名
+     * @param needThrowException 更新失败是否需要抛出异常
      */
-    PmsCategoryBrandRelation updateBrand(Long brandId, String brandName);
+    PmsCategoryBrandRelation updateBrand(Long brandId, String brandName,Boolean needThrowException);
 
     /**
      * 更新品牌与分类关系里的分类名
@@ -64,4 +67,11 @@ public interface PmsCategoryBrandRelationService extends IService<PmsCategoryBra
      * @param ids 品牌ID数组
      */
     void batchDeleteByBrandId(Long[] ids);
+
+    /**
+     * 查询该分类下的所有品牌
+     * @param catId 分类Id
+     * @return 品牌列表
+     */
+    List<PmsBrandVo> getBrandListByCatId(Long catId);
 }

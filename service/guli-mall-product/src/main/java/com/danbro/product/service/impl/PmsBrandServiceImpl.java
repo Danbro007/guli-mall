@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
-import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.Pagination;
 import com.danbro.common.utils.Query;
@@ -47,13 +46,13 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     @Override
     public PmsBrandVo update(PmsBrandVo brand) {
         PmsBrand pmsBrand = MyCurdUtils.insertOrUpdate(brand.convertToEntity(), this.saveOrUpdate(brand.convertToEntity()), ResponseCode.UPDATE_FAILURE);
-        pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(), pmsBrand.getName());
+        pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(), pmsBrand.getName(),false);
         return brand;
     }
 
     @Override
     public PmsBrandVo getBrandInfoById(Long brandId) {
-        PmsBrand pmsBrand = MyCurdUtils.selectOne(this.getById(brandId), ResponseCode.NOT_FOUND);
+        PmsBrand pmsBrand = MyCurdUtils.select(this.getById(brandId), ResponseCode.NOT_FOUND);
         PmsBrandVo pmsBrandVo = new PmsBrandVo();
         return pmsBrandVo.convertToVo(pmsBrand);
     }

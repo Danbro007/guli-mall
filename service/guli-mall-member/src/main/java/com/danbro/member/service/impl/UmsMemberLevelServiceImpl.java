@@ -45,6 +45,6 @@ public class UmsMemberLevelServiceImpl extends ServiceImpl<UmsMemberLevelMapper,
     @Override
     public UmsMemberLevelVo getMemberLevelInfo(Long memberLevelId) {
         UmsMemberLevelVo umsMemberLevelVo = UmsMemberLevelVo.builder().build().convertToVo(this.getById(memberLevelId));
-        return MyCurdUtils.selectOne(umsMemberLevelVo, ResponseCode.NOT_FOUND, true);
+        return MyCurdUtils.select(umsMemberLevelVo, ResponseCode.NOT_FOUND, true);
     }
 }

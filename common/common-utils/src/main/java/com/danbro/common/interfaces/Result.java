@@ -31,16 +31,16 @@ public interface Result {
     /**
      * 设置返回的消息
      *
-     * @param message 消息内容
+     * @param msg 消息内容
      */
-    void setMessage(String message);
+    void setMsg(String msg);
 
     /**
      * 返回消息内容
      *
      * @return 消息内容
      */
-    String getMessage();
+    String getMsg();
 
     /**
      * 设置状态码

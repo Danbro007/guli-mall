@@ -20,7 +20,7 @@ public class ResultBean<T> implements Serializable, Result {
 
     private T data;
     private Integer code;
-    private String message;
+    private String msg;
     private Boolean success;
 
     /**
@@ -32,7 +32,7 @@ public class ResultBean<T> implements Serializable, Result {
         ResultBean<T> resultBean = new ResultBean<T>();
         resultBean.setSuccess(true);
         resultBean.setCode(ResponseCode.SUCCESS.getCode());
-        resultBean.setMessage(ResponseCode.SUCCESS.getMessage());
+        resultBean.setMsg(ResponseCode.SUCCESS.getMessage());
         return resultBean;
     }
 
@@ -58,13 +58,13 @@ public class ResultBean<T> implements Serializable, Result {
         ResultBean<T> resultBean = new ResultBean<>();
         resultBean.setSuccess(false);
         resultBean.setCode(resultCode.getCode());
-        resultBean.setMessage(resultCode.getMessage());
+        resultBean.setMsg(resultCode.getMessage());
         return resultBean;
     }
 
     @Override
     public void setResultCode(ResultCode resultCode) {
-        this.message = resultCode.getMessage();
+        this.msg = resultCode.getMessage();
         this.code = resultCode.getCode();
     }
 }

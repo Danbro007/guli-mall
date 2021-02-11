@@ -20,8 +20,8 @@ public class MyCurdUtils {
      * @param <T>        查找数据的泛型
      * @return 查找结果
      */
-    public static <T> T selectOne(T t, ResultCode resultCode) {
-        return selectOne(t, resultCode, true);
+    public static <T> T select(T t, ResultCode resultCode) {
+        return select(t, resultCode, true);
     }
 
     /**
@@ -31,7 +31,7 @@ public class MyCurdUtils {
      * @param <T>                查找数据的泛型
      * @return 结果
      */
-    public static <T> T selectOne(T t, ResultCode resultCode, Boolean needThrowException) {
+    public static <T> T select(T t, ResultCode resultCode, Boolean needThrowException) {
         if (MyObjectUtils.isNull(t)) {
             if (needThrowException) {
                 throw new GuliMallException(resultCode);
@@ -40,6 +40,35 @@ public class MyCurdUtils {
             }
         }
         return t;
+    }
+
+
+    /**
+     * 对到数据库查找数据后的处理
+     *
+     * @param list       查找的数据
+     * @param resultCode 状态码
+     * @return 查找结果
+     */
+    public static <T> List<T> selectList(List<T> list, ResultCode resultCode) {
+        return selectList(list, resultCode, true);
+    }
+
+    /**
+     * @param list               查找的对象
+     * @param resultCode         状态码
+     * @param needThrowException 是否需要抛出异常异常
+     * @return 结果
+     */
+    public static <T> List<T> selectList(List<T> list, ResultCode resultCode, Boolean needThrowException) {
+        if (MyObjectUtils.isNull(list) || MyCollectionUtils.isEmpty(list)) {
+            if (needThrowException) {
+                throw new GuliMallException(resultCode);
+            } else {
+                return null;
+            }
+        }
+        return list;
     }
 
 
@@ -53,11 +82,19 @@ public class MyCurdUtils {
      * @return 添加或者更新的结果
      */
     public static <T> T insertOrUpdate(T t, Boolean bool, ResultCode resultCode) {
+        return insertOrUpdate(t, bool, resultCode, true);
+    }
+
+    public static <T> T insertOrUpdate(T t, Boolean bool, ResultCode resultCode, Boolean needThrowException) {
         if (bool) {
             return t;
         }
-        throw new GuliMallException(resultCode);
+        if (needThrowException) {
+            throw new GuliMallException(resultCode);
+        }
+        return null;
     }
+
 
     /**
      * 负责删除单个数据的处理

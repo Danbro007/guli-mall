@@ -103,7 +103,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
     @Override
     public PmsCategoryVo getCategoryInfo(Long categoryId, Boolean throwException) {
-        PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(categoryId), ResponseCode.NOT_FOUND, false);
+        PmsCategory pmsCategory = MyCurdUtils.select(this.getById(categoryId), ResponseCode.NOT_FOUND, false);
         if (MyObjectUtils.isNotNull(pmsCategory)) {
             return PmsCategoryVo.builder().build().convertToVo(pmsCategory);
         }
@@ -119,7 +119,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public String[] findCateLogPath(Long cateLogId) {
         List<String> cateLogPath = new ArrayList<>();
-        PmsCategory pmsCategory = MyCurdUtils.selectOne(this.getById(cateLogId), ResponseCode.NOT_FOUND);
+        PmsCategory pmsCategory = MyCurdUtils.select(this.getById(cateLogId), ResponseCode.NOT_FOUND);
         // 判断有没有父类有的话继续查找，直到没有。
         if (MyObjectUtils.isNotNull(pmsCategory) && pmsCategory.getParentCid() != 0) {
             cateLogPath.add(Long.toString(cateLogId));

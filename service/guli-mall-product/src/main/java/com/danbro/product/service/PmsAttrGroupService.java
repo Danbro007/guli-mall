@@ -73,4 +73,11 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroup> {
     Pagination<PmsAttrBaseInfoVo, PmsAttr> getNoAttrListByAttrGroupId(PageParam<PmsAttr> pageParam, Long attrGroupId, String key, Boolean throwException);
 
 
+    /**
+     * 查找该分类Id下的所有属性分组既下面的属性
+     *
+     * @param catId 分类ID
+     * @return 查找到的属性分组列表
+     */
+    List<PmsAttrGroupVo> getAttrGroupAndAttrByCatId(Long catId);
 }

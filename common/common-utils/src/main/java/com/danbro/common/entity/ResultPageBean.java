@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResultPageBean<V,E> implements Result {
-    private String message;
+    private String msg;
     private Boolean success;
     private Integer code;
     private Pagination<V,E> page;
@@ -26,7 +26,7 @@ public class ResultPageBean<V,E> implements Result {
     @Override
     public void setResultCode(ResultCode resultCode) {
         this.code = resultCode.getCode();
-        this.message = resultCode.getMessage();
+        this.msg = resultCode.getMessage();
     }
 
     /**

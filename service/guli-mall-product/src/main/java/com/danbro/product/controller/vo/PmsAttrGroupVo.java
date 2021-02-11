@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.product.entity.PmsAttr;
 import com.danbro.product.entity.PmsAttrGroup;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 /**
  * @author Danrbo
  * @Classname PmsAttrGroupVo
- * @Description TODO
+ * @Description TODO 属性分组Vo
  * @Date 2021/2/5 22:22
  */
 @Data
@@ -60,6 +61,9 @@ public class PmsAttrGroupVo implements Serializable, Converter<PmsAttrGroup, Pms
 
     @ApiModelProperty("分类路径")
     private String[] catelogPath;
+
+    @ApiModelProperty
+    private List<PmsAttrBaseInfoVo> attrs;
 
     @Override
     public PmsAttrGroupVo convertToVo(PmsAttrGroup pmsAttrGroup) {

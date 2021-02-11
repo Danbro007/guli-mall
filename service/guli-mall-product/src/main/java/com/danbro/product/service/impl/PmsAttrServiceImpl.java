@@ -112,19 +112,18 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         this.updateById(pmsAttr);
         // 销售属性不用更新分组关系
         if (AttrType.BASE.getCode().equals(pmsAttr.getAttrType())) {
+            attrgroupRelationService.remove(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().
+                    eq(PmsAttrAttrgroupRelation::getAttrId, param.getAttrId()).eq(PmsAttrAttrgroupRelation::getAttrGroupId, param.getAttrGroupId()));
             // 到 attr_attr_group_relation 表里更新数据
-            PmsAttrAttrgroupRelationVo relation = attrgroupRelationService.getAttrAttrRelationByAttrId(param.getAttrId(), false);
-            if (MyObjectUtils.isNotNull(relation)) {
-                relation.setAttrGroupId(param.getAttrGroupId());
-                attrgroupRelationService.updateById(relation.convertToEntity());
-            }
+            PmsAttrAttrgroupRelationVo attrgroupRelationVo = new PmsAttrAttrgroupRelationVo().setAttrGroupId(param.getAttrGroupId()).setAttrId(param.getAttrId());
+            attrgroupRelationService.insertAttrAttrRelation(attrgroupRelationVo);
         }
         return param;
     }
 
     @Override
     public PmsAttrDetailVo getAttrById(Long attrId) {
-        PmsAttr pmsAttr = MyCurdUtils.selectOne(this.getById(attrId), ResponseCode.NOT_FOUND);
+        PmsAttr pmsAttr = MyCurdUtils.select(this.getById(attrId), ResponseCode.NOT_FOUND);
         PmsAttrDetailVo pmsAttrDetailVo = PmsAttrDetailVo.builder().build().convertToVo(pmsAttr);
         if (MyObjectUtils.isNotNull(pmsAttr.getCatelogId())) {
             // 查询属性属于哪一个分类
@@ -165,7 +164,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     public List<PmsAttrBaseInfoVo> getListInIds(Long[] ids, Boolean throwException) {
         QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("attr_id", Arrays.asList(ids));
-        List<PmsAttr> pmsAttrs = MyCurdUtils.selectOne(this.list(queryWrapper), ResponseCode.NOT_FOUND, throwException);
+        List<PmsAttr> pmsAttrs = MyCurdUtils.select(this.list(queryWrapper), ResponseCode.NOT_FOUND, throwException);
         return pmsAttrs.stream().map(attr -> PmsAttrBaseInfoVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
     }
 
@@ -173,8 +172,8 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key, Boolean throwException) {
         QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
         queryWrapper.notIn("attr_id", Arrays.asList(ids));
-        if (MyStrUtils.isNotEmpty(key)){
-            queryWrapper.like("attr_id",key).or().like("attr_name",key);
+        if (MyStrUtils.isNotEmpty(key)) {
+            queryWrapper.like("attr_id", key).or().like("attr_name", key);
         }
         return new Pagination<>(this.page(new Query<PmsAttr>().getPage(pageParam), queryWrapper), PmsAttrBaseInfoVo.class);
     }

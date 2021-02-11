@@ -46,14 +46,14 @@ public abstract class ControllerAop {
         if (e instanceof GuliMallException) {
             GuliMallException guliMallException = (GuliMallException) e;
             result.setCode(guliMallException.getCode());
-            result.setMessage(guliMallException.getMessage());
+            result.setMsg(guliMallException.getMessage());
             result.setSuccess(false);
         }
         // 未知错误
         else {
             log.error("{} error {}", joinPoint.getSignature(), e);
             // TODO 未知的异常，应该格外注意，可以发送邮件通知等
-            result.setMessage(e.toString());
+            result.setMsg(e.toString());
             result.setCode(ResponseCode.UNKNOWN_EXCEPTION.getCode());
         }
         return result;

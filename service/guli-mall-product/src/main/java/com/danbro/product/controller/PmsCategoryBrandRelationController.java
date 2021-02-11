@@ -2,11 +2,14 @@ package com.danbro.product.controller;
 
 import java.util.List;
 import com.danbro.common.entity.ResultBean;
+import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
+import com.danbro.product.entity.PmsBrand;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
@@ -40,6 +43,12 @@ public class PmsCategoryBrandRelationController {
     public ResultBean<?> deleteCategoryBrandRelation(@RequestBody Long[] ids) {
         pmsCategoryBrandRelationService.batchDeleteCategoryBrandRelation(ids);
         return ResultBean.ofSuccess();
+    }
+
+    @ApiOperation("查询该分类下有哪些品牌")
+    @GetMapping("brands/list")
+    public ResultBean<List<PmsBrandVo>> getBrandListByCatId(@RequestParam("catId") Long catId) {
+        return ResultBean.ofSuccess(pmsCategoryBrandRelationService.getBrandListByCatId(catId));
     }
 
 }

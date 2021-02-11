@@ -1,15 +1,16 @@
 package com.danbro.product.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.enums.pms.AttrType;
 import com.danbro.common.utils.*;
 import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
 import com.danbro.product.controller.vo.PmsAttrGroupVo;
@@ -66,7 +67,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
 
     @Override
     public PmsAttrGroupVo getAttrGroupInfo(Long attrGroupId, Boolean throwException) {
-        PmsAttrGroup pmsAttrGroup = MyCurdUtils.selectOne(this.getById(attrGroupId), ResponseCode.NOT_FOUND, throwException);
+        PmsAttrGroup pmsAttrGroup = MyCurdUtils.select(this.getById(attrGroupId), ResponseCode.NOT_FOUND, throwException);
         if (MyObjectUtils.isNotNull(pmsAttrGroup)) {
             PmsAttrGroupVo attrGroupVo = PmsAttrGroupVo.builder().build().convertToVo(pmsAttrGroup);
             String[] cateLogPath = pmsCategoryService.findCateLogPath(attrGroupVo.getCatelogId());
@@ -88,7 +89,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     @Override
     public List<PmsAttrBaseInfoVo> getAttrListByAttrGroupId(Long attrGroupId, Boolean throwException) {
         // 先到关系表查询到属性分组下面的所有属性ID，找不到则返回null
-        List<PmsAttrAttrgroupRelation> relations = MyCurdUtils.selectOne(attrAttrgroupRelationService.list(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().
+        List<PmsAttrAttrgroupRelation> relations = MyCurdUtils.select(attrAttrgroupRelationService.list(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().
                         eq(PmsAttrAttrgroupRelation::getAttrGroupId, attrGroupId)),
                 ResponseCode.NOT_FOUND,
                 false);
@@ -102,7 +103,7 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
     @Override
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> getNoAttrListByAttrGroupId(PageParam<PmsAttr> param, Long attrGroupId, String key, Boolean throwException) {
         // 1、查找当前属性分组的分类ID
-        PmsAttrGroup pmsAttrGroup = MyCurdUtils.selectOne(this.getById(attrGroupId), ResponseCode.NOT_FOUND);
+        PmsAttrGroup pmsAttrGroup = MyCurdUtils.select(this.getById(attrGroupId), ResponseCode.NOT_FOUND);
         // 2、查找分类ID下其他的属性分组（不包括当前的属性分组）
         List<PmsAttrGroup> pmsAttrGroupList = this.list(new QueryWrapper<PmsAttrGroup>()
                 .lambda()
@@ -121,5 +122,36 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupMapper, Pms
                         eq(PmsAttr::getCatelogId, pmsAttrGroup.getCatelogId()).
                         notIn(PmsAttr::getAttrId, attrIdList)),
                 PmsAttrBaseInfoVo.class);
+    }
+
+    @Override
+    public List<PmsAttrGroupVo> getAttrGroupAndAttrByCatId(Long catId) {
+        // 1、先查找出该分类下的属性分组的ID
+        List<PmsAttrGroup> attrGroupList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsAttrGroup>().lambda().eq(PmsAttrGroup::getCatelogId, catId)), ResponseCode.NOT_FOUND);
+        // 2、通过属性分组查找出下属的属性ID
+        List<PmsAttrAttrgroupRelation> relations = attrAttrgroupRelationService.
+                list(new QueryWrapper<PmsAttrAttrgroupRelation>()
+                        .lambda()
+                        .in(PmsAttrAttrgroupRelation::getAttrGroupId,
+                                attrGroupList.stream().map(PmsAttrGroup::getAttrGroupId).
+                                        collect(Collectors.toList())));
+        MyCurdUtils.select(relations, ResponseCode.NOT_FOUND);
+        // 3、通过属性ID找到所有的属性信息
+        return attrGroupList.stream().map(attrGroup -> {
+            PmsAttrGroupVo pmsAttrGroupVo = PmsAttrGroupVo.builder().build().convertToVo(attrGroup);
+            // 3.1 找到当前属性分组的下属属性ID
+            List<PmsAttrAttrgroupRelation> relationList = relations.stream().filter(relation -> relation.getAttrGroupId().equals(attrGroup.getAttrGroupId())).collect(Collectors.toList());
+            if (MyCollectionUtils.isNotEmpty(relationList)) {
+                // 3.2 通过属性ID找到规格属性对象
+                LambdaQueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<PmsAttr>().lambda().in(PmsAttr::getAttrId, relationList.stream().map(PmsAttrAttrgroupRelation::getAttrId).collect(Collectors.toList())).eq(PmsAttr::getValueType, AttrType.BASE.getCode());
+                List<PmsAttr> pmsAttrList = pmsAttrService.list(queryWrapper);
+                if (MyCollectionUtils.isNotEmpty(pmsAttrList)) {
+                    // 3.3 把属性转换成Vo对象并封装到属性分组里
+                    List<PmsAttrBaseInfoVo> attrBaseInfoVoList = pmsAttrList.stream().map(n -> PmsAttrBaseInfoVo.builder().build().convertToVo(n)).collect(Collectors.toList());
+                    pmsAttrGroupVo.setAttrs(attrBaseInfoVoList);
+                }
+            }
+            return pmsAttrGroupVo;
+        }).collect(Collectors.toList());
     }
 }

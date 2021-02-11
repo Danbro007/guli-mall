@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class OssServiceImpl implements OssService {
             policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, date);
 
             String postPolicy = ossClient.generatePostPolicy(expiration, policyConds);
-            byte[] binaryData = postPolicy.getBytes("utf-8");
+            byte[] binaryData = postPolicy.getBytes(StandardCharsets.UTF_8);
             String encodedPolicy = BinaryUtil.toBase64String(binaryData);
             String postSignature = ossClient.calculatePostSignature(postPolicy);
 

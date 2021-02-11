@@ -6,11 +6,9 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
-import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
-import com.danbro.product.controller.vo.PmsAttrRelationListVo;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 import com.danbro.product.mapper.PmsAttrAttrgroupRelationMapper;
 import com.danbro.product.service.PmsAttrAttrgroupRelationService;
@@ -40,7 +38,7 @@ public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttr
     @Override
     public PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId, Boolean throwException) {
         PmsAttrAttrgroupRelation relation = this.getOne(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().eq(PmsAttrAttrgroupRelation::getAttrId, attrId));
-        PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = MyCurdUtils.selectOne(relation, ResponseCode.NOT_FOUND, throwException);
+        PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = MyCurdUtils.select(relation, ResponseCode.NOT_FOUND, throwException);
         if (MyObjectUtils.isNotNull(pmsAttrAttrgroupRelation)) {
             return PmsAttrAttrgroupRelationVo.builder().build().convertToVo(pmsAttrAttrgroupRelation);
         }
