@@ -1,5 +1,6 @@
 package com.danbro.common.utils;
 
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 
 /**
@@ -30,6 +31,7 @@ public class MyStrUtils {
     public static String replace(CharSequence str, CharSequence searchStr, CharSequence replacement) {
         return StrUtil.replace(str, searchStr, replacement);
     }
+
 
 
 }

@@ -34,14 +34,12 @@ public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttr
     @Override
     public List<PmsAttrAttrgroupRelationVo> batchInsertAttrAttrRelation(List<PmsAttrAttrgroupRelationVo> relationVoList) {
         List<PmsAttrAttrgroupRelation> relations = relationVoList.stream().map(PmsAttrAttrgroupRelationVo::convertToEntity).collect(Collectors.toList());
-        return MyCurdUtils.batchInsertOrUpdate(relationVoList,this.saveBatch(relations),ResponseCode.INSERT_FAILURE);
+        return MyCurdUtils.batchInsertOrUpdate(relationVoList, this.saveBatch(relations), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
     public PmsAttrAttrgroupRelationVo getAttrAttrRelationByAttrId(Long attrId, Boolean throwException) {
-        QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("attr_id", attrId);
-        PmsAttrAttrgroupRelation relation = this.getOne(queryWrapper);
+        PmsAttrAttrgroupRelation relation = this.getOne(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().eq(PmsAttrAttrgroupRelation::getAttrId, attrId));
         PmsAttrAttrgroupRelation pmsAttrAttrgroupRelation = MyCurdUtils.selectOne(relation, ResponseCode.NOT_FOUND, throwException);
         if (MyObjectUtils.isNotNull(pmsAttrAttrgroupRelation)) {
             return PmsAttrAttrgroupRelationVo.builder().build().convertToVo(pmsAttrAttrgroupRelation);
