@@ -30,7 +30,7 @@ public class PmsSpuInfo implements Serializable {
     @ApiModelProperty("商品名称")
     private String spuName;
 
-    @ApiModelProperty("商品描述")
+    @ApiModelProperty("商品描述图片的地址")
     private String spuDescription;
 
     @ApiModelProperty("所属分类id")
@@ -39,16 +39,16 @@ public class PmsSpuInfo implements Serializable {
     @ApiModelProperty("品牌id")
     private Long brandId;
 
+    @ApiModelProperty("商品的重量")
     private BigDecimal weight;
 
     @ApiModelProperty("上架状态[0 - 下架，1 - 上架]")
-    private Integer publishStatus;
+    private Boolean publishStatus;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
 
 }

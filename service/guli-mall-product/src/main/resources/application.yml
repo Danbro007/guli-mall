@@ -13,6 +13,8 @@ spring:
   redis:
     host: 192.168.0.109
     port: 6379
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: 8004
 
@@ -23,5 +25,4 @@ mybatis-plus:
       logic-not-delete-value: 0
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
 

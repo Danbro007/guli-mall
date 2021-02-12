@@ -1,5 +1,7 @@
 package com.danbro.common.utils;
 
+import java.sql.Struct;
+import java.util.List;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 
@@ -32,6 +34,20 @@ public class MyStrUtils {
         return StrUtil.replace(str, searchStr, replacement);
     }
 
+
+    public static String join(CharSequence delimiter, List<String> list) {
+        return String.join(delimiter, list);
+    }
+
+    /**
+     * 通过分割图片的地址获取图片文件名
+     * @param imageUrl 图片的地址
+     * @return 图片文件名
+     */
+    public static String getImageName(String imageUrl) {
+        String[] split = StrUtil.split(imageUrl, "_");
+        return split[split.length - 1];
+    }
 
 
 }

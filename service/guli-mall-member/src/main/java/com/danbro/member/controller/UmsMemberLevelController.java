@@ -4,8 +4,6 @@ import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.member.controller.vo.UmsMemberLevelVo;
-import com.danbro.member.controller.vo.UmsMemberVo;
-import com.danbro.member.entity.UmsMember;
 import com.danbro.member.entity.UmsMemberLevel;
 import com.danbro.member.service.UmsMemberLevelService;
 import com.danbro.service.common.validtors.groups.Insert;
@@ -14,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +54,12 @@ public class UmsMemberLevelController {
     @ApiOperation("获取会员等级的详细信息")
     @GetMapping("info/{memberLevelId}")
     public ResultBean<UmsMemberLevelVo> getMemberLevelInfo(@PathVariable Long memberLevelId){
-        return ResultBean.ofSuccess(umsMemberLevelService.getMemberLevelInfo(memberLevelId));
+        return ResultBean.ofSuccess(umsMemberLevelService.getMemberLevelInfoById(memberLevelId));
+    }
+    @ApiOperation("通过会员等级名获取相信信息")
+    @GetMapping("info/{memberLevelName}")
+    public ResultBean<UmsMemberLevelVo> getMemberLevelInfoByName(@PathVariable String memberLevelName){
+        return ResultBean.ofSuccess(umsMemberLevelService.getMemberLevelInfoByName(memberLevelName));
+
     }
 }

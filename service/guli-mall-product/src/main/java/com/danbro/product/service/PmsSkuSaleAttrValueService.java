@@ -1,7 +1,9 @@
 package com.danbro.product.service;
- 
- 
+
+
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.product.controller.vo.PmsSkuSaleAttrValueVo;
 import com.danbro.product.entity.PmsSkuSaleAttrValue;
 
 
@@ -12,4 +14,11 @@ import com.danbro.product.entity.PmsSkuSaleAttrValue;
  * @since 2021-01-28 18:56:55
  */
 public interface PmsSkuSaleAttrValueService extends IService<PmsSkuSaleAttrValue> {
+    /**
+     * 批量添加Sku的销售属性
+     *
+     * @param attrValueVoList 销售属性
+     * @return 添加结果
+     */
+    List<PmsSkuSaleAttrValueVo> batchSaveSaleAttrValue(List<PmsSkuSaleAttrValueVo> attrValueVoList);
 }

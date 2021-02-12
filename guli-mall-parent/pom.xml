@@ -34,6 +34,9 @@
         <nacos.version>2.2.4.RELEASE</nacos.version>
         <aliyun.oss.version>3.10.2</aliyun.oss.version>
         <swagger.version>2.9.2</swagger.version>
+        <riboon.version>2.2.1.RELEASE</riboon.version>
+        <hystrix.version>2.2.1.RELEASE</hystrix.version>
+        <openfeign.version>2.2.1.RELEASE</openfeign.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -130,6 +133,18 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+                <version>${riboon.version}</version>
+            </dependency>
+            <!--服务调用-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+                <version>${openfeign.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <build>

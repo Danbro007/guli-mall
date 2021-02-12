@@ -39,9 +39,16 @@ public interface UmsMemberLevelService extends IService<UmsMemberLevel> {
     UmsMemberLevelVo updateMemberLevel(UmsMemberLevelVo memberLevelVo);
 
     /**
-     * 获取会员等级的详细信息
+     * 通过会员等级的ID获取会员等级的详细信息
      * @param memberLevelId 会员等级的Id
-     * @return 会员等级的详细
+     * @return 会员等级的详细信息
      */
-    UmsMemberLevelVo getMemberLevelInfo(Long memberLevelId);
+    UmsMemberLevelVo getMemberLevelInfoById(Long memberLevelId);
+
+    /**
+     * 通过会员等级名获取会员等级的详细信息
+     * @param memberLevelName 会员等级名
+     * @return 会员等级的详细信息
+     */
+    UmsMemberLevelVo getMemberLevelInfoByName(String memberLevelName);
 }

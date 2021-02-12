@@ -4,7 +4,10 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -14,6 +17,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ApiModel("spu属性值")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PmsProductAttrValue implements Serializable {
     private static final long serialVersionUID = 208719867365662179L;
 
@@ -38,6 +44,4 @@ public class PmsProductAttrValue implements Serializable {
 
     @ApiModelProperty("快速展示【是否展示在介绍上；0-否 1-是】")
     private Boolean quickShow;
-
-
 }

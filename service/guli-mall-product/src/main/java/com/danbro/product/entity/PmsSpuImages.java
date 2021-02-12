@@ -4,7 +4,10 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -14,6 +17,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ApiModel("spu图片")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PmsSpuImages implements Serializable {
     private static final long serialVersionUID = -42799640499637551L;
 

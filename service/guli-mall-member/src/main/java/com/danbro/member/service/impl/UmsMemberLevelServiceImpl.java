@@ -1,6 +1,7 @@
 package com.danbro.member.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
@@ -43,8 +44,15 @@ public class UmsMemberLevelServiceImpl extends ServiceImpl<UmsMemberLevelMapper,
     }
 
     @Override
-    public UmsMemberLevelVo getMemberLevelInfo(Long memberLevelId) {
+    public UmsMemberLevelVo getMemberLevelInfoById(Long memberLevelId) {
         UmsMemberLevelVo umsMemberLevelVo = UmsMemberLevelVo.builder().build().convertToVo(this.getById(memberLevelId));
         return MyCurdUtils.select(umsMemberLevelVo, ResponseCode.NOT_FOUND, true);
+    }
+
+    @Override
+    public UmsMemberLevelVo getMemberLevelInfoByName(String memberLevelName) {
+        UmsMemberLevel memberLevel = this.getOne(new QueryWrapper<UmsMemberLevel>().lambda().eq(UmsMemberLevel::getName, memberLevelName));
+        UmsMemberLevelVo memberLevelVo = UmsMemberLevelVo.builder().build().convertToVo(memberLevel);
+        return MyCurdUtils.select(memberLevelVo,ResponseCode.NOT_FOUND);
     }
 }

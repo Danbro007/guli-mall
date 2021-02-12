@@ -31,7 +31,7 @@ public class PmsSkuImages implements Serializable {
     private Integer imgSort;
 
     @ApiModelProperty("默认图[0 - 不是默认图，1 - 是默认图]")
-    private Integer defaultImg;
+    private Boolean defaultImg;
 
 
 }

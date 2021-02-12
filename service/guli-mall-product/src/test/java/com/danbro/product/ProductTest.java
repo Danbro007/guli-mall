@@ -2,6 +2,7 @@ package com.danbro.product;
 
 
 import java.util.List;
+import cn.hutool.core.util.StrUtil;
 import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
 import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
 import com.danbro.product.service.PmsAttrAttrgroupRelationService;
@@ -37,7 +38,7 @@ public class ProductTest {
 
     @Test
     public void test1() {
-        Long[] catIds = new Long[]{500L,333L};
+        Long[] catIds = new Long[]{500L, 333L};
         pmsCategoryBrandRelationService.batchDeleteByCategoryId(catIds);
     }
 
@@ -45,10 +46,12 @@ public class ProductTest {
     public void test2() {
         attrService.batchDeleteAttr(new Long[]{11L});
     }
+
     @Test
     public void test3() {
+        String imageUrl = "https://danbro-mall.oss-cn-shanghai.aliyuncs.com/2021/02/12/b8e141a8-bfdf-468b-8691-cba5e66d9215_0d40c24b264aa511.jpg";
+        String[] split = StrUtil.split(imageUrl, "_");
+        System.out.println(split[split.length-1]);
+
     }
-
-
-
 }

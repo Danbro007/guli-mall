@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("商品阶梯价格")
+@ApiModel("商品阶梯价格（打折）")
 public class SmsSkuLadder implements Serializable {
     private static final long serialVersionUID = -85267832469088179L;
 
@@ -28,7 +28,7 @@ public class SmsSkuLadder implements Serializable {
     @ApiModelProperty("满几件")
     private Integer fullCount;
 
-    @ApiModelProperty("打几折")
+    @ApiModelProperty("折扣数")
     private BigDecimal discount;
 
     @ApiModelProperty("折后价")

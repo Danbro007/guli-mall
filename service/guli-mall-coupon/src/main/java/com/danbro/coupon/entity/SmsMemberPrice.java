@@ -2,6 +2,7 @@ package com.danbro.coupon.entity;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
+import cn.hutool.core.annotation.Alias;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import io.swagger.annotations.ApiModel;

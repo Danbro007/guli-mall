@@ -2,6 +2,9 @@ package com.danbro.coupon.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.coupon.controller.vo.SmsSkuFullReductionVo;
 import com.danbro.coupon.entity.SmsSkuFullReduction;
 import com.danbro.coupon.mapper.SmsSkuFullReductionMapper;
 import com.danbro.coupon.service.SmsSkuFullReductionService;
@@ -16,4 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class SmsSkuFullReductionServiceImpl extends ServiceImpl<SmsSkuFullReductionMapper, SmsSkuFullReduction> implements SmsSkuFullReductionService {
 
+    @Override
+    public SmsSkuFullReductionVo insertSkuFullReduction(SmsSkuFullReductionVo smsSkuFullReductionVo) {
+        SmsSkuFullReduction smsSkuFullReduction = smsSkuFullReductionVo.convertToEntity();
+        boolean save = this.save(smsSkuFullReduction);
+        return MyCurdUtils.insertOrUpdate(smsSkuFullReductionVo.convertToVo(smsSkuFullReduction), save, ResponseCode.INSERT_FAILURE);
+    }
 }

@@ -36,5 +36,4 @@ public class PmsSkuSaleAttrValue implements Serializable {
     @ApiModelProperty("顺序")
     private Integer attrSort;
 
-
 }

@@ -1,6 +1,8 @@
 package com.danbro.common.utils;
 
 import java.util.List;
+import com.danbro.common.entity.ResultBean;
+import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.interfaces.ResultCode;
 
@@ -179,4 +181,35 @@ public class MyCurdUtils {
             }
         }
     }
+
+    /**
+     * 负载远程调用添加或者更新的处理
+     *
+     * @param resultBean         远程调用的结果
+     * @param needThrowException 是否抛出异常
+     * @param <T>                返回数据的泛型类型
+     * @return 添加或者更新完毕的数据
+     */
+    public static <T> T rpcInsertOrUpdate(ResultBean<T> resultBean, Boolean needThrowException) {
+        if (resultBean.getSuccess()) {
+            return resultBean.getData();
+        }
+        if (needThrowException) {
+            throw new GuliMallException(ResponseCode.INSERT_FAILURE);
+        }
+        return null;
+    }
+
+    /**
+     * 负载远程调用添加或者更新的处理
+     *
+     * @param resultBean         远程调用的结果
+     * @param <T>                返回数据的泛型类型
+     * @return 添加或者更新完毕的数据
+     */
+    public static <T> T rpcInsertOrUpdate(ResultBean<T> resultBean) {
+        return rpcInsertOrUpdate(resultBean, true);
+    }
+
+
 }
