@@ -1,6 +1,7 @@
 package com.danbro.coupon.service.impl;
 
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
@@ -21,8 +22,13 @@ public class SmsSkuFullReductionServiceImpl extends ServiceImpl<SmsSkuFullReduct
 
     @Override
     public SmsSkuFullReductionVo insertSkuFullReduction(SmsSkuFullReductionVo smsSkuFullReductionVo) {
-        SmsSkuFullReduction smsSkuFullReduction = smsSkuFullReductionVo.convertToEntity();
-        boolean save = this.save(smsSkuFullReduction);
-        return MyCurdUtils.insertOrUpdate(smsSkuFullReductionVo.convertToVo(smsSkuFullReduction), save, ResponseCode.INSERT_FAILURE);
+        // 只添加满减价格和优惠价格大于 0 的
+        if (smsSkuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 && smsSkuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
+            SmsSkuFullReduction smsSkuFullReduction = smsSkuFullReductionVo.convertToEntity();
+            boolean save = this.save(smsSkuFullReduction);
+            return MyCurdUtils.insertOrUpdate(smsSkuFullReductionVo.convertToVo(smsSkuFullReduction), save, ResponseCode.INSERT_FAILURE);
+        }
+        return null;
+
     }
 }

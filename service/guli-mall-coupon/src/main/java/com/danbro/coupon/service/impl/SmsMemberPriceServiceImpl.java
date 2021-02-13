@@ -1,5 +1,6 @@
 package com.danbro.coupon.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -38,7 +39,10 @@ public class SmsMemberPriceServiceImpl extends ServiceImpl<SmsMemberPriceMapper,
     @Transactional(rollbackFor = Exception.class)
     @Override
     public List<SmsMemberPriceVo> batchInsertMemberPrice(List<SmsMemberPriceVo> memberPriceVoList) {
-        List<SmsMemberPrice> memberPriceList = memberPriceVoList.stream().map(SmsMemberPriceVo::convertToEntity).collect(Collectors.toList());
+        // 过滤出会员价格大于 0 的
+        List<SmsMemberPrice> memberPriceList = memberPriceVoList.stream().map(SmsMemberPriceVo::convertToEntity).
+                filter(memberPrice -> memberPrice.getMemberPrice().compareTo(new BigDecimal(0)) > 0).
+                collect(Collectors.toList());
         // Todo 批量保存到 sms_member_price 中
         boolean saveBatch = this.saveBatch(memberPriceList);
         List<SmsMemberPriceVo> priceVoList = memberPriceList.stream().map(memberPrice -> SmsMemberPriceVo.builder().build().convertToVo(memberPrice)).collect(Collectors.toList());

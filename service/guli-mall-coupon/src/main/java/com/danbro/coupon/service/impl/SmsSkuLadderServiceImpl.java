@@ -1,6 +1,7 @@
 package com.danbro.coupon.service.impl;
 
 
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
@@ -21,9 +22,12 @@ public class SmsSkuLadderServiceImpl extends ServiceImpl<SmsSkuLadderMapper, Sms
 
     @Override
     public SmsSkuLadderVo insertSkuLadder(SmsSkuLadderVo smsSkuLadderVo) {
-        SmsSkuLadder smsSkuLadder = smsSkuLadderVo.convertToEntity();
-        System.out.println(smsSkuLadder);
-        boolean save = this.save(smsSkuLadder);
-        return MyCurdUtils.insertOrUpdate(smsSkuLadderVo.convertToVo(smsSkuLadder), save, ResponseCode.INSERT_FAILURE);
+        // 只添加满足打折条件的数量和折扣数大于 0 的
+        if (smsSkuLadderVo.getFullCount() > 0 && smsSkuLadderVo.getDiscount().compareTo(new BigDecimal(0)) > 0) {
+            SmsSkuLadder smsSkuLadder = smsSkuLadderVo.convertToEntity();
+            boolean save = this.save(smsSkuLadder);
+            return MyCurdUtils.insertOrUpdate(smsSkuLadderVo.convertToVo(smsSkuLadder), save, ResponseCode.INSERT_FAILURE);
+        }
+        return null;
     }
 }
