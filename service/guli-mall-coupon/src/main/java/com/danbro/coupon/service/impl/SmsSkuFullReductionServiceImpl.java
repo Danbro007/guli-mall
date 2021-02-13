@@ -22,13 +22,8 @@ public class SmsSkuFullReductionServiceImpl extends ServiceImpl<SmsSkuFullReduct
 
     @Override
     public SmsSkuFullReductionVo insertSkuFullReduction(SmsSkuFullReductionVo smsSkuFullReductionVo) {
-        // 只添加满减价格和优惠价格大于 0 的
-        if (smsSkuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 && smsSkuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
-            SmsSkuFullReduction smsSkuFullReduction = smsSkuFullReductionVo.convertToEntity();
-            boolean save = this.save(smsSkuFullReduction);
-            return MyCurdUtils.insertOrUpdate(smsSkuFullReductionVo.convertToVo(smsSkuFullReduction), save, ResponseCode.INSERT_FAILURE);
-        }
-        return null;
-
+        SmsSkuFullReduction smsSkuFullReduction = smsSkuFullReductionVo.convertToEntity();
+        boolean save = this.save(smsSkuFullReduction);
+        return MyCurdUtils.insertOrUpdate(smsSkuFullReductionVo.convertToVo(smsSkuFullReduction), save, ResponseCode.INSERT_FAILURE);
     }
 }

@@ -1,12 +1,15 @@
 package com.danbro.product.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyNumUtils;
 import com.danbro.product.controller.vo.*;
 import com.danbro.product.controller.vo.spu.Images;
 import com.danbro.product.controller.vo.spu.Skus;
@@ -58,7 +61,7 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             PmsSkuInfo pmsSkuInfo = sku.setSkuDefaultImg(findDefaultImage(sku.getImages())).convertToEntity();
             boolean save = this.save(pmsSkuInfo);
             sku.setSkuId(pmsSkuInfo.getSkuId());
-            MyCurdUtils.batchInsertOrUpdate(skuInfoVoList,save, ResponseCode.INSERT_FAILURE);
+            MyCurdUtils.batchInsertOrUpdate(skuInfoVoList, save, ResponseCode.INSERT_FAILURE);
             // Todo 到 pms_sku_image 保存
             List<PmsSkuImagesVo> skuImagesVoList = sku.getImages().stream().map(image -> image.setSkuId(sku.getSkuId())).
                     collect(Collectors.toList());
@@ -67,14 +70,21 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
             pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
             // Todo 远程调用 保存到 sms_member_price
-            sku.getMemberPrice().forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
+            sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(new BigDecimal(0)) > 0).forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
             MyCurdUtils.rpcInsertOrUpdate(smsMemberPriceClient.batchInsertMemberPrice(sku.getMemberPrice()));
             // Todo 远程调用 保存到 sms_sku_ladder(打折)
+            // 只添加满足打折的件数和折扣数大于 0 的
             SmsSkuLadderVo smsSkuLadderVo = buildSkuLadder(sku);
-            MyCurdUtils.rpcInsertOrUpdate(smsSkuLadderClient.insertSkuLadder(smsSkuLadderVo));
+            if (smsSkuLadderVo.getFullCount() > 0
+                    && MyNumUtils.between(smsSkuLadderVo.getDiscount(), BigDecimal.ZERO, BigDecimal.ONE)) {
+                MyCurdUtils.rpcInsertOrUpdate(smsSkuLadderClient.insertSkuLadder(smsSkuLadderVo));
+            }
             // Todo 远程调用 保存到 sms_sku_full_reduction （满减）
+            // 只添加满减价格和优惠价格大于 0 的
             SmsSkuFullReductionVo skuFullReductionVo = buildSkuFullReduction(sku);
-            MyCurdUtils.rpcInsertOrUpdate(smsSkuFullReductionClient.insertSkuFullReduction(skuFullReductionVo));
+            if (skuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 && skuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
+                MyCurdUtils.rpcInsertOrUpdate(smsSkuFullReductionClient.insertSkuFullReduction(skuFullReductionVo));
+            }
         });
     }
 

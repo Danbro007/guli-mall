@@ -23,11 +23,8 @@ public class SmsSkuLadderServiceImpl extends ServiceImpl<SmsSkuLadderMapper, Sms
     @Override
     public SmsSkuLadderVo insertSkuLadder(SmsSkuLadderVo smsSkuLadderVo) {
         // 只添加满足打折条件的数量和折扣数大于 0 的
-        if (smsSkuLadderVo.getFullCount() > 0 && smsSkuLadderVo.getDiscount().compareTo(new BigDecimal(0)) > 0) {
-            SmsSkuLadder smsSkuLadder = smsSkuLadderVo.convertToEntity();
-            boolean save = this.save(smsSkuLadder);
-            return MyCurdUtils.insertOrUpdate(smsSkuLadderVo.convertToVo(smsSkuLadder), save, ResponseCode.INSERT_FAILURE);
-        }
-        return null;
+        SmsSkuLadder smsSkuLadder = smsSkuLadderVo.convertToEntity();
+        boolean save = this.save(smsSkuLadder);
+        return MyCurdUtils.insertOrUpdate(smsSkuLadderVo.convertToVo(smsSkuLadder), save, ResponseCode.INSERT_FAILURE);
     }
 }
