@@ -29,7 +29,7 @@ public @interface IsMobile {
 
     String message() default "{com.danbro.validation.constraints.IsMobile.message}";
 
-    Class<?>[] groups() default {Insert.class, Update.class, Select.class};
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

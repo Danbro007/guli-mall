@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel("${tableInfo.comment}")
+@ApiModel("采购单")
 public class WmsPurchaseDetail implements Serializable {
     private static final long serialVersionUID = -25537541194269838L;
 
@@ -40,6 +40,5 @@ public class WmsPurchaseDetail implements Serializable {
 
     @ApiModelProperty("状态[0新建，1已分配，2正在采购，3已完成，4采购失败]")
     private Integer status;
-
 
 }

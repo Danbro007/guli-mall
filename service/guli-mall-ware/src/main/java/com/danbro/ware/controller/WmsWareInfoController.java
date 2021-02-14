@@ -47,13 +47,13 @@ public class WmsWareInfoController {
     }
 
     @ApiOperation("修改仓库")
-    @PostMapping("")
+    @PutMapping("")
     public ResultBean<WmsWareInfoVo> updateWare(@Validated(Update.class) @RequestBody WmsWareInfoVo wmsWareInfoVo){
         return ResultBean.ofSuccess(wmsWareInfoService.updateWare(wmsWareInfoVo));
     }
 
     @ApiOperation("获取仓库的详细信息")
-    @PostMapping("info/{wareId}")
+    @GetMapping("info/{wareId}")
     public ResultBean<WmsWareInfoVo> getWareInfo(@PathVariable Long wareId){
         return ResultBean.ofSuccess(wmsWareInfoService.getWareInfoById(wareId));
     }

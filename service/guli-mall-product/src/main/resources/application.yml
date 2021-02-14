@@ -16,7 +16,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   jackson:
-    date-format: java.text.SimpleDateFormat
+    date-format: yyyy-MM-dd HH:mm:ss
 server:
   port: 8004
 

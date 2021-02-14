@@ -10,6 +10,8 @@ import com.danbro.service.common.validtors.anotations.isNumber;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import com.danbro.ware.entity.WmsWareInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +33,7 @@ import lombok.experimental.Accessors;
 public class WmsWareInfoVo implements Converter<WmsWareInfo, WmsWareInfoVo> {
     @NotNull(message = "修改时仓库ID必须存在！", groups = Update.class)
     @Null(message = "添加时仓库ID不能存在！", groups = Insert.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("id")
     private Long id;
 

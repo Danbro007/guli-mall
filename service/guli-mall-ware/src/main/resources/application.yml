@@ -10,6 +10,16 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.0.109:8848
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 
 server:
   port: 8005
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

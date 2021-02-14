@@ -54,7 +54,7 @@ public class WmsWareSkuController {
     }
 
     @ApiOperation("修改sku库存")
-    @PostMapping("")
+    @PutMapping("")
     public ResultBean<WmsWareSkuVo> updateWareSku(@Validated(Update.class) @RequestBody WmsWareSkuVo wmsWareSkuVo) {
         return ResultBean.ofSuccess(wmsWareSkuService.updateWareSku(wmsWareSkuVo));
     }
