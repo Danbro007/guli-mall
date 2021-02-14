@@ -87,6 +87,10 @@ public class MyCurdUtils {
         return insertOrUpdate(t, bool, resultCode, true);
     }
 
+    public static void insertOrUpdate(Boolean bool, ResultCode resultCode) {
+        insertOrUpdate(bool, resultCode, true);
+    }
+
     public static <T> T insertOrUpdate(T t, Boolean bool, ResultCode resultCode, Boolean needThrowException) {
         if (bool) {
             return t;
@@ -95,6 +99,15 @@ public class MyCurdUtils {
             throw new GuliMallException(resultCode);
         }
         return null;
+    }
+
+
+    public static void insertOrUpdate(Boolean bool, ResultCode resultCode, Boolean needThrowException) {
+        if (!bool) {
+            if (needThrowException) {
+                throw new GuliMallException(resultCode);
+            }
+        }
     }
 
 
@@ -203,8 +216,8 @@ public class MyCurdUtils {
     /**
      * 负载远程调用添加或者更新的处理
      *
-     * @param resultBean         远程调用的结果
-     * @param <T>                返回数据的泛型类型
+     * @param resultBean 远程调用的结果
+     * @param <T>        返回数据的泛型类型
      * @return 添加或者更新完毕的数据
      */
     public static <T> T rpcInsertOrUpdate(ResultBean<T> resultBean) {

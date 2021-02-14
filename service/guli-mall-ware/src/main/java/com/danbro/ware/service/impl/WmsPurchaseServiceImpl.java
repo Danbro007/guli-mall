@@ -2,6 +2,8 @@ package com.danbro.ware.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -15,6 +17,8 @@ import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.common.utils.Pagination;
 import com.danbro.common.utils.Query;
+import com.danbro.ware.controller.vo.DonePurchaseDetailVo;
+import com.danbro.ware.controller.vo.DonePurchaseVo;
 import com.danbro.ware.controller.vo.MergePurchaseVo;
 import com.danbro.ware.controller.vo.WmsPurchaseDetailVo;
 import com.danbro.ware.controller.vo.WmsPurchaseVo;
@@ -126,5 +130,35 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
                             set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.PURCHASING));
                 });
         MyCurdUtils.batchInsertOrUpdate(purchaseList, this.updateBatchById(purchaseList), ResponseCode.UPDATE_FAILURE);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void finishPurchase(DonePurchaseVo donePurchaseVo) {
+        Long id = donePurchaseVo.getId();
+        List<DonePurchaseDetailVo> purchaseDetailVos = donePurchaseVo.getItems();
+        // 先更新采购项的状态，如果都采购成功则把采购单的状态设置为【采购成功】
+        boolean flag = false;
+        for (DonePurchaseDetailVo detail : purchaseDetailVos) {
+            LambdaUpdateWrapper<WmsPurchaseDetail> lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda();
+            if (detail.getStatus() == PurchaseDetailStatus.DONE) {
+                lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.DONE);
+            } else if (detail.getStatus() == PurchaseDetailStatus.FAILURE) {
+                lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.FAILURE);
+                flag = true;
+            }
+            MyCurdUtils.insertOrUpdate(wmsPurchaseDetailService.update(lambda), ResponseCode.UPDATE_FAILURE);
+        }
+        // 更新采购单信息
+        LambdaUpdateWrapper<WmsPurchase> updateWrapper;
+        // 没有全部采购成功则把整个采购单的状态设置为【采购失败】状态
+        if (flag) {
+            updateWrapper = new UpdateWrapper<WmsPurchase>().lambda().eq(WmsPurchase::getId, id).set(WmsPurchase::getStatus, PurchaseDetailStatus.FAILURE);
+        }
+        // 都采购成功
+        else {
+            updateWrapper = new UpdateWrapper<WmsPurchase>().lambda().eq(WmsPurchase::getId, id).set(WmsPurchase::getStatus, PurchaseDetailStatus.DONE);
+        }
+        MyCurdUtils.insertOrUpdate(this.update(updateWrapper), ResponseCode.UPDATE_FAILURE);
     }
 }

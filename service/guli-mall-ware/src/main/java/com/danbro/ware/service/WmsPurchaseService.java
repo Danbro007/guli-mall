@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.ware.controller.vo.DonePurchaseVo;
 import com.danbro.ware.controller.vo.MergePurchaseVo;
 import com.danbro.ware.controller.vo.WmsPurchaseVo;
 import com.danbro.ware.entity.WmsPurchase;
@@ -78,4 +79,11 @@ public interface WmsPurchaseService extends IService<WmsPurchase> {
      * @param purchaseIdList 采购单的ID列表
      */
     void receivePurchase(List<Long> purchaseIdList);
+
+    /**
+     * 完成采购
+     *
+     * @param donePurchaseVo 采购信息
+     */
+    void finishPurchase(DonePurchaseVo donePurchaseVo);
 }

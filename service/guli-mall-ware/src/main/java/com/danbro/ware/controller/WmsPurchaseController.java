@@ -6,6 +6,7 @@ import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
+import com.danbro.ware.controller.vo.DonePurchaseVo;
 import com.danbro.ware.controller.vo.MergePurchaseVo;
 import com.danbro.ware.controller.vo.WmsPurchaseDetailVo;
 import com.danbro.ware.controller.vo.WmsPurchaseVo;
@@ -90,4 +91,13 @@ public class WmsPurchaseController {
         wmsPurchaseService.receivePurchase(purchaseIdList);
         return ResultBean.ofSuccess();
     }
+
+
+    @ApiOperation("完成采购单")
+    @PostMapping("done")
+    public ResultBean<?> finishPurchase(@Validated @RequestBody DonePurchaseVo donePurchaseVo) {
+        wmsPurchaseService.finishPurchase(donePurchaseVo);
+        return ResultBean.ofSuccess();
+    }
+
 }
