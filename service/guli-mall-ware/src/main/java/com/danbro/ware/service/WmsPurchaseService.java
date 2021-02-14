@@ -1,6 +1,6 @@
 package com.danbro.ware.service;
- 
- 
+
+
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
@@ -19,25 +19,63 @@ import com.danbro.ware.entity.WmsPurchaseDetail;
  */
 public interface WmsPurchaseService extends IService<WmsPurchase> {
     /**
-     *
      * @param pageParam 分页参数
-     * @param key 关键字
-     * @param status 采购信息状态
+     * @param key       关键字
+     * @param status    采购信息状态
      * @return 分页查询结果
      */
-    Pagination<WmsPurchaseVo,WmsPurchase> queryPageByCondition(PageParam<WmsPurchase> pageParam, String key, Integer status);
+    Pagination<WmsPurchaseVo, WmsPurchase> queryPageByCondition(PageParam<WmsPurchase> pageParam, String key, Integer status);
 
+    /**
+     * 批量删除采购单
+     *
+     * @param purchaseList 采购单ID
+     */
     void batchDeletePurchase(List<Long> purchaseList);
 
+    /**
+     * 添加采购单
+     *
+     * @param wmsPurchaseVo 采购单
+     * @return 添加完毕的采购信息
+     */
     WmsPurchaseVo insertPurchase(WmsPurchaseVo wmsPurchaseVo);
 
+    /**
+     * 修改采购单
+     *
+     * @param wmsPurchaseVo 采购单
+     * @return 修改完毕的采购单
+     */
     WmsPurchaseVo updatePurchase(WmsPurchaseVo wmsPurchaseVo);
 
+    /**
+     * 获取采购单
+     *
+     * @param purchaseId 采购单ID
+     * @return 采购信息
+     */
     WmsPurchaseVo getPurchaseInfoById(Long purchaseId);
 
-    Pagination<WmsPurchaseVo,WmsPurchase> queryPageUnreceiveByCondition(PageParam<WmsPurchase> pageParam);
+    /**
+     * 分页查询未领取的采购单
+     *
+     * @param pageParam 分页条件
+     * @return 未领取的采购单列表
+     */
+    Pagination<WmsPurchaseVo, WmsPurchase> queryPageUnreceiveByCondition(PageParam<WmsPurchase> pageParam);
 
+    /**
+     * 合并采购单
+     *
+     * @param mergePurchaseVo 采购单ID和采购信息ID
+     */
     void mergePurchase(MergePurchaseVo mergePurchaseVo);
 
+    /**
+     * 领取采购单
+     *
+     * @param purchaseIdList 采购单的ID列表
+     */
     void receivePurchase(List<Long> purchaseIdList);
 }
