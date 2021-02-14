@@ -42,8 +42,9 @@ public class PmsSpuInfo implements Serializable {
     @ApiModelProperty("商品的重量")
     private BigDecimal weight;
 
+    // Todo 还会有新建状态
     @ApiModelProperty("上架状态[0 - 下架，1 - 上架]")
-    private Boolean publishStatus;
+    private Integer publishStatus;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

@@ -5,7 +5,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.0.109:4306/gulimall_wms
   application:
-    name: service-ware
+    name: service-wms
   cloud:
     nacos:
       discovery:

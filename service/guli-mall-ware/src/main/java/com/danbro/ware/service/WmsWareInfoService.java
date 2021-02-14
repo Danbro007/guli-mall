@@ -1,10 +1,14 @@
 package com.danbro.ware.service;
- 
- 
+
+
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.common.enums.PageParam;
+import com.danbro.common.utils.Pagination;
+import com.danbro.ware.controller.vo.WmsWareInfoVo;
 import com.danbro.ware.entity.WmsWareInfo;
- 
- 
+
+
 /**
  * 仓库信息(WmsWareInfo)表服务实现类
  *
@@ -12,4 +16,42 @@ import com.danbro.ware.entity.WmsWareInfo;
  * @since 2021-01-28 19:06:16
  */
 public interface WmsWareInfoService extends IService<WmsWareInfo> {
+    /**
+     * 分页查询仓库
+     *
+     * @param pageParam 分页条件
+     * @param key       关键字
+     * @return 分页查询结果
+     */
+    Pagination<WmsWareInfoVo, WmsWareInfo> queryPageByCondition(PageParam<WmsWareInfo> pageParam, String key);
+
+    /**
+     * 添加仓库
+     *
+     * @param wmsWareInfoVo 仓库信息
+     * @return 添加完毕的仓库信息
+     */
+    WmsWareInfoVo insertWare(WmsWareInfoVo wmsWareInfoVo);
+
+    /**
+     * 修改仓库
+     *
+     * @param wmsWareInfoVo 仓库信息
+     * @return 修改完毕的仓库信息
+     */
+    WmsWareInfoVo updateWare(WmsWareInfoVo wmsWareInfoVo);
+
+    /**
+     * 获取仓库的详细信息
+     *
+     * @param wareId 仓库Id
+     * @return 仓库的详细信息
+     */
+    WmsWareInfoVo getWareInfoById(Long wareId);
+
+    /**
+     * 批量删除仓库
+     * @param wareIdList 要删除的仓库ID列表
+     */
+    void batchDeleteWare(List<Long> wareIdList);
 }

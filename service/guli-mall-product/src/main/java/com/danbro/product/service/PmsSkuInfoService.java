@@ -1,10 +1,12 @@
 package com.danbro.product.service;
- 
- 
+
+
+import java.math.BigDecimal;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.common.enums.PageParam;
+import com.danbro.common.utils.Pagination;
 import com.danbro.product.controller.vo.PmsSkuInfoVo;
-import com.danbro.product.controller.vo.spu.Skus;
 import com.danbro.product.entity.PmsSkuInfo;
 
 
@@ -17,7 +19,21 @@ import com.danbro.product.entity.PmsSkuInfo;
 public interface PmsSkuInfoService extends IService<PmsSkuInfo> {
     /**
      * 批量添加Sku
+     *
      * @param skus 批量的skuInfoVo
      */
     void batchSaveSkuInfo(List<PmsSkuInfoVo> skus);
+
+    /**
+     * 分页查询 sku 信息
+     *
+     * @param pageParam 分页条件
+     * @param key       关键字
+     * @param brandId   品牌ID
+     * @param catelogId 分类ID
+     * @param min       最低价格
+     * @param max       最高价格
+     * @return 分页查询的结果
+     */
+    Pagination<PmsSkuInfoVo, PmsSkuInfo> queryPageByCondition(PageParam<PmsSkuInfo> pageParam, String key, Long brandId, Long catelogId, BigDecimal min, BigDecimal max);
 }

@@ -2,15 +2,20 @@ package com.danbro.product.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import com.alibaba.nacos.api.naming.pojo.healthcheck.impl.Mysql;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.danbro.common.entity.ResultBean;
+import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyObjectUtils;
+import com.danbro.common.utils.MyStrUtils;
+import com.danbro.common.utils.Pagination;
+import com.danbro.common.utils.Query;
 import com.danbro.product.controller.vo.PmsProductAttrValueVo;
 import com.danbro.product.controller.vo.PmsSpuInfoVo;
 import com.danbro.product.controller.vo.SmsSpuBondsVo;
-import com.danbro.product.controller.vo.spu.Bounds;
-import com.danbro.product.controller.vo.spu.Spu;
 import com.danbro.product.entity.PmsSpuInfo;
 import com.danbro.product.mapper.PmsSpuInfoMapper;
 import com.danbro.product.rpc.clients.SmsSpuBondsClient;
@@ -75,5 +80,23 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
                 setCatalogId(pmsSpuInfoVo.getCatalogId()).
                 setSkuDesc(pmsSpuInfoVo.getSpuDescription()).setSpuId(pmsSpuInfoVo.getId()));
         pmsSkuInfoService.batchSaveSkuInfo(pmsSpuInfoVo.getSkus());
+    }
+
+    @Override
+    public Pagination<PmsSpuInfoVo, PmsSpuInfo> queryPageByCondition(PageParam<PmsSpuInfo> pageParam, String key, Long brandId, Long catelogId, Integer status) {
+        LambdaQueryWrapper<PmsSpuInfo> queryWrapper = new QueryWrapper<PmsSpuInfo>().lambda();
+        if (MyStrUtils.isNotEmpty(key)) {
+            queryWrapper.like(PmsSpuInfo::getSpuName, key).or().like(PmsSpuInfo::getId, key);
+        }
+        if (MyObjectUtils.isNotNull(brandId) && brandId > 0) {
+            queryWrapper.eq(PmsSpuInfo::getBrandId, brandId);
+        }
+        if (MyObjectUtils.isNotNull(catelogId) && catelogId > 0) {
+            queryWrapper.eq(PmsSpuInfo::getCatalogId, catelogId);
+        }
+        if (MyObjectUtils.isNotNull(status)) {
+            queryWrapper.eq(PmsSpuInfo::getPublishStatus, status);
+        }
+        return new Pagination<>(this.page(new Query<PmsSpuInfo>().getPage(pageParam), queryWrapper), PmsSpuInfoVo.class);
     }
 }

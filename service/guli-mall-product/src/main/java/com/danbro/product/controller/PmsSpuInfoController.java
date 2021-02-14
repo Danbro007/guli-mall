@@ -1,18 +1,21 @@
 package com.danbro.product.controller;
 
 import com.danbro.common.entity.ResultBean;
+import com.danbro.common.entity.ResultPageBean;
+import com.danbro.common.enums.PageParam;
 import com.danbro.product.controller.vo.PmsSpuInfoVo;
-import com.danbro.product.controller.vo.spu.Spu;
+import com.danbro.product.entity.PmsSpuInfo;
 import com.danbro.product.service.PmsSpuInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -32,9 +35,21 @@ public class PmsSpuInfoController {
 
     @ApiOperation("添加Spu")
     @PostMapping
-    public ResultBean<?> insertSpuInfo(@RequestBody PmsSpuInfoVo spu) {
+    public ResultBean<?> insertSpuInfo(@Validated @RequestBody PmsSpuInfoVo spu) {
         pmsSpuInfoService.insertSpuInfo(spu);
         return ResultBean.ofSuccess();
+    }
+
+    @ApiOperation("分页查看Spu")
+    @GetMapping("list")
+    public ResultPageBean<PmsSpuInfoVo, PmsSpuInfo> getSpuInfoList(@RequestParam("page") Long page,
+                                                                   @RequestParam("limit") Long limit,
+                                                                   @RequestParam(value = "key", required = false) String key,
+                                                                   @RequestParam(value = "brandId", required = false) Long brandId,
+                                                                   @RequestParam(value = "catelogId", required = false) Long catelogId,
+                                                                   @RequestParam(value = "status", required = false) Integer status) {
+        PageParam<PmsSpuInfo> pageParam = new PageParam<PmsSpuInfo>().setLimit(limit).setPage(page);
+        return ResultPageBean.ofSuccess(pmsSpuInfoService.queryPageByCondition(pageParam, key, brandId, catelogId, status));
     }
 
 }

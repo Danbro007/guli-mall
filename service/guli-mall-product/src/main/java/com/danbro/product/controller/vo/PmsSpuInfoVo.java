@@ -2,12 +2,11 @@ package com.danbro.product.controller.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.controller.vo.spu.BaseAttr;
-import com.danbro.product.controller.vo.spu.Bounds;
-import com.danbro.product.controller.vo.spu.Skus;
 import com.danbro.product.entity.PmsSpuInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,7 +18,7 @@ import lombok.Data;
  * @Created by Administrator
  */
 @Data
-public class PmsSpuInfoVo implements Serializable,Converter<PmsSpuInfo,PmsSpuInfoVo> {
+public class PmsSpuInfoVo implements Serializable, Converter<PmsSpuInfo, PmsSpuInfoVo> {
     @ApiModelProperty("商品id")
     private Long id;
 
@@ -39,7 +38,7 @@ public class PmsSpuInfoVo implements Serializable,Converter<PmsSpuInfo,PmsSpuInf
     private BigDecimal weight;
 
     @ApiModelProperty("上架状态[0 - 下架，1 - 上架]")
-    private Boolean publishStatus;
+    private Integer publishStatus;
 
     @ApiModelProperty("Spu介绍")
     private List<String> decript;
@@ -56,16 +55,23 @@ public class PmsSpuInfoVo implements Serializable,Converter<PmsSpuInfo,PmsSpuInf
     @ApiModelProperty("sku信息")
     private List<PmsSkuInfoVo> skus;
 
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    @ApiModelProperty("修改时间")
+    private Date updateTime;
+
+
     @Override
     public PmsSpuInfoVo convertToVo(PmsSpuInfo pmsSpuInfo) {
-        MyBeanUtils.copyProperties(pmsSpuInfo,this);
+        MyBeanUtils.copyProperties(pmsSpuInfo, this);
         return this;
     }
 
     @Override
     public PmsSpuInfo convertToEntity() {
         PmsSpuInfo pmsSpuInfo = new PmsSpuInfo();
-        MyBeanUtils.copyProperties(this,pmsSpuInfo);
+        MyBeanUtils.copyProperties(this, pmsSpuInfo);
         return pmsSpuInfo;
     }
 }

@@ -3,18 +3,20 @@ package com.danbro.product.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import cn.hutool.core.util.NumberUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.danbro.common.entity.ResultBean;
+import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
-import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyNumUtils;
+import com.danbro.common.utils.MyObjectUtils;
+import com.danbro.common.utils.MyStrUtils;
+import com.danbro.common.utils.Pagination;
+import com.danbro.common.utils.Query;
 import com.danbro.product.controller.vo.*;
-import com.danbro.product.controller.vo.spu.Images;
-import com.danbro.product.controller.vo.spu.Skus;
-import com.danbro.product.entity.PmsSkuImages;
 import com.danbro.product.entity.PmsSkuInfo;
+import com.danbro.product.entity.PmsSpuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
 import com.danbro.product.rpc.clients.SmsMemberPriceClient;
 import com.danbro.product.rpc.clients.SmsSkuFullReductionClient;
@@ -70,7 +72,7 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
             pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
             // Todo 远程调用 保存到 sms_member_price
-            sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(new BigDecimal(0)) > 0).forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
+            sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
             MyCurdUtils.rpcInsertOrUpdate(smsMemberPriceClient.batchInsertMemberPrice(sku.getMemberPrice()));
             // Todo 远程调用 保存到 sms_sku_ladder(打折)
             // 只添加满足打折的件数和折扣数大于 0 的
@@ -86,6 +88,34 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
                 MyCurdUtils.rpcInsertOrUpdate(smsSkuFullReductionClient.insertSkuFullReduction(skuFullReductionVo));
             }
         });
+    }
+
+    @Override
+    public Pagination<PmsSkuInfoVo, PmsSkuInfo> queryPageByCondition(PageParam<PmsSkuInfo> pageParam, String key, Long brandId, Long catelogId, BigDecimal min, BigDecimal max) {
+        LambdaQueryWrapper<PmsSkuInfo> queryWrapper = new QueryWrapper<PmsSkuInfo>().lambda();
+        // 模糊查询
+        if (MyStrUtils.isNotEmpty(key)) {
+            queryWrapper.like(PmsSkuInfo::getSkuName, key).or().
+                    like(PmsSkuInfo::getSkuId, key).or().
+                    like(PmsSkuInfo::getSkuDesc, key).or().
+                    like(PmsSkuInfo::getSkuTitle, key).or().
+                    like(PmsSkuInfo::getSkuTitle, key).or().
+                    eq(PmsSkuInfo::getSkuId, key);
+        }
+        if (MyObjectUtils.isNotNull(brandId) && brandId > 0) {
+            queryWrapper.eq(PmsSkuInfo::getBrandId, brandId);
+        }
+        if (MyObjectUtils.isNotNull(catelogId) && catelogId > 0) {
+            queryWrapper.eq(PmsSkuInfo::getCatalogId, catelogId);
+        }
+        // 最低价和最高价
+        if (MyObjectUtils.isNotNull(min) && MyObjectUtils.isNotNull(max)) {
+            // 同时为0则不进行查询
+            if (min.compareTo(BigDecimal.ZERO) != 0 && max.compareTo(BigDecimal.ZERO) != 0) {
+                queryWrapper.between(PmsSkuInfo::getPrice, min, max);
+            }
+        }
+        return new Pagination<>(this.page(new Query<PmsSkuInfo>().getPage(pageParam), queryWrapper), PmsSkuInfoVo.class);
     }
 
     /**

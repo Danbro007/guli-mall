@@ -25,4 +25,8 @@ public class MyValidatorUtils {
         return Validator.isBirthday(birthday);
     }
 
+
+    public static Boolean isNumber(String number) {
+        return Validator.isNumber(number);
+    }
 }
