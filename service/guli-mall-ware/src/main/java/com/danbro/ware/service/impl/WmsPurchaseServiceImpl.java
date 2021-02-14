@@ -113,7 +113,7 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void receivePurchase(List<Long> purchaseIdList) {
-        List<WmsPurchase> purchaseList = this.list(new QueryWrapper<WmsPurchase>().lambda().in(WmsPurchase::getId, purchaseIdList));
+        List<WmsPurchase> purchaseList = MyCurdUtils.selectList(this.list(new QueryWrapper<WmsPurchase>().lambda().in(WmsPurchase::getId, purchaseIdList)), ResponseCode.NOT_FOUND);
         // 只更新采购单状态为【新建】或者【已分配】的变成【已领取】
         purchaseList.stream().
                 filter(purchase -> purchase.getStatus() == PurchaseDetailStatus.NEW || purchase.getStatus() == PurchaseDetailStatus.ALLOCATED)
