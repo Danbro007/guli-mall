@@ -36,4 +36,12 @@ public interface PmsSkuInfoService extends IService<PmsSkuInfo> {
      * @return 分页查询的结果
      */
     Pagination<PmsSkuInfoVo, PmsSkuInfo> queryPageByCondition(PageParam<PmsSkuInfo> pageParam, String key, Long brandId, Long catelogId, BigDecimal min, BigDecimal max);
+
+    /**
+     * 获取sku的详细信息
+     *
+     * @param skuId skuID
+     * @return sku的详细信息
+     */
+    PmsSkuInfoVo getSkuInfoById(Long skuId);
 }

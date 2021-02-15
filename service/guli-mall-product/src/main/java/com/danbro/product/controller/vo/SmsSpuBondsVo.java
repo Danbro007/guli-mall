@@ -3,6 +3,8 @@ package com.danbro.product.controller.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +22,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class SmsSpuBondsVo implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("spuId")
     private Long spuId;
 

@@ -1,14 +1,12 @@
 package com.danbro.product.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import cn.hutool.core.collection.CollUtil;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
-import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
 import com.danbro.product.controller.vo.PmsAttrDetailVo;
+import com.danbro.product.controller.vo.PmsProductAttrValueVo;
 import com.danbro.product.entity.PmsAttr;
 import com.danbro.product.service.PmsAttrService;
 import com.danbro.service.common.validtors.groups.Insert;
@@ -68,5 +66,18 @@ public class PmsAttrController {
     public ResultBean<?> batchDeleteAttr(@RequestBody Long[] ids) {
         pmsAttrService.batchDeleteAttr(ids);
         return ResultBean.ofSuccess();
+    }
+
+    @ApiOperation("查看spu的规格参数")
+    @GetMapping("base/listforspu/{spuId}")
+    public ResultBean<List<PmsProductAttrValueVo>> getSpuBaseAttrList(@PathVariable Long spuId) {
+        return ResultBean.ofSuccess(pmsAttrService.getSpuBaseAttrListBySpuId(spuId));
+    }
+
+    @ApiOperation("更新spu的规格参数")
+    @PutMapping("{spuId}")
+    public ResultBean<?> batchUpdateSpuBaseAttr(@RequestBody List<PmsProductAttrValueVo> productAttrValueVoList,
+                                                @PathVariable Long spuId) {
+        return ResultBean.ofSuccess(pmsAttrService.batchUpdateSpuBaseAttr(productAttrValueVoList, spuId));
     }
 }

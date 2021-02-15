@@ -11,18 +11,16 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.enums.pms.AttrType;
 import com.danbro.common.utils.*;
-import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
-import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
-import com.danbro.product.controller.vo.PmsAttrDetailVo;
-import com.danbro.product.controller.vo.PmsAttrGroupVo;
-import com.danbro.product.controller.vo.PmsCategoryVo;
+import com.danbro.product.controller.vo.*;
 import com.danbro.product.entity.PmsAttr;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
+import com.danbro.product.entity.PmsProductAttrValue;
 import com.danbro.product.mapper.PmsAttrMapper;
 import com.danbro.product.service.PmsAttrAttrgroupRelationService;
 import com.danbro.product.service.PmsAttrGroupService;
 import com.danbro.product.service.PmsAttrService;
 import com.danbro.product.service.PmsCategoryService;
+import com.danbro.product.service.PmsProductAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +35,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> implements PmsAttrService {
     @Autowired
     private PmsCategoryService pmsCategoryService;
+
     @Autowired
     private PmsAttrGroupService pmsAttrGroupService;
 
     @Autowired
     PmsAttrAttrgroupRelationService attrgroupRelationService;
+
+    @Autowired
+    PmsProductAttrValueService pmsProductAttrValueService;
 
     @Override
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> attrQueryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId, String attrType) {
@@ -176,5 +178,22 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
             queryWrapper.like("attr_id", key).or().like("attr_name", key);
         }
         return new Pagination<>(this.page(new Query<PmsAttr>().getPage(pageParam), queryWrapper), PmsAttrBaseInfoVo.class);
+    }
+
+    @Override
+    public List<PmsProductAttrValueVo> getSpuBaseAttrListBySpuId(Long spuId) {
+        List<PmsProductAttrValue> productAttrValueList = MyCurdUtils.select(pmsProductAttrValueService.list(new QueryWrapper<PmsProductAttrValue>().lambda().eq(PmsProductAttrValue::getSpuId, spuId)), ResponseCode.NOT_FOUND);
+        return productAttrValueList.stream().map(attr -> PmsProductAttrValueVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PmsProductAttrValueVo> batchUpdateSpuBaseAttr(List<PmsProductAttrValueVo> productAttrValueVoList, Long spuId) {
+        // 先更新能查询到的，然后添加原来没有的
+        List<PmsProductAttrValue> productAttrValues = productAttrValueVoList.stream().map(PmsProductAttrValueVo::convertToEntity).collect(Collectors.toList());
+        productAttrValues.forEach(attr -> attr.setSpuId(spuId));
+        boolean result = pmsProductAttrValueService.saveOrUpdateBatch(productAttrValues);
+        return MyCurdUtils.batchInsertOrUpdate(productAttrValues.stream().map(attr -> PmsProductAttrValueVo.builder().build().convertToVo(attr)).collect(Collectors.toList()),
+                result,
+                ResponseCode.UPDATE_FAILURE);
     }
 }

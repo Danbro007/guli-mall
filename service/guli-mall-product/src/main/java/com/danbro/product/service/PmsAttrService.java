@@ -8,6 +8,7 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
 import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
 import com.danbro.product.controller.vo.PmsAttrDetailVo;
+import com.danbro.product.controller.vo.PmsProductAttrValueVo;
 import com.danbro.product.entity.PmsAttr;
 
 
@@ -79,6 +80,22 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @param throwException 找不到的话是否抛出异常
      * @return 查询结果
      */
-    Pagination<PmsAttrBaseInfoVo,PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key,Boolean throwException);
+    Pagination<PmsAttrBaseInfoVo, PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key, Boolean throwException);
 
+    /**
+     * 获取Spu的基本属性
+     *
+     * @param spuId SpuId
+     * @return 查询的结果
+     */
+    List<PmsProductAttrValueVo> getSpuBaseAttrListBySpuId(Long spuId);
+
+    /**
+     * 批量更新spu的规格参数
+     *
+     * @param productAttrValueVoList spu的参数规格数据
+     * @param spuId                  spuID
+     * @return 更新后的spu规格参数
+     */
+    List<PmsProductAttrValueVo> batchUpdateSpuBaseAttr(List<PmsProductAttrValueVo> productAttrValueVoList, Long spuId);
 }

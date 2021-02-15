@@ -5,6 +5,8 @@ import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsProductAttrValue;
 import com.danbro.product.entity.PmsSpuImages;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,12 +26,15 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class PmsProductAttrValueVo implements Serializable, Converter<PmsProductAttrValue, PmsProductAttrValueVo> {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("商品id")
     private Long spuId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("属性id")
     private Long attrId;
 

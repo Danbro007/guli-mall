@@ -1,6 +1,7 @@
 package com.danbro.product.controller;
 
 import java.math.BigDecimal;
+import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.product.controller.vo.PmsSkuInfoVo;
@@ -13,6 +14,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,4 +46,9 @@ public class PmsSkuInfoController {
         return ResultPageBean.ofSuccess(pmsSkuInfoService.queryPageByCondition(pageParam, key, brandId, catelogId, min, max));
     }
 
+    @ApiOperation("查询sku的详细信息")
+    @GetMapping("info/{skuId}")
+    public ResultBean<PmsSkuInfoVo> getSkuInfo(@PathVariable Long skuId) {
+        return ResultBean.ofSuccess(pmsSkuInfoService.getSkuInfoById(skuId));
+    }
 }

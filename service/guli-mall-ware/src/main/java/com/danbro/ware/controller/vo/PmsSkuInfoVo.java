@@ -1,13 +1,8 @@
-package com.danbro.product.controller.vo;
+package com.danbro.ware.controller.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-import com.danbro.common.interfaces.Converter;
-import com.danbro.common.utils.MyBeanUtils;
-import com.danbro.product.entity.PmsSkuInfo;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,12 +21,10 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true)
 @NoArgsConstructor
-public class PmsSkuInfoVo implements Serializable, Converter<PmsSkuInfo, PmsSkuInfoVo> {
-    @JsonSerialize(using = ToStringSerializer.class)
+public class PmsSkuInfoVo implements Serializable {
     @ApiModelProperty("skuId")
     private Long skuId;
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("spuId")
     private Long spuId;
 
@@ -41,11 +34,9 @@ public class PmsSkuInfoVo implements Serializable, Converter<PmsSkuInfo, PmsSkuI
     @ApiModelProperty("sku介绍描述图片")
     private String skuDesc;
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("所属分类id")
     private Long catalogId;
 
-    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("品牌id")
     private Long brandId;
 
@@ -63,12 +54,6 @@ public class PmsSkuInfoVo implements Serializable, Converter<PmsSkuInfo, PmsSkuI
 
     @ApiModelProperty("销量")
     private Long saleCount;
-
-    @ApiModelProperty("销售属性")
-    private List<PmsSkuSaleAttrValueVo> attr;
-
-    @ApiModelProperty("图片地址")
-    private List<PmsSkuImagesVo> images;
 
     @ApiModelProperty("sku 选择的品类")
     private List<String> descar;
@@ -90,20 +75,4 @@ public class PmsSkuInfoVo implements Serializable, Converter<PmsSkuInfo, PmsSkuI
 
     @ApiModelProperty("是否可叠加满减的优惠")
     private Boolean priceStatus;
-
-    @ApiModelProperty("会员价格的信息")
-    private List<SmsMemberPriceVo> memberPrice;
-
-    @Override
-    public PmsSkuInfoVo convertToVo(PmsSkuInfo pmsSkuInfo) {
-        MyBeanUtils.copyProperties(pmsSkuInfo, this);
-        return this;
-    }
-
-    @Override
-    public PmsSkuInfo convertToEntity() {
-        PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
-        MyBeanUtils.copyProperties(this, pmsSkuInfo);
-        return pmsSkuInfo;
-    }
 }

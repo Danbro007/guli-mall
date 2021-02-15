@@ -4,6 +4,8 @@ import java.io.Serializable;
 import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsSpuImages;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +25,11 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 public class PmsSpuImagesVo implements Serializable, Converter<PmsSpuImages, PmsSpuImagesVo> {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("spu_id")
     private Long spuId;
 

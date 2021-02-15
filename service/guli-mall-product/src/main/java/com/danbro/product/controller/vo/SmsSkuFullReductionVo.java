@@ -2,6 +2,8 @@ package com.danbro.product.controller.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,9 +23,11 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class SmsSkuFullReductionVo implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("spu_id")
     private Long skuId;
 

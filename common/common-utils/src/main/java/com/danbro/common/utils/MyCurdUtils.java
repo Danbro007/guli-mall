@@ -196,14 +196,14 @@ public class MyCurdUtils {
     }
 
     /**
-     * 负载远程调用添加或者更新的处理
+     * 负载远程调用的处理
      *
      * @param resultBean         远程调用的结果
      * @param needThrowException 是否抛出异常
      * @param <T>                返回数据的泛型类型
-     * @return 添加或者更新完毕的数据
+     * @return 调用结果
      */
-    public static <T> T rpcInsertOrUpdate(ResultBean<T> resultBean, Boolean needThrowException) {
+    public static <T> T rpcResultHandle(ResultBean<T> resultBean, Boolean needThrowException) {
         if (resultBean.getSuccess()) {
             return resultBean.getData();
         }
@@ -214,15 +214,14 @@ public class MyCurdUtils {
     }
 
     /**
-     * 负载远程调用添加或者更新的处理
+     * 负载远程调用的处理
      *
      * @param resultBean 远程调用的结果
      * @param <T>        返回数据的泛型类型
-     * @return 添加或者更新完毕的数据
+     * @return 调用结果
      */
-    public static <T> T rpcInsertOrUpdate(ResultBean<T> resultBean) {
-        return rpcInsertOrUpdate(resultBean, true);
+    public static <T> T rpcResultHandle(ResultBean<T> resultBean) {
+        return rpcResultHandle(resultBean, true);
     }
-
 
 }

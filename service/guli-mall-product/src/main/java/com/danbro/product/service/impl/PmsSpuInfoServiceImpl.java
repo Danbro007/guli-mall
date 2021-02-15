@@ -2,7 +2,6 @@ package com.danbro.product.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import com.alibaba.nacos.api.naming.pojo.healthcheck.impl.Mysql;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -65,7 +64,7 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         // 4、Todo 到 sms_spu_bonds 保存(远程调用)
         SmsSpuBondsVo bounds = pmsSpuInfoVo.getBounds();
         bounds.setSpuId(spuInfo.getId());
-        MyCurdUtils.rpcInsertOrUpdate(smsSpuBondsClient.insertSpuBonds(bounds));
+        MyCurdUtils.rpcResultHandle(smsSpuBondsClient.insertSpuBonds(bounds));
         // 5、Todo 到 pms_product_attr_value 保存
         List<PmsProductAttrValueVo> attrValueList = pmsSpuInfoVo.getBaseAttrs().stream().map(
                 attr -> PmsProductAttrValueVo.builder().build().

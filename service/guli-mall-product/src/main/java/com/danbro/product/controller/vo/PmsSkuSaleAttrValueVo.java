@@ -4,6 +4,8 @@ import java.io.Serializable;
 import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.entity.PmsSkuSaleAttrValue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,12 +25,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class PmsSkuSaleAttrValueVo implements Serializable, Converter<PmsSkuSaleAttrValue, PmsSkuSaleAttrValueVo> {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("属性id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("sku_id")
     private Long skuId;
 
+
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("attr_id")
     private Long attrId;
 

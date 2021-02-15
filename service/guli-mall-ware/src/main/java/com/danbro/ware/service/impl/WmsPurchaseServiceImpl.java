@@ -20,14 +20,18 @@ import com.danbro.common.utils.Query;
 import com.danbro.ware.controller.vo.DonePurchaseDetailVo;
 import com.danbro.ware.controller.vo.DonePurchaseVo;
 import com.danbro.ware.controller.vo.MergePurchaseVo;
+import com.danbro.ware.controller.vo.PmsSkuInfoVo;
 import com.danbro.ware.controller.vo.WmsPurchaseDetailVo;
 import com.danbro.ware.controller.vo.WmsPurchaseVo;
 import com.danbro.ware.entity.WmsPurchase;
 import com.danbro.ware.entity.WmsPurchaseDetail;
+import com.danbro.ware.entity.WmsWareSku;
 import com.danbro.ware.mapper.WmsPurchaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danbro.ware.rpc.clients.PmsSkuInfoClient;
 import com.danbro.ware.service.WmsPurchaseDetailService;
 import com.danbro.ware.service.WmsPurchaseService;
+import com.danbro.ware.service.WmsWareSkuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +47,12 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
 
     @Autowired
     WmsPurchaseDetailService wmsPurchaseDetailService;
+
+    @Autowired
+    PmsSkuInfoClient pmsSkuInfoClient;
+
+    @Autowired
+    WmsWareSkuService wmsWareSkuService;
 
     @Override
     public Pagination<WmsPurchaseVo, WmsPurchase> queryPageByCondition(PageParam<WmsPurchase> pageParam, String key, Integer status) {
@@ -141,24 +151,33 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
         boolean flag = false;
         for (DonePurchaseDetailVo detail : purchaseDetailVos) {
             LambdaUpdateWrapper<WmsPurchaseDetail> lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda();
+            // 采购成功的都要入库
             if (detail.getStatus() == PurchaseDetailStatus.DONE) {
                 lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.DONE);
+                // 产品入库
+                // 先查询到采购的商品信息（到 pms 查询）
+                WmsPurchaseDetail purchaseDetail = MyCurdUtils.select(wmsPurchaseDetailService.getById(detail.getItemId()), ResponseCode.NOT_FOUND);
+                PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsSkuInfoClient.getSkuInfo(purchaseDetail.getSkuId()));
+                // 查询出入库之前的库存
+                WmsWareSku wmsWareSku = MyCurdUtils.select(wmsWareSkuService.getOne(new QueryWrapper<WmsWareSku>().lambda().
+                                eq(WmsWareSku::getSkuId, pmsSkuInfoVo.getSkuId()).
+                                eq(WmsWareSku::getWareId, purchaseDetail.getWareId())),
+                        ResponseCode.NOT_FOUND);
+                // 更新产品的库存
+                wmsWareSku.setStock(wmsWareSku.getStock() + purchaseDetail.getSkuNum());
+                MyCurdUtils.insertOrUpdate(wmsWareSkuService.updateById(wmsWareSku), ResponseCode.UPDATE_FAILURE);
             } else if (detail.getStatus() == PurchaseDetailStatus.FAILURE) {
+                // 采购失败的只更新采购状态
                 lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.FAILURE);
                 flag = true;
             }
             MyCurdUtils.insertOrUpdate(wmsPurchaseDetailService.update(lambda), ResponseCode.UPDATE_FAILURE);
         }
         // 更新采购单信息
-        LambdaUpdateWrapper<WmsPurchase> updateWrapper;
-        // 没有全部采购成功则把整个采购单的状态设置为【采购失败】状态
-        if (flag) {
-            updateWrapper = new UpdateWrapper<WmsPurchase>().lambda().eq(WmsPurchase::getId, id).set(WmsPurchase::getStatus, PurchaseDetailStatus.FAILURE);
-        }
-        // 都采购成功
-        else {
-            updateWrapper = new UpdateWrapper<WmsPurchase>().lambda().eq(WmsPurchase::getId, id).set(WmsPurchase::getStatus, PurchaseDetailStatus.DONE);
-        }
+        // 没有全部采购成功则把整个采购单的状态设置为【采购失败】状态  false:都采购成功
+        LambdaUpdateWrapper<WmsPurchase> updateWrapper = new UpdateWrapper<WmsPurchase>().lambda().
+                eq(WmsPurchase::getId, id).
+                set(WmsPurchase::getStatus, flag ? PurchaseDetailStatus.FAILURE : PurchaseDetailStatus.DONE);
         MyCurdUtils.insertOrUpdate(this.update(updateWrapper), ResponseCode.UPDATE_FAILURE);
     }
 }

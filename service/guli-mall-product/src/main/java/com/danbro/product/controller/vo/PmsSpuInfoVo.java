@@ -8,6 +8,8 @@ import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.product.controller.vo.spu.BaseAttr;
 import com.danbro.product.entity.PmsSpuInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,6 +21,7 @@ import lombok.Data;
  */
 @Data
 public class PmsSpuInfoVo implements Serializable, Converter<PmsSpuInfo, PmsSpuInfoVo> {
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("商品id")
     private Long id;
 
@@ -28,9 +31,11 @@ public class PmsSpuInfoVo implements Serializable, Converter<PmsSpuInfo, PmsSpuI
     @ApiModelProperty("商品描述")
     private String spuDescription;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("所属分类id")
     private Long catalogId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("品牌id")
     private Long brandId;
 

@@ -16,7 +16,6 @@ import com.danbro.common.utils.Pagination;
 import com.danbro.common.utils.Query;
 import com.danbro.product.controller.vo.*;
 import com.danbro.product.entity.PmsSkuInfo;
-import com.danbro.product.entity.PmsSpuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
 import com.danbro.product.rpc.clients.SmsMemberPriceClient;
 import com.danbro.product.rpc.clients.SmsSkuFullReductionClient;
@@ -73,19 +72,19 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
             // Todo 远程调用 保存到 sms_member_price
             sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
-            MyCurdUtils.rpcInsertOrUpdate(smsMemberPriceClient.batchInsertMemberPrice(sku.getMemberPrice()));
+            MyCurdUtils.rpcResultHandle(smsMemberPriceClient.batchInsertMemberPrice(sku.getMemberPrice()));
             // Todo 远程调用 保存到 sms_sku_ladder(打折)
             // 只添加满足打折的件数和折扣数大于 0 的
             SmsSkuLadderVo smsSkuLadderVo = buildSkuLadder(sku);
             if (smsSkuLadderVo.getFullCount() > 0
                     && MyNumUtils.between(smsSkuLadderVo.getDiscount(), BigDecimal.ZERO, BigDecimal.ONE)) {
-                MyCurdUtils.rpcInsertOrUpdate(smsSkuLadderClient.insertSkuLadder(smsSkuLadderVo));
+                MyCurdUtils.rpcResultHandle(smsSkuLadderClient.insertSkuLadder(smsSkuLadderVo));
             }
             // Todo 远程调用 保存到 sms_sku_full_reduction （满减）
             // 只添加满减价格和优惠价格大于 0 的
             SmsSkuFullReductionVo skuFullReductionVo = buildSkuFullReduction(sku);
             if (skuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 && skuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
-                MyCurdUtils.rpcInsertOrUpdate(smsSkuFullReductionClient.insertSkuFullReduction(skuFullReductionVo));
+                MyCurdUtils.rpcResultHandle(smsSkuFullReductionClient.insertSkuFullReduction(skuFullReductionVo));
             }
         });
     }
@@ -116,6 +115,12 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             }
         }
         return new Pagination<>(this.page(new Query<PmsSkuInfo>().getPage(pageParam), queryWrapper), PmsSkuInfoVo.class);
+    }
+
+    @Override
+    public PmsSkuInfoVo getSkuInfoById(Long skuId) {
+        PmsSkuInfo pmsSkuInfo = MyCurdUtils.select(this.getById(skuId), ResponseCode.NOT_FOUND);
+        return PmsSkuInfoVo.builder().build().convertToVo(pmsSkuInfo);
     }
 
     /**
