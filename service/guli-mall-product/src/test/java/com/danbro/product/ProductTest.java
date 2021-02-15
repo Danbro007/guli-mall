@@ -1,10 +1,7 @@
 package com.danbro.product;
 
 
-import java.util.List;
 import cn.hutool.core.util.StrUtil;
-import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
-import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
 import com.danbro.product.service.PmsAttrAttrgroupRelationService;
 import com.danbro.product.service.PmsAttrGroupService;
 import com.danbro.product.service.PmsAttrService;
