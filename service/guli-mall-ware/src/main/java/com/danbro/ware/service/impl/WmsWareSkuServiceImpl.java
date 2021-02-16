@@ -1,6 +1,8 @@
 package com.danbro.ware.service.impl;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.danbro.common.enums.PageParam;
@@ -60,5 +62,14 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
     @Override
     public void batchDeleteWareSku(List<Long> wareSkuIdList) {
         MyCurdUtils.batchDelete(this.removeByIds(wareSkuIdList), ResponseCode.DELETE_FAILURE);
+    }
+
+    @Override
+    public Boolean hasStockBySkuId(Long skuId) {
+        List<WmsWareSku> wareSkuList = MyCurdUtils.selectList(this.list(new QueryWrapper<WmsWareSku>().lambda().eq(WmsWareSku::getSkuId, skuId)), ResponseCode.NOT_FOUND);
+        // 计算出 sku 的总库存数（所有仓库的库存）
+        AtomicReference<Integer> totalStock = new AtomicReference<>(0);
+        wareSkuList.forEach(sku -> totalStock.updateAndGet(v -> v + sku.getStock()));
+        return totalStock.get() > 0;
     }
 }

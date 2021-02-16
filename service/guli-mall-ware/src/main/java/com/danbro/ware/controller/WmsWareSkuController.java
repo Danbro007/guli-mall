@@ -1,6 +1,7 @@
 package com.danbro.ware.controller;
 
 import java.util.List;
+
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
@@ -66,5 +67,10 @@ public class WmsWareSkuController {
         return ResultBean.ofSuccess();
     }
 
+    @ApiOperation("查询Sku还有没有库存")
+    @GetMapping("hasStock/{skuId}")
+    public ResultBean<Boolean> hasStock(@PathVariable Long skuId) {
+        return ResultBean.ofSuccess(wmsWareSkuService.hasStockBySkuId(skuId));
+    }
 
 }

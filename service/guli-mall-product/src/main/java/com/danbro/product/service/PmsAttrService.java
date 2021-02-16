@@ -3,6 +3,7 @@ package com.danbro.product.service;
 
 import java.time.chrono.IsoEra;
 import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
@@ -98,4 +99,12 @@ public interface PmsAttrService extends IService<PmsAttr> {
      * @return 更新后的spu规格参数
      */
     List<PmsProductAttrValueVo> batchUpdateSpuBaseAttr(List<PmsProductAttrValueVo> productAttrValueVoList, Long spuId);
+
+    /**
+     * 查询出能被检索的属性
+     *
+     * @param attrIdList 属性ID
+     * @return 能被检索的属性
+     */
+    List<PmsAttrBaseInfoVo> getAttrListWithCanShow(List<Long> attrIdList);
 }

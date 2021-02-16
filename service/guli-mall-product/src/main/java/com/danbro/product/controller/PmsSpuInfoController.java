@@ -11,12 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -50,6 +45,13 @@ public class PmsSpuInfoController {
                                                                    @RequestParam(value = "status", required = false) Integer status) {
         PageParam<PmsSpuInfo> pageParam = new PageParam<PmsSpuInfo>().setLimit(limit).setPage(page);
         return ResultPageBean.ofSuccess(pmsSpuInfoService.queryPageByCondition(pageParam, key, brandId, catelogId, status));
+    }
+
+    @ApiOperation("产品上线")
+    @PostMapping("{spuId}/up")
+    public ResultBean<?> upSpu(@PathVariable Long spuId) {
+        pmsSpuInfoService.upSpu(spuId);
+        return ResultBean.ofSuccess();
     }
 
 }

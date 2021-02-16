@@ -7,6 +7,9 @@ package com.danbro.common.enums.pms;
  * @Created by Administrator
  */
 public enum AttrType {
+    /**
+     *
+     */
     SALE("sale", 0),
     BASE("base", 1),
     ALL("all", 2);

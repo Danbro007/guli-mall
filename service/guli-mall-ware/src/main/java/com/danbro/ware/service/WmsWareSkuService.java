@@ -2,6 +2,7 @@ package com.danbro.ware.service;
 
 
 import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
@@ -56,4 +57,12 @@ public interface WmsWareSkuService extends IService<WmsWareSku> {
      * @param wareSkuIdList 商品库存的ID列表
      */
     void batchDeleteWareSku(List<Long> wareSkuIdList);
+
+    /**
+     * 查询当前的Sku是否有库存
+     *
+     * @param skuId skuID
+     * @return 是否有库存
+     */
+    Boolean hasStockBySkuId(Long skuId);
 }

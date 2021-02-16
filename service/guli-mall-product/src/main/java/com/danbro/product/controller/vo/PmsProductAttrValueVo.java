@@ -15,8 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
+ * @author liweimo
  * @Classname PmsProductAttrValueVo
- * @Description TODO
+ * @Description TODO 商品属性值Vo
  * @Date 2021/2/11 20:51
  * @Created by Administrator
  */

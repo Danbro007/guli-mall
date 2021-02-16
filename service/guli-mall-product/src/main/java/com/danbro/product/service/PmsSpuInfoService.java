@@ -33,4 +33,12 @@ public interface PmsSpuInfoService extends IService<PmsSpuInfo> {
      * @return 查询的分页结果
      */
     Pagination<PmsSpuInfoVo, PmsSpuInfo> queryPageByCondition(PageParam<PmsSpuInfo> pageParam, String key, Long brandId, Long catelogId, Integer status);
+
+    /**
+     * 商品上线
+     *
+     * @param spuId 商品spu 的 Id
+     */
+    void upSpu(Long spuId);
+
 }

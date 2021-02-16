@@ -1,8 +1,9 @@
-package com.danbro.search.controller.vo;
+package com.danbro.search.controller.esModel;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +16,9 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
+ * @author liweimo
  * @Classname PmsSkuInfoVo
- * @Description TODO
+ * @Description TODO elasticsearch的sku商品数据模型对象
  * @Date 2021/2/15 21:20
  * @Created by Administrator
  */
@@ -26,7 +28,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Accessors(chain = true)
 @NoArgsConstructor
 @Document(indexName = "product")
-public class SearcgProductSkuInfoVo implements Serializable {
+public class ProductSkuInfoEsModel implements Serializable {
     @Id
     @ApiModelProperty("skuId")
     private Long skuId;
@@ -81,5 +83,5 @@ public class SearcgProductSkuInfoVo implements Serializable {
 
     @ApiModelProperty("sku属性")
     @Field(type = FieldType.Nested)
-    private List<SearchProductAttrVo> attrs;
+    private List<ProductAttrEsModel> attrs;
 }

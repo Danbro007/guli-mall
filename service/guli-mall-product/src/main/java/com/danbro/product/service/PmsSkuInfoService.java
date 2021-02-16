@@ -3,6 +3,7 @@ package com.danbro.product.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
@@ -44,4 +45,12 @@ public interface PmsSkuInfoService extends IService<PmsSkuInfo> {
      * @return sku的详细信息
      */
     PmsSkuInfoVo getSkuInfoById(Long skuId);
+
+    /**
+     * 通过 spu 获取到所有的 sku 信息
+     *
+     * @param spuId spuId
+     * @return sku信息列表
+     */
+    List<PmsSkuInfoVo> getSkuInfoListBySpuId(Long spuId);
 }

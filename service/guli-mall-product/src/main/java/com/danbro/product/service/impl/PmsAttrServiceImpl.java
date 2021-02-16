@@ -3,6 +3,7 @@ package com.danbro.product.service.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -195,5 +196,14 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         return MyCurdUtils.batchInsertOrUpdate(productAttrValues.stream().map(attr -> PmsProductAttrValueVo.builder().build().convertToVo(attr)).collect(Collectors.toList()),
                 result,
                 ResponseCode.UPDATE_FAILURE);
+    }
+
+    @Override
+    public List<PmsAttrBaseInfoVo> getAttrListWithCanShow(List<Long> attrIdList) {
+        List<PmsAttr> pmsAttrList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsAttr>().lambda().
+                        in(PmsAttr::getAttrId, attrIdList).
+                        eq(PmsAttr::getSearchType, true)),
+                ResponseCode.NOT_FOUND);
+        return pmsAttrList.stream().map(attr -> PmsAttrBaseInfoVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
     }
 }

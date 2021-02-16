@@ -3,6 +3,7 @@ package com.danbro.product.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -58,29 +59,29 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Override
     public void batchSaveSkuInfo(List<PmsSkuInfoVo> skuInfoVoList) {
         skuInfoVoList.forEach(sku -> {
-            // Todo 到 pms_sku_info 保存
+            // 1、到 pms_sku_info 保存
             PmsSkuInfo pmsSkuInfo = sku.setSkuDefaultImg(findDefaultImage(sku.getImages())).convertToEntity();
             boolean save = this.save(pmsSkuInfo);
             sku.setSkuId(pmsSkuInfo.getSkuId());
             MyCurdUtils.batchInsertOrUpdate(skuInfoVoList, save, ResponseCode.INSERT_FAILURE);
-            // Todo 到 pms_sku_image 保存
+            // 2、 到 pms_sku_image 保存
             List<PmsSkuImagesVo> skuImagesVoList = sku.getImages().stream().map(image -> image.setSkuId(sku.getSkuId())).
                     collect(Collectors.toList());
             pmsSkuImagesService.batchSaveSkuImages(skuImagesVoList);
-            // Todo 到 pms_sku_sale_attr_value 保存销售属性s
+            // 3、 到 pms_sku_sale_attr_value 保存销售属性s
             List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
             pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
-            // Todo 远程调用 保存到 sms_member_price
+            // 4、 远程调用 保存到 sms_member_price
             sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
             MyCurdUtils.rpcResultHandle(smsMemberPriceClient.batchInsertMemberPrice(sku.getMemberPrice()));
-            // Todo 远程调用 保存到 sms_sku_ladder(打折)
+            // 5、 远程调用 保存到 sms_sku_ladder(打折)
             // 只添加满足打折的件数和折扣数大于 0 的
             SmsSkuLadderVo smsSkuLadderVo = buildSkuLadder(sku);
             if (smsSkuLadderVo.getFullCount() > 0
                     && MyNumUtils.between(smsSkuLadderVo.getDiscount(), BigDecimal.ZERO, BigDecimal.ONE)) {
                 MyCurdUtils.rpcResultHandle(smsSkuLadderClient.insertSkuLadder(smsSkuLadderVo));
             }
-            // Todo 远程调用 保存到 sms_sku_full_reduction （满减）
+            // 5、远程调用 保存到 sms_sku_full_reduction （满减）
             // 只添加满减价格和优惠价格大于 0 的
             SmsSkuFullReductionVo skuFullReductionVo = buildSkuFullReduction(sku);
             if (skuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 && skuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
@@ -121,6 +122,12 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     public PmsSkuInfoVo getSkuInfoById(Long skuId) {
         PmsSkuInfo pmsSkuInfo = MyCurdUtils.select(this.getById(skuId), ResponseCode.NOT_FOUND);
         return PmsSkuInfoVo.builder().build().convertToVo(pmsSkuInfo);
+    }
+
+    @Override
+    public List<PmsSkuInfoVo> getSkuInfoListBySpuId(Long spuId) {
+        List<PmsSkuInfo> pmsSkuInfoList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsSkuInfo>().lambda().eq(PmsSkuInfo::getSpuId, spuId)), ResponseCode.NOT_FOUND);
+        return pmsSkuInfoList.stream().map(skuInfo -> PmsSkuInfoVo.builder().build().convertToVo(skuInfo)).collect(Collectors.toList());
     }
 
     /**
