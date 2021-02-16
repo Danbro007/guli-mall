@@ -20,7 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Accessors(chain = true)
 @NoArgsConstructor
-public class ProductAttrEsModel implements Serializable {
+public class ProductAttrEsModel implements Serializable{
     @ApiModelProperty("属性ID")
     private Long attrId;
 
