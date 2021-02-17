@@ -138,15 +138,27 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         // 7、把 productAttrValueList 里不能被检索的属性值过滤掉
         HashSet<Long> attrIdSet = attrListWithCanShow.stream().map(PmsAttrBaseInfoVo::getAttrId).collect(Collectors.toCollection(HashSet::new));
         // 过滤掉不能被检索的属性
-        List<ProductAttrEsModel> attrEsModels = productAttrValueList.stream().filter(attr ->
-                attrIdSet.contains(attr.getAttrId())
-        ).map(attr -> {
-            ProductAttrEsModel attrEsModel = ProductAttrEsModel.builder().build();
-            MyBeanUtils.copyProperties(attr, attrEsModel);
-            return attrEsModel;
-        }).collect(Collectors.toList());
-        // 7、建立 es 的 skuInfo 数据模型对象
-        List<ProductSkuInfoEsModel> esProductSkuModelList = skuInfoVoList.stream().map(skuInfoVo -> {
+        List<ProductAttrEsModel> attrEsModels = filterAttrBySet(productAttrValueList, attrIdSet);
+        // 8、建立 es 的 skuInfo 数据模型对象
+        List<ProductSkuInfoEsModel> esProductSkuModelList = buildSkuInfoModelList(skuInfoVoList, brandInfo, categoryInfo, attrEsModels);
+        // Todo 10、发送给ES存储
+        MyCurdUtils.rpcResultHandle(searchClient.batchInsert(esProductSkuModelList));
+        // 11、发送成功则把spu状态设置为上架状态
+        pmsSpuInfo.setPublishStatus(ProductPublishStatus.PUT_ON);
+        MyCurdUtils.insertOrUpdate(pmsSpuInfoService.updateById(pmsSpuInfo), ResponseCode.UPDATE_FAILURE);
+    }
+
+    /**
+     * 构建 SkuInfoModel 数据模型列表
+     *
+     * @param skuInfoVoList 要构架您的 skuInfo
+     * @param brandInfo     品牌信息
+     * @param categoryInfo  分类信息
+     * @param attrEsModels  sku对应的属性数据模型
+     * @return SkuInfoModel 数据模型列表
+     */
+    private List<ProductSkuInfoEsModel> buildSkuInfoModelList(List<PmsSkuInfoVo> skuInfoVoList, PmsBrandVo brandInfo, PmsCategoryVo categoryInfo, List<ProductAttrEsModel> attrEsModels) {
+        return skuInfoVoList.stream().map(skuInfoVo -> {
             // 8.1 sku信息
             ProductSkuInfoEsModel skuInfoEsModel = ProductSkuInfoEsModel.builder().build();
             MyBeanUtils.copyProperties(skuInfoVo, skuInfoEsModel);
@@ -164,10 +176,23 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
             skuInfoEsModel.setAttrs(attrEsModels);
             return skuInfoEsModel;
         }).collect(Collectors.toList());
-        // Todo 10、发送给ES存储
-        MyCurdUtils.rpcResultHandle(searchClient.batchInsert(esProductSkuModelList));
-        // 11、发送成功则把spu状态设置为上架状态
-        pmsSpuInfo.setPublishStatus(ProductPublishStatus.PUT_ON);
-        MyCurdUtils.insertOrUpdate(pmsSpuInfoService.updateById(pmsSpuInfo), ResponseCode.UPDATE_FAILURE);
     }
+
+    /**
+     * 过滤掉不在 attrIdSet 中的属性
+     *
+     * @param productAttrValueList 要被过滤的属性
+     * @param attrIdSet            需要的属性 Id Set
+     * @return
+     */
+    private List<ProductAttrEsModel> filterAttrBySet(List<PmsProductAttrValueVo> productAttrValueList, HashSet<Long> attrIdSet) {
+        return productAttrValueList.stream().filter(attr ->
+                attrIdSet.contains(attr.getAttrId())
+        ).map(attr -> {
+            ProductAttrEsModel attrEsModel = ProductAttrEsModel.builder().build();
+            MyBeanUtils.copyProperties(attr, attrEsModel);
+            return attrEsModel;
+        }).collect(Collectors.toList());
+    }
+
 }
