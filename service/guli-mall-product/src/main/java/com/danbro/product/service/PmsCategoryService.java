@@ -2,8 +2,10 @@ package com.danbro.product.service;
 
 
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.product.controller.vo.PmsCategory2Vo;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsCategory;
 
@@ -49,7 +51,7 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      * @param categoryId 分类ID
      * @return 信息
      */
-    PmsCategoryVo getCategoryInfo(Long categoryId,Boolean throwException);
+    PmsCategoryVo getCategoryInfo(Long categoryId, Boolean throwException);
 
     /**
      * 批量更新分类
@@ -65,4 +67,19 @@ public interface PmsCategoryService extends IService<PmsCategory> {
      * @return 属性分组的分类路径ID数组
      */
     String[] findCateLogPath(Long cateLogId);
+
+    /**
+     * 获取指定的分类登记的分类
+     *
+     * @param catLevel 分类等级
+     * @return 分类列表
+     */
+    List<PmsCategoryVo> getCategoryByCatLevel(Integer catLevel);
+
+    /**
+     * 获取返回给前端的分类数据
+     *
+     * @return
+     */
+    Map<String, List<PmsCategory2Vo>> getCategoryTreeFroFront();
 }

@@ -208,7 +208,11 @@ public class MyCurdUtils {
             return resultBean.getData();
         }
         if (needThrowException) {
-            throw new GuliMallException(ResponseCode.INSERT_FAILURE);
+            // 不是rpc远程调用错误
+            if (!resultBean.getCode().equals(ResponseCode.RPC_TIME_OUT.getCode())) {
+                throw new GuliMallException(resultBean.getCode(), resultBean.getMsg());
+            }
+            throw new GuliMallException(ResponseCode.RPC_TIME_OUT);
         }
         return null;
     }

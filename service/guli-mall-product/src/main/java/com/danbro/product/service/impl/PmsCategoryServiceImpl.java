@@ -1,5 +1,7 @@
 package com.danbro.product.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
@@ -7,6 +9,8 @@ import com.danbro.common.enums.pms.CatSortType;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyObjectUtils;
+import com.danbro.product.controller.vo.PmsCategory2Vo;
+import com.danbro.product.controller.vo.PmsCategory3Vo;
 import com.danbro.product.controller.vo.PmsCategoryVo;
 import com.danbro.product.entity.PmsCategory;
 import com.danbro.product.mapper.PmsCategoryMapper;
@@ -17,13 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 商品三级分类(PmsCategory)表服务实现类
@@ -129,6 +126,41 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         String[] array = new String[cateLogPath.size()];
         cateLogPath.toArray(array);
         return array;
+    }
+
+    @Override
+    public List<PmsCategoryVo> getCategoryByCatLevel(Integer catLevel) {
+        List<PmsCategory> categoryList = this.list(new QueryWrapper<PmsCategory>().lambda().eq(PmsCategory::getCatLevel, catLevel));
+        return categoryList.stream().map(cat -> PmsCategoryVo.builder().build().convertToVo(cat)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, List<PmsCategory2Vo>> getCategoryTreeFroFront() {
+        // 1、先获取以及分类；
+        List<PmsCategoryVo> firstCatList = MyCurdUtils.selectList(this.getCategoryByCatLevel(1), ResponseCode.NOT_FOUND);
+        HashMap<String, List<PmsCategory2Vo>> map = new HashMap<>();
+        firstCatList.forEach(first -> {
+            // 2、找到下属的二级分类
+            List<PmsCategory> secondCatList = this.list(new QueryWrapper<PmsCategory>().lambda().eq(PmsCategory::getParentCid, first.getCatId()));
+            if (MyCollectionUtils.isNotEmpty(secondCatList)) {
+                List<PmsCategory2Vo> secondVoList = secondCatList.stream().map(second -> {
+                    PmsCategory2Vo category2Vo = PmsCategory2Vo.builder().build().setCatalog1Id(first.getCatId().toString()).setId(second.getCatId().toString()).setName(second.getName());
+                    // 3、找到下属的三级分类
+                    List<PmsCategory> thirdCatList = this.list(new QueryWrapper<PmsCategory>().lambda().eq(PmsCategory::getParentCid, second.getCatId()));
+                    if (MyCollectionUtils.isNotEmpty(thirdCatList)) {
+                        List<PmsCategory3Vo> category3VoList = thirdCatList.stream().map(third -> PmsCategory3Vo.builder().build().
+                                setCatalog2Id(second.getCatId().toString()).
+                                setId(third.getCatId().toString()).
+                                setName(third.getName())).
+                                collect(Collectors.toList());
+                        category2Vo.setCatalog3List(category3VoList);
+                    }
+                    return category2Vo;
+                }).collect(Collectors.toList());
+                map.put(first.getCatId().toString(), secondVoList);
+            }
+        });
+        return map;
     }
 
     private void findParentCateLogId(Long cateLogId, List<String> cateLogPath) {

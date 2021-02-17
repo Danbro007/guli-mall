@@ -15,6 +15,7 @@ public enum ResponseCode implements ResultCode {
     SUCCESS("成功", 0),
     UNKNOWN_EXCEPTION("未知异常", 1000),
     RPC_TIME_OUT("远程服务调用超时！",2000),
+    PRODUCT_UP_EXCEPTION("商品上架异常！",3000),
     FAILURE("失败", 4000),
 
     /**

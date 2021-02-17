@@ -46,8 +46,4 @@ public class PmsProductAttrValueServiceImpl extends ServiceImpl<PmsProductAttrVa
         return pmsProductAttrValues.stream().map(productAttrValue -> PmsProductAttrValueVo.builder().build().convertToVo(productAttrValue)).collect(Collectors.toList());
     }
 
-    @Override
-    public List<PmsProductAttrValueVo> getAttrValueListBySpuIdWithShow(Long spuId) {
-        return null;
-    }
 }

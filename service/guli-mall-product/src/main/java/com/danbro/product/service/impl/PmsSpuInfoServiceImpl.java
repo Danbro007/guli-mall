@@ -1,19 +1,23 @@
 package com.danbro.product.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
-import com.danbro.common.utils.*;
+import com.danbro.common.enums.pms.ProductPublishStatus;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyObjectUtils;
+import com.danbro.common.utils.MyStrUtils;
+import com.danbro.common.utils.Pagination;
+import com.danbro.common.utils.Query;
 import com.danbro.product.controller.esModel.ProductAttrEsModel;
 import com.danbro.product.controller.esModel.ProductSkuInfoEsModel;
 import com.danbro.product.controller.vo.*;
-import com.danbro.product.entity.PmsSkuInfo;
 import com.danbro.product.entity.PmsSpuInfo;
 import com.danbro.product.mapper.PmsSpuInfoMapper;
 import com.danbro.product.rpc.clients.SearchClient;
@@ -61,6 +65,9 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
 
     @Autowired
     SearchClient searchClient;
+
+    @Autowired
+    PmsSpuInfoService pmsSpuInfoService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -121,33 +128,41 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         PmsBrandVo brandInfo = pmsBrandService.getBrandInfoById(pmsSpuInfo.getBrandId());
         // 4、 查询出分类信息
         PmsCategoryVo categoryInfo = pmsCategoryService.getCategoryInfo(pmsSpuInfo.getCatalogId(), true);
-        // 5、查询出spu相关的属性ID
+        // 5、查询出spu相关的规格属性值ID
         List<PmsProductAttrValueVo> productAttrValueList = pmsProductAttrValueService.getAttrValueListBySpuId(spuId);
-        // 6、过滤掉被设置为不能被检索的属性，并查询出属性信息。
-        List<PmsAttrBaseInfoVo> attrListWithCanShow = pmsAttrService.getAttrListWithCanShow(productAttrValueList.stream().map(PmsProductAttrValueVo::getAttrId).collect(Collectors.toList()));
-        List<ProductAttrEsModel> attrValueList = attrListWithCanShow.stream().map(attr -> {
+        // 6、通过找到的属性值找出属性ID，然后找出被设置为能被检索的基本属性，并查询出属性信息。
+        List<PmsAttrBaseInfoVo> attrListWithCanShow = pmsAttrService.getBaseAttrListWithCanShow(productAttrValueList.stream().map(PmsProductAttrValueVo::getAttrId).collect(Collectors.toList()));
+        // 7、把 productAttrValueList 里不能被检索的属性值过滤掉
+        HashSet<Long> attrIdSet = attrListWithCanShow.stream().map(PmsAttrBaseInfoVo::getAttrId).collect(Collectors.toCollection(HashSet::new));
+        List<ProductAttrEsModel> attrEsModels = productAttrValueList.stream().filter(attr ->
+                attrIdSet.contains(attr.getAttrId())
+        ).map(attr -> {
             ProductAttrEsModel attrEsModel = ProductAttrEsModel.builder().build();
             MyBeanUtils.copyProperties(attr, attrEsModel);
             return attrEsModel;
         }).collect(Collectors.toList());
         // 7、建立 es 的 skuInfo 数据模型对象
         List<ProductSkuInfoEsModel> esProductSkuModelList = skuInfoVoList.stream().map(skuInfoVo -> {
-            // 7.1 sku信息
+            // 8.1 sku信息
             ProductSkuInfoEsModel skuInfoEsModel = ProductSkuInfoEsModel.builder().build();
             MyBeanUtils.copyProperties(skuInfoVo, skuInfoEsModel);
-            // 7.2 品牌信息
+            // 8.2 品牌信息
             skuInfoEsModel.setBrandImg(brandInfo.getLogo()).setBrandId(brandInfo.getBrandId()).setBrandName(brandInfo.getName());
-            // 7.3 分类信息
+            // 8.3 分类信息
             skuInfoEsModel.setCatalogName(categoryInfo.getName()).setCatalogId(categoryInfo.getCatId());
-            // 7.4 rpc 查询当前的sku还有没有库存
-            Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(skuInfoVo.getSkuId()));
+            // 8.4 rpc 查询当前的sku还有没有库存,如果是服务超时则默认设置为有库存
+            Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(skuInfoVo.getSkuId()), false);
+            hasStock = true;
             skuInfoEsModel.setHasStock(hasStock);
-            // Todo 7.5商品搜索热度 我这里暂定为 0
+            // Todo 8.5商品搜索热度 我这里暂定为 0
             skuInfoEsModel.setHotScore(0L);
-            skuInfoEsModel.setAttrs(attrValueList);
+            skuInfoEsModel.setAttrs(attrEsModels);
             return skuInfoEsModel;
         }).collect(Collectors.toList());
         // Todo 10、发送给ES存储
         MyCurdUtils.rpcResultHandle(searchClient.batchInsert(esProductSkuModelList));
+        // 11、发送成功则把spu状态设置为上架状态
+        pmsSpuInfo.setPublishStatus(ProductPublishStatus.PUT_ON);
+        MyCurdUtils.insertOrUpdate(pmsSpuInfoService.updateById(pmsSpuInfo), ResponseCode.UPDATE_FAILURE);
     }
 }

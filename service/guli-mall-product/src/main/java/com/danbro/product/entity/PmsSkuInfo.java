@@ -57,6 +57,4 @@ public class PmsSkuInfo implements Serializable {
 
     @ApiModelProperty("销量")
     private Long saleCount;
-
-
 }

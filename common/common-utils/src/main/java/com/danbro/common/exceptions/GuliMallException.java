@@ -17,6 +17,12 @@ public class GuliMallException extends RuntimeException {
         this.message = resultCode.getMessage();
     }
 
+    public GuliMallException(Integer code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+
     public Integer getCode() {
         return code;
     }

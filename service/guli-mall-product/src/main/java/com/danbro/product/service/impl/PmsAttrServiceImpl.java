@@ -199,7 +199,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     }
 
     @Override
-    public List<PmsAttrBaseInfoVo> getAttrListWithCanShow(List<Long> attrIdList) {
+    public List<PmsAttrBaseInfoVo> getBaseAttrListWithCanShow(List<Long> attrIdList) {
         List<PmsAttr> pmsAttrList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsAttr>().lambda().
                         in(PmsAttr::getAttrId, attrIdList).
                         eq(PmsAttr::getSearchType, true)),
