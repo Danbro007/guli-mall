@@ -46,8 +46,8 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
     @Override
     public PmsBrandVo update(PmsBrandVo brand) {
         PmsBrand pmsBrand = MyCurdUtils.insertOrUpdate(brand.convertToEntity(), this.saveOrUpdate(brand.convertToEntity()), ResponseCode.UPDATE_FAILURE);
-        pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(), pmsBrand.getName(),false);
-        return brand;
+        pmsCategoryBrandRelationService.updateBrand(pmsBrand.getBrandId(), pmsBrand.getName(), false);
+        return brand.convertToVo(pmsBrand);
     }
 
     @Override

@@ -34,6 +34,4 @@ public class IndexController {
     public Map<String, List<PmsCategory2Vo>> getCateLogList() {
         return pmsCategoryService.getCategoryTreeFroFront();
     }
-
-
 }

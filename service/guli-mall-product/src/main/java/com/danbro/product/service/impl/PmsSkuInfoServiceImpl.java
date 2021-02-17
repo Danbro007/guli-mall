@@ -9,12 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyNumUtils;
-import com.danbro.common.utils.MyObjectUtils;
-import com.danbro.common.utils.MyStrUtils;
-import com.danbro.common.utils.Pagination;
-import com.danbro.common.utils.Query;
+import com.danbro.common.utils.*;
 import com.danbro.product.controller.vo.*;
 import com.danbro.product.entity.PmsSkuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
@@ -68,7 +63,7 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             List<PmsSkuImagesVo> skuImagesVoList = sku.getImages().stream().map(image -> image.setSkuId(sku.getSkuId())).
                     collect(Collectors.toList());
             pmsSkuImagesService.batchSaveSkuImages(skuImagesVoList);
-            // 3、 到 pms_sku_sale_attr_value 保存销售属性s
+            // 3、 到 pms_sku_sale_attr_value 保存销售属性
             List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
             pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
             // 4、 远程调用 保存到 sms_member_price
@@ -121,13 +116,13 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Override
     public PmsSkuInfoVo getSkuInfoById(Long skuId) {
         PmsSkuInfo pmsSkuInfo = MyCurdUtils.select(this.getById(skuId), ResponseCode.NOT_FOUND);
-        return PmsSkuInfoVo.builder().build().convertToVo(pmsSkuInfo);
+        return VoConvertUtils.convertToVo(pmsSkuInfo, PmsSkuInfoVo.class);
     }
 
     @Override
     public List<PmsSkuInfoVo> getSkuInfoListBySpuId(Long spuId) {
         List<PmsSkuInfo> pmsSkuInfoList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsSkuInfo>().lambda().eq(PmsSkuInfo::getSpuId, spuId)), ResponseCode.NOT_FOUND);
-        return pmsSkuInfoList.stream().map(skuInfo -> PmsSkuInfoVo.builder().build().convertToVo(skuInfo)).collect(Collectors.toList());
+        return VoConvertUtils.batchConvertToVo(pmsSkuInfoList, PmsSkuInfoVo.class);
     }
 
     /**
@@ -151,12 +146,9 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
      * @return 构建完毕的对象
      */
     private SmsSkuLadderVo buildSkuLadder(PmsSkuInfoVo sku) {
-        return SmsSkuLadderVo.builder().build().
-                setDiscount(sku.getDiscount()).
-                setFullCount(sku.getFullCount()).
-                setSkuId(sku.getSkuId()).
-                setPrice(sku.getPrice()).
-                setAddOther(sku.getCountStatus());
+        SmsSkuLadderVo skuLadderVo = SmsSkuLadderVo.builder().build();
+        MyBeanUtils.copyProperties(sku, skuLadderVo);
+        return skuLadderVo;
     }
 
     /**
@@ -166,10 +158,8 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
      * @return 构建完毕的对象
      */
     private SmsSkuFullReductionVo buildSkuFullReduction(PmsSkuInfoVo sku) {
-        return SmsSkuFullReductionVo.builder().build().
-                setSkuId(sku.getSkuId()).
-                setFullPrice(sku.getFullPrice()).
-                setReducePrice(sku.getReducePrice()).
-                setAddOther(sku.getPriceStatus());
+        SmsSkuFullReductionVo skuFullReductionVo = SmsSkuFullReductionVo.builder().build();
+        MyBeanUtils.copyProperties(sku, skuFullReductionVo);
+        return skuFullReductionVo;
     }
 }

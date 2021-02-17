@@ -168,7 +168,10 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("attr_id", Arrays.asList(ids));
         List<PmsAttr> pmsAttrs = MyCurdUtils.select(this.list(queryWrapper), ResponseCode.NOT_FOUND, throwException);
-        return pmsAttrs.stream().map(attr -> PmsAttrBaseInfoVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
+        if (MyObjectUtils.isNotNull(pmsAttrs)) {
+            return VoConvertUtils.batchConvertToVo(pmsAttrs, PmsAttrBaseInfoVo.class);
+        }
+        return null;
     }
 
     @Override
@@ -184,7 +187,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     @Override
     public List<PmsProductAttrValueVo> getSpuBaseAttrListBySpuId(Long spuId) {
         List<PmsProductAttrValue> productAttrValueList = MyCurdUtils.select(pmsProductAttrValueService.list(new QueryWrapper<PmsProductAttrValue>().lambda().eq(PmsProductAttrValue::getSpuId, spuId)), ResponseCode.NOT_FOUND);
-        return productAttrValueList.stream().map(attr -> PmsProductAttrValueVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
+        return VoConvertUtils.batchConvertToVo(productAttrValueList, PmsProductAttrValueVo.class);
     }
 
     @Override
@@ -193,17 +196,21 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         List<PmsProductAttrValue> productAttrValues = productAttrValueVoList.stream().map(PmsProductAttrValueVo::convertToEntity).collect(Collectors.toList());
         productAttrValues.forEach(attr -> attr.setSpuId(spuId));
         boolean result = pmsProductAttrValueService.saveOrUpdateBatch(productAttrValues);
-        return MyCurdUtils.batchInsertOrUpdate(productAttrValues.stream().map(attr -> PmsProductAttrValueVo.builder().build().convertToVo(attr)).collect(Collectors.toList()),
+        return MyCurdUtils.batchInsertOrUpdate(
+                VoConvertUtils.batchConvertToVo(productAttrValues, PmsProductAttrValueVo.class),
                 result,
-                ResponseCode.UPDATE_FAILURE);
+                ResponseCode.UPDATE_FAILURE
+        );
     }
 
     @Override
     public List<PmsAttrBaseInfoVo> getBaseAttrListWithCanShow(List<Long> attrIdList) {
-        List<PmsAttr> pmsAttrList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsAttr>().lambda().
+        List<PmsAttr> pmsAttrList = MyCurdUtils.selectList(
+                this.list(new QueryWrapper<PmsAttr>().lambda().
                         in(PmsAttr::getAttrId, attrIdList).
                         eq(PmsAttr::getSearchType, true)),
-                ResponseCode.NOT_FOUND);
-        return pmsAttrList.stream().map(attr -> PmsAttrBaseInfoVo.builder().build().convertToVo(attr)).collect(Collectors.toList());
+                ResponseCode.NOT_FOUND
+        );
+        return VoConvertUtils.batchConvertToVo(pmsAttrList, PmsAttrBaseInfoVo.class);
     }
 }

@@ -2,6 +2,7 @@ package com.danbro.product.controller.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import cn.hutool.core.annotation.Alias;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
@@ -37,6 +38,7 @@ public class SmsSkuFullReductionVo implements Serializable {
     @ApiModelProperty("减多少")
     private BigDecimal reducePrice;
 
+    @Alias("priceStatus")
     @ApiModelProperty("是否参与其他优惠")
     private Boolean addOther;
 

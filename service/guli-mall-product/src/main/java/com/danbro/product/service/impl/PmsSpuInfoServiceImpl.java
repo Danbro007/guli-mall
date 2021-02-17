@@ -74,8 +74,8 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
     public void insertSpuInfo(PmsSpuInfoVo pmsSpuInfoVo) {
         //1、添加 spu 的基本信息 pms_spu_info
         PmsSpuInfo spuInfo = pmsSpuInfoVo.convertToEntity();
-        boolean save = this.save(spuInfo);
-        MyCurdUtils.insertOrUpdate(pmsSpuInfoVo.convertToVo(spuInfo), save, ResponseCode.INSERT_FAILURE);
+        boolean saveResult = this.save(spuInfo);
+        MyCurdUtils.insertOrUpdate(pmsSpuInfoVo.convertToVo(spuInfo), saveResult, ResponseCode.INSERT_FAILURE);
         // 2、添加商品介绍图片 pms_spu_info_desc
         pmsSpuInfoDescService.saveSpuInfoDesc(pmsSpuInfoVo.getDecript(), pmsSpuInfoVo.getId());
         // 3. 到 pms_spu_image 保存图片
@@ -94,9 +94,12 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
                 collect(Collectors.toList());
         pmsProductAttrValueService.batchSave(attrValueList);
         // 6、 保存sku信息
-        pmsSpuInfoVo.getSkus().forEach(sku -> sku.setBrandId(pmsSpuInfoVo.getBrandId()).
-                setCatalogId(pmsSpuInfoVo.getCatalogId()).
-                setSkuDesc(pmsSpuInfoVo.getSpuDescription()).setSpuId(pmsSpuInfoVo.getId()));
+        pmsSpuInfoVo.getSkus().forEach(sku ->
+                sku.setBrandId(pmsSpuInfoVo.getBrandId()).
+                        setCatalogId(pmsSpuInfoVo.getCatalogId()).
+                        setSkuDesc(pmsSpuInfoVo.getSpuDescription()).
+                        setSpuId(pmsSpuInfoVo.getId())
+        );
         pmsSkuInfoService.batchSaveSkuInfo(pmsSpuInfoVo.getSkus());
     }
 
@@ -134,6 +137,7 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         List<PmsAttrBaseInfoVo> attrListWithCanShow = pmsAttrService.getBaseAttrListWithCanShow(productAttrValueList.stream().map(PmsProductAttrValueVo::getAttrId).collect(Collectors.toList()));
         // 7、把 productAttrValueList 里不能被检索的属性值过滤掉
         HashSet<Long> attrIdSet = attrListWithCanShow.stream().map(PmsAttrBaseInfoVo::getAttrId).collect(Collectors.toCollection(HashSet::new));
+        // 过滤掉不能被检索的属性
         List<ProductAttrEsModel> attrEsModels = productAttrValueList.stream().filter(attr ->
                 attrIdSet.contains(attr.getAttrId())
         ).map(attr -> {
@@ -151,6 +155,7 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
             // 8.3 分类信息
             skuInfoEsModel.setCatalogName(categoryInfo.getName()).setCatalogId(categoryInfo.getCatId());
             // 8.4 rpc 查询当前的sku还有没有库存,如果是服务超时则默认设置为有库存
+            // Todo fallback 不起作用 待解决
             Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(skuInfoVo.getSkuId()), false);
             hasStock = true;
             skuInfoEsModel.setHasStock(hasStock);
