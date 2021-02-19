@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.product.controller.vo.PmsSpuImagesVo;
 import com.danbro.product.entity.PmsSpuImages;
 import com.danbro.product.mapper.PmsSpuImagesMapper;
@@ -25,7 +26,7 @@ public class PmsSpuImagesServiceImpl extends ServiceImpl<PmsSpuImagesMapper, Pms
     public List<PmsSpuImagesVo> batchSave(List<String> images, Long spuId) {
         List<PmsSpuImages> spuImages = images.stream().map(image -> PmsSpuImages.builder().build().setSpuId(spuId).setImgUrl(MyStrUtils.getImageName(image))).collect(Collectors.toList());
         boolean saveBatch = this.saveBatch(spuImages);
-        List<PmsSpuImagesVo> imagesVoList = spuImages.stream().map(image -> PmsSpuImagesVo.builder().build().convertToVo(image)).collect(Collectors.toList());
+        List<PmsSpuImagesVo> imagesVoList = ConvertUtils.batchConvert(spuImages, PmsSpuImagesVo.class);
         return MyCurdUtils.batchInsertOrUpdate(imagesVoList, saveBatch, ResponseCode.INSERT_FAILURE);
     }
 }

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.product.controller.vo.PmsSkuSaleAttrValueVo;
 import com.danbro.product.entity.PmsSkuSaleAttrValue;
 import com.danbro.product.mapper.PmsSkuSaleAttrValueMapper;
@@ -24,7 +25,7 @@ public class PmsSkuSaleAttrValueServiceImpl extends ServiceImpl<PmsSkuSaleAttrVa
     public List<PmsSkuSaleAttrValueVo> batchSaveSaleAttrValue(List<PmsSkuSaleAttrValueVo> attrValueVoList) {
         List<PmsSkuSaleAttrValue> attrValueList = attrValueVoList.stream().map(PmsSkuSaleAttrValueVo::convertToEntity).collect(Collectors.toList());
         boolean saveBatch = this.saveBatch(attrValueList);
-        List<PmsSkuSaleAttrValueVo> saleAttrValueVos = attrValueList.stream().map(saleAttr -> PmsSkuSaleAttrValueVo.builder().build().convertToVo(saleAttr)).collect(Collectors.toList());
+        List<PmsSkuSaleAttrValueVo> saleAttrValueVos = ConvertUtils.batchConvert(attrValueList, PmsSkuSaleAttrValueVo.class);
         return MyCurdUtils.batchInsertOrUpdate(saleAttrValueVos, saveBatch, ResponseCode.INSERT_FAILURE);
     }
 }

@@ -21,6 +21,7 @@ public class SmsSpuBoundsServiceImpl extends ServiceImpl<SmsSpuBoundsMapper, Sms
     @Override
     public SmsSpuBondsVo insertSpuBonds(SmsSpuBondsVo smsSpuBondsVo) {
         SmsSpuBounds smsSpuBounds = smsSpuBondsVo.convertToEntity();
-        return MyCurdUtils.insertOrUpdate(smsSpuBondsVo.convertToVo(smsSpuBounds), this.save(smsSpuBounds), ResponseCode.INSERT_FAILURE);
+        boolean save = this.save(smsSpuBounds);
+        return MyCurdUtils.insertOrUpdate(smsSpuBondsVo.convertToVo(smsSpuBounds), save, ResponseCode.INSERT_FAILURE);
     }
 }

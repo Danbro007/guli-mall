@@ -47,26 +47,31 @@ public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttr
 
     @Override
     public void batchDeleteByAttrId(Long[] ids, Boolean throwException) {
-        QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("attr_id", Arrays.asList(ids));
-        MyCurdUtils.batchDelete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
+        MyCurdUtils.batchDelete(this.remove(new QueryWrapper<PmsAttrAttrgroupRelation>()
+                        .lambda()
+                        .in(PmsAttrAttrgroupRelation::getAttrId, Arrays.asList(ids))),
+                ResponseCode.DELETE_FAILURE);
     }
 
     @Override
     public void batchDeleteByAttrGroupId(Long[] ids, Boolean throwException) {
-        QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("attr_group_id", Arrays.asList(ids));
         // 如果是销售属性删除则到关系表里删除失败也不抛出异常。
-        MyCurdUtils.batchDelete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE, throwException);
+        MyCurdUtils.batchDelete(this.remove(new QueryWrapper<PmsAttrAttrgroupRelation>()
+                        .lambda()
+                        .in(PmsAttrAttrgroupRelation::getAttrId, Arrays.asList(ids))),
+                ResponseCode.DELETE_FAILURE,
+                throwException);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDeleteByAttrIdAndAttrGroupId(List<PmsAttrAttrgroupRelationVo> paramList) {
         paramList.forEach(e -> {
-            QueryWrapper<PmsAttrAttrgroupRelation> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("attr_id", e.getAttrId()).eq("attr_group_id", e.getAttrGroupId());
-            MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
+            MyCurdUtils.delete(this.remove(new QueryWrapper<PmsAttrAttrgroupRelation>().
+                            lambda().
+                            eq(PmsAttrAttrgroupRelation::getAttrId, e.getAttrId()).
+                            eq(PmsAttrAttrgroupRelation::getAttrGroupId, e.getAttrGroupId())),
+                    ResponseCode.DELETE_FAILURE);
         });
     }
 }

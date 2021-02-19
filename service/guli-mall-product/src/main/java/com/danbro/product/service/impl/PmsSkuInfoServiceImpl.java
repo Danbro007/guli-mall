@@ -116,13 +116,13 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Override
     public PmsSkuInfoVo getSkuInfoById(Long skuId) {
         PmsSkuInfo pmsSkuInfo = MyCurdUtils.select(this.getById(skuId), ResponseCode.NOT_FOUND);
-        return VoConvertUtils.convertToVo(pmsSkuInfo, PmsSkuInfoVo.class);
+        return ConvertUtils.convert(pmsSkuInfo, PmsSkuInfoVo.class);
     }
 
     @Override
     public List<PmsSkuInfoVo> getSkuInfoListBySpuId(Long spuId) {
         List<PmsSkuInfo> pmsSkuInfoList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsSkuInfo>().lambda().eq(PmsSkuInfo::getSpuId, spuId)), ResponseCode.NOT_FOUND);
-        return VoConvertUtils.batchConvertToVo(pmsSkuInfoList, PmsSkuInfoVo.class);
+        return ConvertUtils.batchConvert(pmsSkuInfoList, PmsSkuInfoVo.class);
     }
 
     /**

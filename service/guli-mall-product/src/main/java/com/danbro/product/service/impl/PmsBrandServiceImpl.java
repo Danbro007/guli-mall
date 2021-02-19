@@ -1,6 +1,7 @@
 package com.danbro.product.service.impl;
 
 import java.util.Arrays;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,8 +32,8 @@ public class PmsBrandServiceImpl extends ServiceImpl<PmsBrandMapper, PmsBrand> i
 
     @Override
     public Pagination<PmsBrandVo, PmsBrand> queryPage(PageParam<PmsBrand> pageParam, String key) {
-        QueryWrapper<PmsBrand> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("brand_id", key).or().like("name", key);
+        LambdaQueryWrapper<PmsBrand> queryWrapper = new QueryWrapper<PmsBrand>().lambda();
+        queryWrapper.eq(PmsBrand::getBrandId, key).or().like(PmsBrand::getName, key);
         IPage<PmsBrand> page = this.page(new Query<PmsBrand>().getPage(pageParam), queryWrapper);
         return new Pagination<>(page, PmsBrandVo.class);
     }

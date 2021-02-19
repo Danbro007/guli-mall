@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.VoConvertUtils;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.product.controller.vo.PmsAttrDetailVo;
 import com.danbro.product.controller.vo.PmsProductAttrValueVo;
 import com.danbro.product.entity.PmsProductAttrValue;
@@ -39,7 +39,7 @@ public class PmsProductAttrValueServiceImpl extends ServiceImpl<PmsProductAttrVa
         });
         boolean saveBatchResult = this.saveBatch(pmsProductAttrValues);
         return MyCurdUtils.batchInsertOrUpdate(
-                VoConvertUtils.batchConvertToVo(pmsProductAttrValues, PmsProductAttrValueVo.class),
+                ConvertUtils.batchConvert(pmsProductAttrValues, PmsProductAttrValueVo.class),
                 saveBatchResult,
                 ResponseCode.INSERT_FAILURE
         );
@@ -51,7 +51,7 @@ public class PmsProductAttrValueServiceImpl extends ServiceImpl<PmsProductAttrVa
                         lambda().
                         eq(PmsProductAttrValue::getSpuId, spuId)),
                 ResponseCode.NOT_FOUND);
-        return VoConvertUtils.batchConvertToVo(pmsProductAttrValues, PmsProductAttrValueVo.class);
+        return ConvertUtils.batchConvert(pmsProductAttrValues, PmsProductAttrValueVo.class);
     }
 
 }

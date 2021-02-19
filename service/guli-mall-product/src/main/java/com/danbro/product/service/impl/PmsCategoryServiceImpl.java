@@ -54,11 +54,12 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public void batchDeleteCategoryById(Long[] catIds) {
         List<Long> catIdList = Arrays.asList(catIds);
-        QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();
         // 删除 categoryId或者父级Id为要删除的分类Id的对象
-        queryWrapper.in("cat_id", catIdList).or().in("parent_cid", catIdList);
         // 删除完毕就不建议立即主动建立缓存，因为可能建立的缓存次数比删除的次数少，降低效率。
-        MyCurdUtils.delete(this.remove(queryWrapper), ResponseCode.DELETE_FAILURE);
+        MyCurdUtils.delete(this.remove(new QueryWrapper<PmsCategory>().lambda().
+                        in(PmsCategory::getCatId, catIdList).or().
+                        in(PmsCategory::getParentCid, catIdList)),
+                ResponseCode.DELETE_FAILURE);
         // 同步删除 pms_category_brand_relation 里的数据
         pmsCategoryBrandRelationService.batchDeleteByCategoryId(catIds);
         // 同步删除 pms_attr 表的数据
@@ -92,6 +93,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
 
+    @CacheEvict(value = "category", allEntries = true)
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
         MyCurdUtils.batchInsertOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
@@ -111,6 +113,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         cateLogPath.toArray(array);
         return array;
     }
+
 
     @Override
     public List<PmsCategoryVo> getCategoryByCatLevel(Integer catLevel) {
@@ -132,7 +135,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
      *
      * @param allCategory  所有的分类
      * @param firstCatList 第一分类的列表
-     * @return
+     * @return 以第一分类的 ID 作为 key，第一分类的子分类作为 value
      */
     private Map<String, List<PmsCategory2Vo>> buildCategoryMap(List<PmsCategory> allCategory, List<PmsCategory> firstCatList) {
         HashMap<String, List<PmsCategory2Vo>> map = new HashMap<>();
@@ -163,6 +166,12 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         return map;
     }
 
+    /**
+     * 通过第三分类ID查找出分类的路径
+     *
+     * @param cateLogId   第三分类ID
+     * @param cateLogPath 分类路径
+     */
     private void findParentCateLogId(Long cateLogId, List<String> cateLogPath) {
         cateLogPath.add(Long.toString(cateLogId));
         PmsCategory pmsCategory = this.getById(cateLogId);
@@ -173,7 +182,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
 
     /**
-     * 获取父分类的子分类
+     * 递归获取父分类的子分类
      *
      * @param root        父分类
      * @param allCategory 所有分类列表
@@ -186,6 +195,4 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
     }
-
-
 }

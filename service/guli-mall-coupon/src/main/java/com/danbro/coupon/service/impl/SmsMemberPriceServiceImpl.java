@@ -3,20 +3,16 @@ package com.danbro.coupon.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.coupon.controller.vo.SmsMemberPriceVo;
-import com.danbro.coupon.controller.vo.SmsSkuLadderVo;
-import com.danbro.coupon.controller.vo.UmsMemberLevelVo;
 import com.danbro.coupon.entity.SmsMemberPrice;
 import com.danbro.coupon.mapper.SmsMemberPriceMapper;
 import com.danbro.coupon.rpc.clients.UmsMemberLevelClient;
 import com.danbro.coupon.service.SmsMemberPriceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +36,13 @@ public class SmsMemberPriceServiceImpl extends ServiceImpl<SmsMemberPriceMapper,
     @Override
     public List<SmsMemberPriceVo> batchInsertMemberPrice(List<SmsMemberPriceVo> memberPriceVoList) {
         // 过滤出会员价格大于 0 的
-        List<SmsMemberPrice> memberPriceList = memberPriceVoList.stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).map(SmsMemberPriceVo::convertToEntity).collect(Collectors.toList());
+        List<SmsMemberPrice> memberPriceList = memberPriceVoList.stream().
+                filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).
+                map(SmsMemberPriceVo::convertToEntity).
+                collect(Collectors.toList());
         // Todo 批量保存到 sms_member_price 中
         boolean saveBatch = this.saveBatch(memberPriceList);
-        List<SmsMemberPriceVo> priceVoList = memberPriceList.stream().map(memberPrice -> SmsMemberPriceVo.builder().build().convertToVo(memberPrice)).collect(Collectors.toList());
+        List<SmsMemberPriceVo> priceVoList = ConvertUtils.batchConvert(memberPriceList, SmsMemberPriceVo.class);
         return MyCurdUtils.batchInsertOrUpdate(priceVoList, saveBatch, ResponseCode.INSERT_FAILURE);
     }
 }

@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.product.controller.vo.PmsBrandVo;
 import com.danbro.product.controller.vo.PmsCategoryBrandRelationVo;
 import com.danbro.product.controller.vo.PmsCategoryVo;
@@ -40,21 +42,17 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     public PmsCategoryBrandRelationVo insert(PmsCategoryBrandRelationVo param) {
         PmsBrandVo brand = pmsBrandService.getBrandInfoById(param.getBrandId());
         PmsCategoryVo category = pmsCategoryService.getCategoryInfo(param.getCatelogId(), true);
-        param.setBrandName(brand.getName()).setCatelogName(category.getName());
+        param.setBrandName(brand.getName()).
+                setCatelogName(category.getName());
         return MyCurdUtils.insertOrUpdate(param, this.saveOrUpdate(param.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
     @Override
     public List<PmsCategoryBrandRelationVo> getBrandRelationList(Long brandId) {
-        QueryWrapper<PmsCategoryBrandRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("brand_id", brandId);
+        LambdaQueryWrapper<PmsCategoryBrandRelation> queryWrapper = new QueryWrapper<PmsCategoryBrandRelation>().lambda();
+        queryWrapper.eq(PmsCategoryBrandRelation::getBrandId, brandId);
         List<PmsCategoryBrandRelation> brandRelations = this.list(queryWrapper);
-        ArrayList<PmsCategoryBrandRelationVo> relationVos = new ArrayList<>();
-        brandRelations.forEach(e -> {
-            PmsCategoryBrandRelationVo vo = PmsCategoryBrandRelationVo.builder().build().convertToVo(e);
-            relationVos.add(vo);
-        });
-        return relationVos;
+        return ConvertUtils.batchConvert(brandRelations, PmsCategoryBrandRelationVo.class);
     }
 
     @Override
@@ -63,18 +61,18 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     }
 
     @Override
-    public PmsCategoryBrandRelation updateBrand(Long brandId, String brandName,Boolean needThrowException) {
-        UpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<>();
+    public PmsCategoryBrandRelation updateBrand(Long brandId, String brandName, Boolean needThrowException) {
+        LambdaUpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<PmsCategoryBrandRelation>().lambda();
         PmsCategoryBrandRelation brandRelation = new PmsCategoryBrandRelation().setBrandId(brandId).setBrandName(brandName);
-        updateWrapper.eq("brand_id", brandId);
-        return MyCurdUtils.insertOrUpdate(brandRelation, this.update(brandRelation, updateWrapper), ResponseCode.UPDATE_FAILURE,needThrowException);
+        updateWrapper.eq(PmsCategoryBrandRelation::getBrandId, brandId);
+        return MyCurdUtils.insertOrUpdate(brandRelation, this.update(brandRelation, updateWrapper), ResponseCode.UPDATE_FAILURE, needThrowException);
     }
 
     @Override
     public PmsCategoryBrandRelation updateCategory(Long categoryId, String categoryName) {
-        UpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<>();
+        LambdaUpdateWrapper<PmsCategoryBrandRelation> updateWrapper = new UpdateWrapper<PmsCategoryBrandRelation>().lambda();
         PmsCategoryBrandRelation brandRelation = new PmsCategoryBrandRelation().setCatelogName(categoryName);
-        updateWrapper.eq("catelog_id", categoryId);
+        updateWrapper.eq(PmsCategoryBrandRelation::getCatelogId, categoryId);
         return MyCurdUtils.insertOrUpdate(brandRelation, this.update(brandRelation, updateWrapper), ResponseCode.UPDATE_FAILURE);
     }
 
@@ -102,7 +100,7 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
                                 collect(Collectors.toList())));
         List<PmsBrandVo> pmsBrandVoList = new ArrayList<>();
         if (!MyCollectionUtils.isEmpty(pmsBrandList)) {
-            pmsBrandVoList = pmsBrandList.stream().map(brand -> PmsBrandVo.builder().build().convertToVo(brand)).collect(Collectors.toList());
+            pmsBrandVoList = ConvertUtils.batchConvert(pmsBrandList, PmsBrandVo.class);
         }
         return MyCurdUtils.select(pmsBrandVoList, ResponseCode.NOT_FOUND, false);
     }

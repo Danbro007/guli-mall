@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -49,16 +50,16 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     @Override
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> attrQueryPage(PageParam<PmsAttr> pageParam, String key, Long categoryId, String attrType) {
         IPage<PmsAttr> page;
-        QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<PmsAttr>().lambda();
         // 返回所有
         if (MyObjectUtils.isNotNull(categoryId) && categoryId > 0) {
-            queryWrapper.eq("catelog_id", categoryId);
+            queryWrapper.eq(PmsAttr::getCatelogId, categoryId);
         }
         if (MyStrUtils.isNotEmpty(key)) {
-            queryWrapper.like("attr_name", key).or().like("attr_id", key);
+            queryWrapper.like(PmsAttr::getAttrName, key).or().like(PmsAttr::getAttrId, key);
         }
         // 查询的属性类型
-        queryWrapper.eq("attr_type", AttrType.BASE.getType().equalsIgnoreCase(attrType) ? AttrType.BASE.getCode() : AttrType.SALE.getCode());
+        queryWrapper.eq(PmsAttr::getAttrType, AttrType.BASE.getType().equalsIgnoreCase(attrType) ? AttrType.BASE.getCode() : AttrType.SALE.getCode());
         //分页查找
         page = this.page(new Query<PmsAttr>().getPage(pageParam), queryWrapper);
         // 遍历每一个属性对象然后查找属性对应的属性分组的组名和与分类名。
@@ -109,8 +110,8 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public PmsAttrDetailVo updateAttr(PmsAttrDetailVo param) {
-        PmsAttrAttrgroupRelation attrgroupRelation = new PmsAttrAttrgroupRelation();
-        MyBeanUtils.copyProperties(param, attrgroupRelation);
+        PmsAttrAttrgroupRelation relation = new PmsAttrAttrgroupRelation();
+        MyBeanUtils.copyProperties(param, relation);
         PmsAttr pmsAttr = param.convertToEntity();
         this.updateById(pmsAttr);
         // 销售属性不用更新分组关系
@@ -147,8 +148,8 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDeleteAttr(Long[] ids) {
-        QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("attr_id", Arrays.asList(ids));
+        LambdaQueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<PmsAttr>().lambda();
+        queryWrapper.in(PmsAttr::getAttrId, Arrays.asList(ids));
         // 如果是销售属性则不用到 pms_attr_attr_group_relation 表删除，如果是基本属性需要删除pms_attr_attr_group_relation 表的关系
         List<PmsAttr> baseAttrList = this.list(queryWrapper).stream().filter(attr -> AttrType.BASE.getCode().equals(attr.getAttrType())).collect(Collectors.toList());
         // 先到 pms_attr 里删除
@@ -165,21 +166,21 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
 
     @Override
     public List<PmsAttrBaseInfoVo> getListInIds(Long[] ids, Boolean throwException) {
-        QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("attr_id", Arrays.asList(ids));
+        LambdaQueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<PmsAttr>().lambda();
+        queryWrapper.in(PmsAttr::getAttrId, Arrays.asList(ids));
         List<PmsAttr> pmsAttrs = MyCurdUtils.select(this.list(queryWrapper), ResponseCode.NOT_FOUND, throwException);
-        if (MyObjectUtils.isNotNull(pmsAttrs)) {
-            return VoConvertUtils.batchConvertToVo(pmsAttrs, PmsAttrBaseInfoVo.class);
+        if (MyCollectionUtils.isNotEmpty(pmsAttrs)) {
+            return ConvertUtils.batchConvert(pmsAttrs, PmsAttrBaseInfoVo.class);
         }
         return null;
     }
 
     @Override
     public Pagination<PmsAttrBaseInfoVo, PmsAttr> getListNotInIds(PageParam<PmsAttr> pageParam, Long[] ids, String key, Boolean throwException) {
-        QueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<>();
-        queryWrapper.notIn("attr_id", Arrays.asList(ids));
+        LambdaQueryWrapper<PmsAttr> queryWrapper = new QueryWrapper<PmsAttr>().lambda();
+        queryWrapper.notIn(PmsAttr::getAttrId, Arrays.asList(ids));
         if (MyStrUtils.isNotEmpty(key)) {
-            queryWrapper.like("attr_id", key).or().like("attr_name", key);
+            queryWrapper.like(PmsAttr::getAttrId, key).or().like(PmsAttr::getAttrName, key);
         }
         return new Pagination<>(this.page(new Query<PmsAttr>().getPage(pageParam), queryWrapper), PmsAttrBaseInfoVo.class);
     }
@@ -187,7 +188,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     @Override
     public List<PmsProductAttrValueVo> getSpuBaseAttrListBySpuId(Long spuId) {
         List<PmsProductAttrValue> productAttrValueList = MyCurdUtils.select(pmsProductAttrValueService.list(new QueryWrapper<PmsProductAttrValue>().lambda().eq(PmsProductAttrValue::getSpuId, spuId)), ResponseCode.NOT_FOUND);
-        return VoConvertUtils.batchConvertToVo(productAttrValueList, PmsProductAttrValueVo.class);
+        return ConvertUtils.batchConvert(productAttrValueList, PmsProductAttrValueVo.class);
     }
 
     @Override
@@ -197,7 +198,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         productAttrValues.forEach(attr -> attr.setSpuId(spuId));
         boolean result = pmsProductAttrValueService.saveOrUpdateBatch(productAttrValues);
         return MyCurdUtils.batchInsertOrUpdate(
-                VoConvertUtils.batchConvertToVo(productAttrValues, PmsProductAttrValueVo.class),
+                ConvertUtils.batchConvert(productAttrValues, PmsProductAttrValueVo.class),
                 result,
                 ResponseCode.UPDATE_FAILURE
         );
@@ -211,6 +212,6 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
                         eq(PmsAttr::getSearchType, true)),
                 ResponseCode.NOT_FOUND
         );
-        return VoConvertUtils.batchConvertToVo(pmsAttrList, PmsAttrBaseInfoVo.class);
+        return ConvertUtils.batchConvert(pmsAttrList, PmsAttrBaseInfoVo.class);
     }
 }

@@ -2,13 +2,11 @@ package com.danbro.ware.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.enums.wms.PurchaseDetailStatus;
@@ -21,13 +19,11 @@ import com.danbro.ware.controller.vo.DonePurchaseDetailVo;
 import com.danbro.ware.controller.vo.DonePurchaseVo;
 import com.danbro.ware.controller.vo.MergePurchaseVo;
 import com.danbro.ware.controller.vo.PmsSkuInfoVo;
-import com.danbro.ware.controller.vo.WmsPurchaseDetailVo;
 import com.danbro.ware.controller.vo.WmsPurchaseVo;
 import com.danbro.ware.entity.WmsPurchase;
 import com.danbro.ware.entity.WmsPurchaseDetail;
 import com.danbro.ware.entity.WmsWareSku;
 import com.danbro.ware.mapper.WmsPurchaseMapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.ware.rpc.clients.PmsSkuInfoClient;
 import com.danbro.ware.service.WmsPurchaseDetailService;
 import com.danbro.ware.service.WmsPurchaseService;
@@ -127,7 +123,10 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void receivePurchase(List<Long> purchaseIdList) {
-        List<WmsPurchase> purchaseList = MyCurdUtils.selectList(this.list(new QueryWrapper<WmsPurchase>().lambda().in(WmsPurchase::getId, purchaseIdList)), ResponseCode.NOT_FOUND);
+        List<WmsPurchase> purchaseList = MyCurdUtils.selectList(this.list(new QueryWrapper<WmsPurchase>().
+                        lambda().
+                        in(WmsPurchase::getId, purchaseIdList)),
+                ResponseCode.NOT_FOUND);
         // 只更新采购单状态为【新建】或者【已分配】的变成【已领取】
         purchaseList.stream().
                 filter(purchase -> purchase.getStatus() == PurchaseDetailStatus.NEW || purchase.getStatus() == PurchaseDetailStatus.ALLOCATED)
@@ -135,7 +134,8 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
                 .forEach(purchase -> {
                     // 更新采购项的状态为【已领取】
                     purchase.setStatus(PurchaseDetailStatus.PURCHASING);
-                    wmsPurchaseDetailService.update(new UpdateWrapper<WmsPurchaseDetail>().lambda().
+                    wmsPurchaseDetailService.update(new UpdateWrapper<WmsPurchaseDetail>().
+                            lambda().
                             eq(WmsPurchaseDetail::getPurchaseId, purchase.getId()).
                             set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.PURCHASING));
                 });
@@ -153,31 +153,45 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
             LambdaUpdateWrapper<WmsPurchaseDetail> lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda();
             // 采购成功的都要入库
             if (detail.getStatus() == PurchaseDetailStatus.DONE) {
-                lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.DONE);
+                lambda = new UpdateWrapper<WmsPurchaseDetail>().
+                        lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.DONE);
                 // 产品入库
-                // 先查询到采购的商品信息（到 pms 查询）
-                WmsPurchaseDetail purchaseDetail = MyCurdUtils.select(wmsPurchaseDetailService.getById(detail.getItemId()), ResponseCode.NOT_FOUND);
-                PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsSkuInfoClient.getSkuInfo(purchaseDetail.getSkuId()));
-                // 查询出入库之前的库存
-                WmsWareSku wmsWareSku = MyCurdUtils.select(wmsWareSkuService.getOne(new QueryWrapper<WmsWareSku>().lambda().
-                                eq(WmsWareSku::getSkuId, pmsSkuInfoVo.getSkuId()).
-                                eq(WmsWareSku::getWareId, purchaseDetail.getWareId())),
-                        ResponseCode.NOT_FOUND);
-                // 更新产品的库存
-                wmsWareSku.setStock(wmsWareSku.getStock() + purchaseDetail.getSkuNum());
-                MyCurdUtils.insertOrUpdate(wmsWareSkuService.updateById(wmsWareSku), ResponseCode.UPDATE_FAILURE);
+                productInBound(detail);
             } else if (detail.getStatus() == PurchaseDetailStatus.FAILURE) {
                 // 采购失败的只更新采购状态
-                lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.FAILURE);
+                lambda = new UpdateWrapper<WmsPurchaseDetail>().lambda().
+                        eq(WmsPurchaseDetail::getId, detail.getItemId()).set(WmsPurchaseDetail::getStatus, PurchaseDetailStatus.FAILURE);
                 flag = true;
             }
+            // 更细采购状态
             MyCurdUtils.insertOrUpdate(wmsPurchaseDetailService.update(lambda), ResponseCode.UPDATE_FAILURE);
         }
         // 更新采购单信息
         // 没有全部采购成功则把整个采购单的状态设置为【采购失败】状态  false:都采购成功
-        LambdaUpdateWrapper<WmsPurchase> updateWrapper = new UpdateWrapper<WmsPurchase>().lambda().
+        LambdaUpdateWrapper<WmsPurchase> updateWrapper = new UpdateWrapper<WmsPurchase>().
+                lambda().
                 eq(WmsPurchase::getId, id).
                 set(WmsPurchase::getStatus, flag ? PurchaseDetailStatus.FAILURE : PurchaseDetailStatus.DONE);
         MyCurdUtils.insertOrUpdate(this.update(updateWrapper), ResponseCode.UPDATE_FAILURE);
+    }
+
+    /**
+     * 商品入库
+     *
+     * @param detail 采购成功的项目
+     */
+    private void productInBound(DonePurchaseDetailVo detail) {
+        WmsPurchaseDetail purchaseDetail = MyCurdUtils.select(wmsPurchaseDetailService.getById(detail.getItemId()), ResponseCode.NOT_FOUND);
+        // 先查询到采购的商品信息（到 pms 查询）
+        PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsSkuInfoClient.getSkuInfo(purchaseDetail.getSkuId()));
+        // 查询出入库之前的库存
+        WmsWareSku wmsWareSku = MyCurdUtils.select(wmsWareSkuService.getOne(new QueryWrapper<WmsWareSku>().
+                        lambda().
+                        eq(WmsWareSku::getSkuId, pmsSkuInfoVo.getSkuId()).
+                        eq(WmsWareSku::getWareId, purchaseDetail.getWareId())),
+                ResponseCode.NOT_FOUND);
+        // 更新产品的库存
+        wmsWareSku.setStock(wmsWareSku.getStock() + purchaseDetail.getSkuNum());
+        MyCurdUtils.insertOrUpdate(wmsWareSkuService.updateById(wmsWareSku), ResponseCode.UPDATE_FAILURE);
     }
 }

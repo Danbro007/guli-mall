@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.common.utils.Pagination;
@@ -35,24 +36,29 @@ public class UmsMemberLevelServiceImpl extends ServiceImpl<UmsMemberLevelMapper,
 
     @Override
     public UmsMemberLevelVo insertMemberLevel(UmsMemberLevelVo memberLevelVo) {
-        return MyCurdUtils.insertOrUpdate(memberLevelVo, this.save(memberLevelVo.convertToEntity()), ResponseCode.INSERT_FAILURE);
+        UmsMemberLevel umsMemberLevel = memberLevelVo.convertToEntity();
+        boolean save = this.save(umsMemberLevel);
+        return MyCurdUtils.insertOrUpdate(memberLevelVo.convertToVo(umsMemberLevel), save, ResponseCode.INSERT_FAILURE);
     }
 
     @Override
     public UmsMemberLevelVo updateMemberLevel(UmsMemberLevelVo memberLevelVo) {
-        return MyCurdUtils.insertOrUpdate(memberLevelVo, this.updateById(memberLevelVo.convertToEntity()), ResponseCode.INSERT_FAILURE);
+        UmsMemberLevel umsMemberLevel = memberLevelVo.convertToEntity();
+        boolean update = this.updateById(umsMemberLevel);
+        return MyCurdUtils.insertOrUpdate(memberLevelVo.convertToVo(umsMemberLevel), update, ResponseCode.INSERT_FAILURE);
     }
 
     @Override
     public UmsMemberLevelVo getMemberLevelInfoById(Long memberLevelId) {
-        UmsMemberLevelVo umsMemberLevelVo = UmsMemberLevelVo.builder().build().convertToVo(this.getById(memberLevelId));
+        UmsMemberLevel memberLevel = this.getById(memberLevelId);
+        UmsMemberLevelVo umsMemberLevelVo = ConvertUtils.convert(memberLevel,UmsMemberLevelVo.class);
         return MyCurdUtils.select(umsMemberLevelVo, ResponseCode.NOT_FOUND, true);
     }
 
     @Override
     public UmsMemberLevelVo getMemberLevelInfoByName(String memberLevelName) {
         UmsMemberLevel memberLevel = this.getOne(new QueryWrapper<UmsMemberLevel>().lambda().eq(UmsMemberLevel::getName, memberLevelName));
-        UmsMemberLevelVo memberLevelVo = UmsMemberLevelVo.builder().build().convertToVo(memberLevel);
-        return MyCurdUtils.select(memberLevelVo,ResponseCode.NOT_FOUND);
+        UmsMemberLevelVo memberLevelVo = ConvertUtils.convert(memberLevel,UmsMemberLevelVo.class);
+        return MyCurdUtils.select(memberLevelVo, ResponseCode.NOT_FOUND);
     }
 }

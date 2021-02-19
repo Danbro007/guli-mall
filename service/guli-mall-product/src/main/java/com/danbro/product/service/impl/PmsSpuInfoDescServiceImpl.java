@@ -22,6 +22,7 @@ public class PmsSpuInfoDescServiceImpl extends ServiceImpl<PmsSpuInfoDescMapper,
 
     @Override
     public PmsSpuInfoDescVo saveSpuInfoDesc(List<String> images, Long spuId) {
+        // 图片之间用 ， 间隔处理
         PmsSpuInfoDesc pmsSpuInfoDesc = new PmsSpuInfoDesc().setDecript(MyStrUtils.join(",", images)).setSpuId(spuId);
         return MyCurdUtils.insertOrUpdate(PmsSpuInfoDescVo.builder().build().convertToVo(pmsSpuInfoDesc), this.save(pmsSpuInfoDesc), ResponseCode.INSERT_FAILURE);
     }
