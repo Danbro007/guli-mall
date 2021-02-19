@@ -1,12 +1,9 @@
 package com.danbro.common.utils;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.collection.ListUtil;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 
 /**
  * @author Danrbo
@@ -28,6 +25,7 @@ public class MyCollectionUtils {
     public static Boolean isNotEmpty(Collection<?> collection) {
         return !CollectionUtil.isEmpty(collection);
     }
+
 
     /**
      * 新建一个列表

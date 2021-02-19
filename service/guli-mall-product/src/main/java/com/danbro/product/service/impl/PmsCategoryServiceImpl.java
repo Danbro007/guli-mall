@@ -18,7 +18,8 @@ import com.danbro.product.service.PmsAttrService;
 import com.danbro.product.service.PmsCategoryBrandRelationService;
 import com.danbro.product.service.PmsCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,36 +38,21 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Autowired
     private PmsAttrService pmsAttrService;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-    private static final String CATEGORY_TREE = "category-tree";
-
+    @Cacheable(value = "category", key = "'getCategoryTree'", sync = true)
     @Override
     public List<PmsCategoryVo> getCategoryTree() {
-        // 尝试到缓存去取
-        List<PmsCategoryVo> pmsCategoryListFromCache = (List<PmsCategoryVo>) redisTemplate.opsForValue().get(CATEGORY_TREE);
-        if (!MyCollectionUtils.isEmpty(pmsCategoryListFromCache)) {
-            return pmsCategoryListFromCache;
-        }
-        // 缓存没有到数据库去取然后放入 redis 中
-        // 先找所有的一级分类
         List<PmsCategory> allPmsCategory = this.list();
-        List<PmsCategoryVo> pmsCategoryVos = allPmsCategory.stream().filter(e -> 0 == e.getParentCid()).map(m -> {
+        return allPmsCategory.stream().filter(e -> 0 == e.getParentCid()).map(m -> {
             PmsCategoryVo categoryVo = PmsCategoryVo.builder().build().convertToVo(m);
             categoryVo.setChildren(getChildren(categoryVo, allPmsCategory));
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
-        // 找到的数据放入缓存中
-        redisTemplate.opsForValue().set(CATEGORY_TREE, pmsCategoryVos);
-        return pmsCategoryVos;
     }
 
+    @CacheEvict(value = "category", allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDeleteCategoryById(Long[] catIds) {
-        // 先删除缓存
-        redisTemplate.delete(CATEGORY_TREE);
         List<Long> catIdList = Arrays.asList(catIds);
         QueryWrapper<PmsCategory> queryWrapper = new QueryWrapper<>();
         // 删除 categoryId或者父级Id为要删除的分类Id的对象
@@ -81,7 +67,6 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
 
     @Override
     public PmsCategoryVo insert(PmsCategoryVo category) {
-        redisTemplate.delete(CATEGORY_TREE);
         return MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category.convertToEntity()), ResponseCode.INSERT_FAILURE);
     }
 
@@ -89,7 +74,6 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Override
     public PmsCategoryVo update(PmsCategoryVo category) {
         // 请清空缓存
-        redisTemplate.delete(CATEGORY_TREE);
         PmsCategoryVo pmsCategoryVo = MyCurdUtils.insertOrUpdate(category, this.saveOrUpdate(category.convertToEntity()), ResponseCode.UPDATE_FAILURE);
         // 如果是三级分类则同步更新 CategoryBrandRelation
         if (pmsCategoryVo.getCatLevel().equals(CatSortType.THREE)) {
@@ -107,9 +91,9 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         return null;
     }
 
+
     @Override
     public void batchUpdateCategory(List<PmsCategory> updateCategoryList) {
-        redisTemplate.delete(CATEGORY_TREE);
         MyCurdUtils.batchInsertOrUpdate(updateCategoryList, this.updateBatchById(updateCategoryList), ResponseCode.UPDATE_FAILURE);
     }
 
@@ -134,19 +118,35 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
         return categoryList.stream().map(cat -> PmsCategoryVo.builder().build().convertToVo(cat)).collect(Collectors.toList());
     }
 
+    @Cacheable(value = "category", key = "'getCategoryTreeFroFront'", sync = true)
     @Override
     public Map<String, List<PmsCategory2Vo>> getCategoryTreeFroFront() {
+        List<PmsCategory> allCategory = MyCurdUtils.selectList(this.list(), ResponseCode.NOT_FOUND);
         // 1、先获取以及分类；
-        List<PmsCategoryVo> firstCatList = MyCurdUtils.selectList(this.getCategoryByCatLevel(1), ResponseCode.NOT_FOUND);
+        List<PmsCategory> firstCatList = allCategory.stream().filter(cat -> cat.getCatLevel().equals(1)).collect(Collectors.toList());
+        return buildCategoryMap(allCategory, firstCatList);
+    }
+
+    /**
+     * 构建分类Map
+     *
+     * @param allCategory  所有的分类
+     * @param firstCatList 第一分类的列表
+     * @return
+     */
+    private Map<String, List<PmsCategory2Vo>> buildCategoryMap(List<PmsCategory> allCategory, List<PmsCategory> firstCatList) {
         HashMap<String, List<PmsCategory2Vo>> map = new HashMap<>();
         firstCatList.forEach(first -> {
             // 2、找到下属的二级分类
-            List<PmsCategory> secondCatList = this.list(new QueryWrapper<PmsCategory>().lambda().eq(PmsCategory::getParentCid, first.getCatId()));
+            List<PmsCategory> secondCatList = allCategory.stream().filter(second -> second.getParentCid().equals(first.getCatId())).collect(Collectors.toList());
             if (MyCollectionUtils.isNotEmpty(secondCatList)) {
                 List<PmsCategory2Vo> secondVoList = secondCatList.stream().map(second -> {
-                    PmsCategory2Vo category2Vo = PmsCategory2Vo.builder().build().setCatalog1Id(first.getCatId().toString()).setId(second.getCatId().toString()).setName(second.getName());
+                    PmsCategory2Vo category2Vo = PmsCategory2Vo.builder().build().
+                            setCatalog1Id(first.getCatId().toString()).
+                            setId(second.getCatId().toString()).
+                            setName(second.getName());
                     // 3、找到下属的三级分类
-                    List<PmsCategory> thirdCatList = this.list(new QueryWrapper<PmsCategory>().lambda().eq(PmsCategory::getParentCid, second.getCatId()));
+                    List<PmsCategory> thirdCatList = allCategory.stream().filter(third -> third.getParentCid().equals(second.getCatId())).collect(Collectors.toList());
                     if (MyCollectionUtils.isNotEmpty(thirdCatList)) {
                         List<PmsCategory3Vo> category3VoList = thirdCatList.stream().map(third -> PmsCategory3Vo.builder().build().
                                 setCatalog2Id(second.getCatId().toString()).
@@ -186,4 +186,6 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
             return categoryVo;
         }).sorted(Comparator.comparingInt(PmsCategoryVo::getSort)).collect(Collectors.toList());
     }
+
+
 }

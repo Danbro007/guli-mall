@@ -1,5 +1,6 @@
 package com.danbro.product.controller.vo;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class PmsCategory3Vo {
+public class PmsCategory3Vo implements Serializable {
     private String id;
     private String catalog2Id;
     private String name;

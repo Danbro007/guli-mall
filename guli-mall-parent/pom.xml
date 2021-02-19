@@ -39,6 +39,7 @@
         <hystrix.version>2.2.1.RELEASE</hystrix.version>
         <openfeign.version>2.2.1.RELEASE</openfeign.version>
         <elasticsearch>4.0.0.RELEASE</elasticsearch>
+        <redisson.version>3.10.0</redisson.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -142,13 +143,24 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-thymeleaf</artifactId>
-                <version>2.3.1.RELEASE</version>
+                <version>${springboot.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-devtools</artifactId>
-                <version>2.3.1.RELEASE</version>
+                <version>${springboot.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-cache</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <build>
