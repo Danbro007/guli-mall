@@ -67,8 +67,12 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
             pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
             // 4、 远程调用 保存到 sms_member_price
-            sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).forEach(memberPrice -> memberPrice.setSkuId(sku.getSkuId()));
-            MyCurdUtils.rpcResultHandle(smsMemberPriceClient.batchInsertMemberPrice(sku.getMemberPrice()));
+            // 过滤出会员价格大于 0 的
+            List<SmsMemberPriceVo> memberPriceVos = sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toList());
+            if (MyCollectionUtils.isNotEmpty(memberPriceVos)) {
+                memberPriceVos.forEach(e -> e.setSkuId(sku.getSkuId()));
+                MyCurdUtils.rpcResultHandle(smsMemberPriceClient.batchInsertMemberPrice(memberPriceVos));
+            }
             // 5、 远程调用 保存到 sms_sku_ladder(打折)
             // 只添加满足打折的件数和折扣数大于 0 的
             SmsSkuLadderVo smsSkuLadderVo = buildSkuLadder(sku);

@@ -82,8 +82,10 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         pmsSpuImagesService.batchSave(pmsSpuInfoVo.getImages(), pmsSpuInfoVo.getId());
         // 4、 到 sms_spu_bonds 保存(远程调用)
         SmsSpuBondsVo bounds = pmsSpuInfoVo.getBounds();
-        bounds.setSpuId(spuInfo.getId());
-        MyCurdUtils.rpcResultHandle(smsSpuBondsClient.insertSpuBonds(bounds));
+        if (MyObjectUtils.isNotNull(bounds)){
+            bounds.setSpuId(spuInfo.getId());
+            MyCurdUtils.rpcResultHandle(smsSpuBondsClient.insertSpuBonds(bounds));
+        }
         // 5、 到 pms_product_attr_value 保存
         List<PmsProductAttrValueVo> attrValueList = pmsSpuInfoVo.getBaseAttrs().stream().map(
                 attr -> PmsProductAttrValueVo.builder().build().

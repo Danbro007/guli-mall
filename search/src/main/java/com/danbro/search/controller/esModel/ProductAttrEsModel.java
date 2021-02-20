@@ -1,7 +1,6 @@
 package com.danbro.search.controller.esModel;
 
 import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +27,7 @@ public class ProductAttrEsModel implements Serializable {
     private Long attrId;
 
     @ApiModelProperty("属性名")
-    @Field(type = FieldType.Keyword, index = false, docValues = false)
+    @Field(type = FieldType.Keyword)
     private String attrName;
 
     @ApiModelProperty("属性值")

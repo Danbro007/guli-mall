@@ -1,13 +1,21 @@
 package com.danbro.search;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Resource;
+import com.danbro.common.utils.MyObjectUtils;
+import com.danbro.common.utils.MyStrUtils;
+import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
+import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.entity.Account;
 import com.danbro.search.repositories.AccountRepository;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -18,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.GetQuery;
@@ -102,7 +112,7 @@ public class SearchTest {
     }
 
     @Test
-    public void aggQuery2() {
+    public void aggQuey2() {
         // 查询所有数据然后聚合每个年龄的平均工资
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         // 子查询 聚合出每个年龄的平均工资
@@ -115,5 +125,45 @@ public class SearchTest {
         Map<String, Aggregation> asMap = aggregations.getAsMap();
     }
 
+
+    @Test
+    public void test() {
+        // 创建索引
+        IndexOperations indexOperations = elasticsearchRestTemplate.indexOps(ProductSkuInfoEsModel.class);
+        indexOperations.create();
+        // 创建映射
+        Document mapping = indexOperations.createMapping(ProductSkuInfoEsModel.class);
+        indexOperations.putMapping(mapping);
+    }
+
+    @Test
+    public void query3() {
+        SearchParamVo searchParamVo = new SearchParamVo();
+        ArrayList<Long> brandIds = new ArrayList<>();
+        searchParamVo.setKeyword("华为");
+        brandIds.add(4L);
+        brandIds.add(1L);
+        brandIds.add(2L);
+        searchParamVo.setBrandId(brandIds);
+        searchParamVo.setCatalog3Id(255L);
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
+        // 关键字查找
+        if (MyStrUtils.isNotEmpty(searchParamVo.getKeyword())) {
+            MatchQueryBuilder skuTitle = QueryBuilders.matchQuery("skuTitle", searchParamVo.getKeyword());
+            boolQueryBuilder.must().add(skuTitle);
+        }
+        // brandId terms
+        if (MyObjectUtils.isNotNull(searchParamVo.getBrandId())) {
+            TermsQueryBuilder brandId = QueryBuilders.termsQuery("brandId", searchParamVo.getBrandId());
+            boolQueryBuilder.filter().add(brandId);
+        }
+        if (MyObjectUtils.isNotNull(searchParamVo.getCatalog3Id())) {
+            TermQueryBuilder catalogId = QueryBuilders.termQuery("catalogId", searchParamVo.getCatalog3Id());
+            boolQueryBuilder.filter().add(catalogId);
+        }
+        SearchHits<ProductSkuInfoEsModel> search = elasticsearchRestTemplate.search(nativeSearchQueryBuilder.build(), ProductSkuInfoEsModel.class);
+        System.out.println("1223");
+    }
 }
 

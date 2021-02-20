@@ -41,7 +41,7 @@ public class ProductSkuInfoEsModel implements Serializable {
     @ApiModelProperty("所属分类id")
     private Long catalogId;
 
-    @Field(type = FieldType.Keyword, index = false, docValues = false)
+    @Field(type = FieldType.Keyword)
     @ApiModelProperty("分类名")
     private String catalogName;
 
@@ -49,15 +49,15 @@ public class ProductSkuInfoEsModel implements Serializable {
     @ApiModelProperty("品牌id")
     private Long brandId;
 
-    @Field(type = FieldType.Keyword, index = false, docValues = false)
+    @Field(type = FieldType.Keyword)
     @ApiModelProperty("品牌名")
     private String brandName;
 
-    @Field(type = FieldType.Keyword, index = false, docValues = false)
+    @Field(type = FieldType.Keyword)
     @ApiModelProperty("品牌logo")
     private String brandImg;
 
-    @Field(type = FieldType.Keyword, index = false, docValues = false)
+    @Field(type = FieldType.Keyword)
     @ApiModelProperty("默认图片")
     private String skuDefaultImg;
 
@@ -84,4 +84,6 @@ public class ProductSkuInfoEsModel implements Serializable {
     @ApiModelProperty("sku属性")
     @Field(type = FieldType.Nested)
     private List<ProductAttrEsModel> attrs;
+
+
 }
