@@ -3,14 +3,18 @@ package com.danbro.product.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
-import com.danbro.product.controller.vo.*;
+import com.danbro.product.controller.vo.PmsSkuImagesVo;
+import com.danbro.product.controller.vo.PmsSkuInfoVo;
+import com.danbro.product.controller.vo.PmsSkuSaleAttrValueVo;
+import com.danbro.product.controller.vo.SmsMemberPriceVo;
+import com.danbro.product.controller.vo.SmsSkuFullReductionVo;
+import com.danbro.product.controller.vo.SmsSkuLadderVo;
 import com.danbro.product.entity.PmsSkuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
 import com.danbro.product.rpc.clients.SmsMemberPriceClient;
@@ -31,7 +35,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuInfo> implements PmsSkuInfoService {
-
     @Autowired
     PmsSkuImagesService pmsSkuImagesService;
 
@@ -59,13 +62,17 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             boolean save = this.save(pmsSkuInfo);
             sku.setSkuId(pmsSkuInfo.getSkuId());
             MyCurdUtils.batchInsertOrUpdate(skuInfoVoList, save, ResponseCode.INSERT_FAILURE);
-            // 2、 到 pms_sku_image 保存
-            List<PmsSkuImagesVo> skuImagesVoList = sku.getImages().stream().map(image -> image.setSkuId(sku.getSkuId())).
+            // 2、 到 pms_sku_image 保存，过滤掉 url 为空的
+            List<PmsSkuImagesVo> skuImagesVoList = sku.getImages().stream().filter(image -> MyStrUtils.isNotEmpty(image.getImgUrl())).map(image -> image.setSkuId(sku.getSkuId())).
                     collect(Collectors.toList());
-            pmsSkuImagesService.batchSaveSkuImages(skuImagesVoList);
+            if (MyCollectionUtils.isNotEmpty(skuImagesVoList)){
+                pmsSkuImagesService.batchSaveSkuImages(skuImagesVoList);
+            }
             // 3、 到 pms_sku_sale_attr_value 保存销售属性
-            List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
-            pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
+            if (MyCollectionUtils.isNotEmpty(sku.getMemberPrice())){
+                List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
+                pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
+            }
             // 4、 远程调用 保存到 sms_member_price
             // 过滤出会员价格大于 0 的
             List<SmsMemberPriceVo> memberPriceVos = sku.getMemberPrice().stream().filter(memberPrice -> memberPrice.getMemberPrice().compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toList());
@@ -76,14 +83,17 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             // 5、 远程调用 保存到 sms_sku_ladder(打折)
             // 只添加满足打折的件数和折扣数大于 0 的
             SmsSkuLadderVo smsSkuLadderVo = buildSkuLadder(sku);
-            if (smsSkuLadderVo.getFullCount() > 0
+            if (MyObjectUtils.isNotNull(smsSkuLadderVo)
+                    && smsSkuLadderVo.getFullCount() > 0
                     && MyNumUtils.between(smsSkuLadderVo.getDiscount(), BigDecimal.ZERO, BigDecimal.ONE)) {
                 MyCurdUtils.rpcResultHandle(smsSkuLadderClient.insertSkuLadder(smsSkuLadderVo));
             }
             // 5、远程调用 保存到 sms_sku_full_reduction （满减）
             // 只添加满减价格和优惠价格大于 0 的
             SmsSkuFullReductionVo skuFullReductionVo = buildSkuFullReduction(sku);
-            if (skuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 && skuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
+            if (MyObjectUtils.isNotNull(skuFullReductionVo) &&
+                    skuFullReductionVo.getFullPrice().compareTo(new BigDecimal(0)) > 0 &&
+                    skuFullReductionVo.getReducePrice().compareTo(new BigDecimal(0)) > 0) {
                 MyCurdUtils.rpcResultHandle(smsSkuFullReductionClient.insertSkuFullReduction(skuFullReductionVo));
             }
         });

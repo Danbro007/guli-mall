@@ -99,10 +99,10 @@ public interface PmsAttrService extends IService<PmsAttr> {
     List<PmsProductAttrValueVo> batchUpdateSpuBaseAttr(List<PmsProductAttrValueVo> productAttrValueVoList, Long spuId);
 
     /**
-     * 查询出能被检索的基本属性
+     * 查询出能被检索的属性
      *
      * @param attrIdList 属性ID
      * @return 能被检索的属性
      */
-    List<PmsAttrBaseInfoVo> getBaseAttrListWithCanShow(List<Long> attrIdList);
+    List<PmsAttrBaseInfoVo> getAttrListWithCanShow(List<Long> attrIdList);
 }

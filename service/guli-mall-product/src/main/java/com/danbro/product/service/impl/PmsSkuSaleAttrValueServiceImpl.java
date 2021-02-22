@@ -2,6 +2,7 @@ package com.danbro.product.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
@@ -27,5 +28,11 @@ public class PmsSkuSaleAttrValueServiceImpl extends ServiceImpl<PmsSkuSaleAttrVa
         boolean saveBatch = this.saveBatch(attrValueList);
         List<PmsSkuSaleAttrValueVo> saleAttrValueVos = ConvertUtils.batchConvert(attrValueList, PmsSkuSaleAttrValueVo.class);
         return MyCurdUtils.batchInsertOrUpdate(saleAttrValueVos, saveBatch, ResponseCode.INSERT_FAILURE);
+    }
+
+    @Override
+    public List<PmsSkuSaleAttrValueVo> getSaleAttrValueListBySkuId(Long skuId) {
+        List<PmsSkuSaleAttrValue> pmsSkuSaleAttrValues = this.list(new QueryWrapper<PmsSkuSaleAttrValue>().lambda().eq(PmsSkuSaleAttrValue::getSkuId, skuId));
+        return ConvertUtils.batchConvert(pmsSkuSaleAttrValues, PmsSkuSaleAttrValueVo.class);
     }
 }

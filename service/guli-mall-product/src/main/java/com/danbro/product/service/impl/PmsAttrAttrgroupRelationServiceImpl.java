@@ -58,7 +58,7 @@ public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttr
         // 如果是销售属性删除则到关系表里删除失败也不抛出异常。
         MyCurdUtils.batchDelete(this.remove(new QueryWrapper<PmsAttrAttrgroupRelation>()
                         .lambda()
-                        .in(PmsAttrAttrgroupRelation::getAttrId, Arrays.asList(ids))),
+                        .in(PmsAttrAttrgroupRelation::getAttrGroupId, Arrays.asList(ids))),
                 ResponseCode.DELETE_FAILURE,
                 throwException);
     }

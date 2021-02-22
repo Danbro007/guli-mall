@@ -3,7 +3,6 @@ package com.danbro.product.service.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,7 +12,12 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.enums.pms.AttrType;
 import com.danbro.common.utils.*;
-import com.danbro.product.controller.vo.*;
+import com.danbro.product.controller.vo.PmsAttrAttrgroupRelationVo;
+import com.danbro.product.controller.vo.PmsAttrBaseInfoVo;
+import com.danbro.product.controller.vo.PmsAttrDetailVo;
+import com.danbro.product.controller.vo.PmsAttrGroupVo;
+import com.danbro.product.controller.vo.PmsCategoryVo;
+import com.danbro.product.controller.vo.PmsProductAttrValueVo;
 import com.danbro.product.entity.PmsAttr;
 import com.danbro.product.entity.PmsAttrAttrgroupRelation;
 import com.danbro.product.entity.PmsProductAttrValue;
@@ -96,10 +100,12 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
         PmsAttrAttrgroupRelationVo relationVo = new PmsAttrAttrgroupRelationVo();
         MyBeanUtils.copyProperties(param, relationVo);
         PmsAttr pmsAttr = param.convertToEntity();
+        // 销售属性是能被检索的
+        pmsAttr.setSearchType(true);
+        // 保存 pmsAttr
+        this.save(pmsAttr);
         // 销售属性不用保存分组关系
         if (AttrType.BASE.getCode().equals(pmsAttr.getAttrType())) {
-            // 保存 pmsAttr
-            this.save(pmsAttr);
             relationVo.setAttrId(pmsAttr.getAttrId());
             // 保存属性与属性分组之间的关系
             attrgroupRelationService.insertAttrAttrRelation(relationVo);
@@ -119,7 +125,9 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
             attrgroupRelationService.remove(new QueryWrapper<PmsAttrAttrgroupRelation>().lambda().
                     eq(PmsAttrAttrgroupRelation::getAttrId, param.getAttrId()).eq(PmsAttrAttrgroupRelation::getAttrGroupId, param.getAttrGroupId()));
             // 到 attr_attr_group_relation 表里更新数据
-            PmsAttrAttrgroupRelationVo attrgroupRelationVo = new PmsAttrAttrgroupRelationVo().setAttrGroupId(param.getAttrGroupId()).setAttrId(param.getAttrId());
+            PmsAttrAttrgroupRelationVo attrgroupRelationVo = new PmsAttrAttrgroupRelationVo().
+                    setAttrGroupId(param.getAttrGroupId()).
+                    setAttrId(param.getAttrId());
             attrgroupRelationService.insertAttrAttrRelation(attrgroupRelationVo);
         }
         return param;
@@ -205,7 +213,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrMapper, PmsAttr> impl
     }
 
     @Override
-    public List<PmsAttrBaseInfoVo> getBaseAttrListWithCanShow(List<Long> attrIdList) {
+    public List<PmsAttrBaseInfoVo> getAttrListWithCanShow(List<Long> attrIdList) {
         List<PmsAttr> pmsAttrList = MyCurdUtils.selectList(
                 this.list(new QueryWrapper<PmsAttr>().lambda().
                         in(PmsAttr::getAttrId, attrIdList).

@@ -21,4 +21,11 @@ public interface PmsSkuSaleAttrValueService extends IService<PmsSkuSaleAttrValue
      * @return 添加结果
      */
     List<PmsSkuSaleAttrValueVo> batchSaveSaleAttrValue(List<PmsSkuSaleAttrValueVo> attrValueVoList);
+
+    /**
+     * 通过 SkuID 查找出 sku 的销售属性
+     * @param skuId skuId
+     * @return sku 的销售属性
+     */
+    List<PmsSkuSaleAttrValueVo> getSaleAttrValueListBySkuId(Long skuId);
 }
