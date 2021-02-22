@@ -1,4 +1,4 @@
-package com.danbro.search.service.impl;
+package com.danbro.search.service;
 
 
 import java.util.List;

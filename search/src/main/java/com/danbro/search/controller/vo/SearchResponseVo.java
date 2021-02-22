@@ -2,6 +2,7 @@ package com.danbro.search.controller.vo;
 
 import java.io.Serializable;
 import java.util.List;
+
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +50,10 @@ public class SearchResponseVo implements Serializable {
      * 查询结果里涉及到的属性和属性值
      */
     private List<AttrVo> attrs;
+    /**
+     * 三级分类
+     */
+    private List<CatalogVo> catalogVos;
 
     @Data
     public static class BrandVo {
@@ -64,4 +69,11 @@ public class SearchResponseVo implements Serializable {
         private String attrName;
         private List<String> attrValues;
     }
+
+    @Data
+    public static class CatalogVo {
+        private Long catalogId;
+        private String catalogName;
+    }
+
 }

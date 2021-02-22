@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class SearchParamVo implements Serializable {
+public class SearchParamVo{
     /**
      * 关键字
      */

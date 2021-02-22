@@ -4,7 +4,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
-import com.danbro.search.service.impl.SearchService;
+import com.danbro.search.service.SearchService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
