@@ -1,5 +1,8 @@
 package com.danbro.search.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.MyCollectionUtils;
@@ -33,10 +36,6 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Classname SearchServiceImpl
@@ -285,15 +284,15 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
                 // 只有至少两个属性值 6寸:8寸
                 if (MyStrUtils.contains(values, VALUE_SPLIT_CHAR)) {
                     List<String> valueList = MyStrUtils.split(values, VALUE_SPLIT_CHAR);
-                    boolQuery.must().add(QueryBuilders.termsQuery("attrs.attrValue", valueList));
+                    boolQuery.must(QueryBuilders.termsQuery("attrs.attrValue", valueList));
 
                 } else {
-                    boolQuery.must().add(QueryBuilders.termsQuery("attrs.attrValue", values));
+                    boolQuery.must(QueryBuilders.termsQuery("attrs.attrValue", values));
                 }
-                boolQuery.must().add(QueryBuilders.termQuery("attrs.attrId", attrId));
-                NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolQuery, ScoreMode.None);
-                boolQueryBuilder.filter().add(nestedQuery);
+                boolQuery.must(QueryBuilders.termQuery("attrs.attrId", attrId));
             }
+            NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolQuery, ScoreMode.None);
+            boolQueryBuilder.filter(nestedQuery);
         }
         // 分页
         PageRequest pageRequest;

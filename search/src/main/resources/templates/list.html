@@ -32,6 +32,7 @@
                 <a href="#">河北</a>
                 <a href="#">山西</a>
                 <a href="#">河南</a>
+                <a href="#">河南</a>
                 <a href="#">辽宁</a>
                 <a href="#">吉林</a>
                 <a href="#">黑龙江</a>
@@ -1049,35 +1050,41 @@
                 <div class="filter">
                     <!--综合排序-->
                     <div class="filter_top">
-                        <div class="filter_top_left" th:with="p = ${param.sort}, priceRange = ${param.skuPrice}">
+                        <div class="filter_top_left" th:with="p = ${param.sort}, priceRange = ${param.price}">
                             <a sort="hotScore"
+                               href="/static/search/#"
                                th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'hotScore') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
                                th:attr="style=${(#strings.isEmpty(p) || #strings.startsWith(p,'hotScore')) ?
                                    'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
                                 综合排序[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'hotScore') &&
-                                #strings.endsWith(p,'desc')) ?'↓':'↑' }]]</a>
+                                #strings.endsWith(p,'desc')) ?'↓':'↑' }]]
+                            </a>
                             <a sort="saleCount"
+                               href="/static/search/#"
                                th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'saleCount') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
                                th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p,'saleCount')) ?
                                    'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
                                 销量[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'saleCount') &&
-                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]</a>
-                            <a sort="skuPrice"
-                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'skuPrice') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
-                               th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p,'skuPrice')) ?
+                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]
+                            </a>
+                            <a sort="price"
+                               href="/static/search/#"
+                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'price') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
+                               th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p,'price')) ?
                                    'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
-                                价格[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'skuPrice') &&
-                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]</a>
+                                价格[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'price') &&
+                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]
+                            </a>
                             <a sort="hotScore" class="sort_a">评论分</a>
                             <a sort="hotScore" class="sort_a">上架时间</a>
-                            <input id="skuPriceFrom" type="number"
+                            <input id="priceFrom" type="number"
                                    th:value="${#strings.isEmpty(priceRange)?'':#strings.substringBefore(priceRange,'_')}"
                                    style="width: 100px; margin-left: 30px">
                             -
-                            <input id="skuPriceTo" type="number"
+                            <input id="priceTo" type="number"
                                    th:value="${#strings.isEmpty(priceRange)?'':#strings.substringAfter(priceRange,'_')}"
                                    style="width: 100px">
-                            <button id="skuPriceSearchBtn">确定</button>
+                            <button id="priceSearchBtn">确定</button>
                         </div>
                         <div class="filter_top_right">
                             <span class="fp-text">
@@ -1885,22 +1892,19 @@
 </div>
 
 <script>
-    <!--
-    仅显示有货-->
+
     $("#showHasStock").click(function () {
         let checked = $(this).prop("checked");
         console.log(checked);
         location.href = replaceParamVal(location.href, "hasStock", checked ? 1 : 0, false)
     })
 
-    <!--价格区间-->
-    $("#skuPriceSearchBtn").click(function () {
-        var skuPriceFrom = $("#skuPriceFrom").val();
-        var skuPriceTo = $("#skuPriceTo").val();
-        location.href = replaceParamVal(location.href, "skuPrice", skuPriceFrom + "_" + skuPriceTo, false);
+    $("#priceSearchBtn").click(function () {
+        var priceFrom = $("#priceFrom").val();
+        var priceTo = $("#priceTo").val();
+        location.href = replaceParamVal(location.href, "price", priceFrom + "_" + priceTo, false);
     })
 
-    <!--排序-->
     // $(".sort_a").click(function () {
     //     //3 通过修改url排序
     //     var sort = $(this).attr("sort");
@@ -1964,7 +1968,6 @@
         }
     };
 
-    <!--分页函数-->
     $(".page_a").click(function () {
         var pn = $(this).attr("pn");
         location.href = replaceParamVal(location.href, "pageNum", pn, false);
@@ -1981,13 +1984,6 @@
         location.href = replaceParamVal(location.href, name, value, true)
     };
 
-    /**
-     * @param url 目前的url
-     * @param paramName 需要替换的参数属性名
-     * @param replaceVal 需要替换的参数的新属性值
-     * @param forceAdd 该参数是否可以重复查询(attrs=1_3G:4G:5G&attrs=2_骁龙845&attrs=4_高清屏)
-     * @returns {string} 替换或添加后的url
-     */
     function replaceParamVal(url, paramName, replaceVal, forceAdd) {
         var oUrl = url.toString();
         var nUrl;
@@ -2052,6 +2048,7 @@
         $(".dizhi_con").css({display: "none"})
     });
     $(".dizhi_con").hover(function () {
+        console.log("hover")
         $(this).css({display: "block"})
     }, function () {
         $(this).css({display: "none"})
@@ -2145,6 +2142,7 @@
     }, function () {
         $(this).css("color", "#727272")
     })
+
 </script>
 </body>
 </html>
