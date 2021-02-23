@@ -67,7 +67,7 @@ public class ProductSkuInfoEsModel implements Serializable {
 
     @Field(type = FieldType.Keyword)
     @ApiModelProperty("价格")
-    private BigDecimal price;
+    private BigDecimal skuPrice;
 
     @Field(type = FieldType.Long)
     @ApiModelProperty("销量")

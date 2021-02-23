@@ -1,16 +1,15 @@
 package com.danbro.product.controller.esModel;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import cn.hutool.core.annotation.Alias;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.springframework.data.annotation.Id;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author liweimo
@@ -52,8 +51,9 @@ public class ProductSkuInfoEsModel implements Serializable {
     @ApiModelProperty("标题")
     private String skuTitle;
 
+    @Alias("price")
     @ApiModelProperty("价格")
-    private BigDecimal price;
+    private BigDecimal skuPrice;
 
     @ApiModelProperty("销量")
     private Long saleCount;

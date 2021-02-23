@@ -32,7 +32,6 @@
                 <a href="#">河北</a>
                 <a href="#">山西</a>
                 <a href="#">河南</a>
-                <a href="#">河南</a>
                 <a href="#">辽宁</a>
                 <a href="#">吉林</a>
                 <a href="#">黑龙江</a>
@@ -1050,41 +1049,38 @@
                 <div class="filter">
                     <!--综合排序-->
                     <div class="filter_top">
-                        <div class="filter_top_left" th:with="p = ${param.sort}, priceRange = ${param.price}">
+                        <div class="filter_top_left" th:with="p = ${param.sort}, priceRange = ${param.skuPrice}">
                             <a sort="hotScore"
-                               href="/static/search/#"
+                               href="#"
                                th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'hotScore') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
                                th:attr="style=${(#strings.isEmpty(p) || #strings.startsWith(p,'hotScore')) ?
                                    'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
                                 综合排序[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'hotScore') &&
-                                #strings.endsWith(p,'desc')) ?'↓':'↑' }]]
-                            </a>
+                                #strings.endsWith(p,'desc')) ?'↓':'↑' }]]</a>
                             <a sort="saleCount"
-                               href="/static/search/#"
+                               href="#"
                                th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'saleCount') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
                                th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p,'saleCount')) ?
                                    'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
                                 销量[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'saleCount') &&
-                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]
-                            </a>
-                            <a sort="price"
-                               href="/static/search/#"
-                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'price') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
-                               th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p,'price')) ?
+                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]</a>
+                            <a sort="skuPrice"
+                               href="#"
+                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p,'skuPrice') && #strings.endsWith(p,'desc')) ? 'sort_a desc' : 'sort_a'}"
+                               th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p,'skuPrice')) ?
                                    'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
-                                价格[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'price') &&
-                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]
-                            </a>
-                            <a sort="hotScore" class="sort_a">评论分</a>
-                            <a sort="hotScore" class="sort_a">上架时间</a>
-                            <input id="priceFrom" type="number"
+                                价格[[${(!#strings.isEmpty(p) && #strings.startsWith(p,'skuPrice') &&
+                                #strings.endsWith(p,'desc'))?'↓':'↑' }]]</a>
+                            <a sort="hotScore" class="sort_a" href="#">评论分</a>
+                            <a sort="hotScore" class="sort_a" href="#">上架时间</a>
+                            <input id="skuPriceFrom" type="number"
                                    th:value="${#strings.isEmpty(priceRange)?'':#strings.substringBefore(priceRange,'_')}"
                                    style="width: 100px; margin-left: 30px">
                             -
-                            <input id="priceTo" type="number"
+                            <input id="skuPriceTo" type="number"
                                    th:value="${#strings.isEmpty(priceRange)?'':#strings.substringAfter(priceRange,'_')}"
                                    style="width: 100px">
-                            <button id="priceSearchBtn">确定</button>
+                            <button id="skuPriceSearchBtn">确定</button>
                         </div>
                         <div class="filter_top_right">
                             <span class="fp-text">
@@ -1226,7 +1222,7 @@
                                     <img th:src="${product.getSkuDefaultImg()}"></a></li>
                             </ul>
                             <p class="tab_R">
-                                <span th:text="'￥' + ${product.getPrice()}">¥5199.00</span>
+                                <span th:text="'￥' + ${product.getSkuPrice()}">¥5199.00</span>
                             </p>
                             <p class="tab_JE">
                                 <a href="/static/search/#" th:utext="${product.getSkuTitle()}">
@@ -1892,17 +1888,16 @@
 </div>
 
 <script>
-
     $("#showHasStock").click(function () {
         let checked = $(this).prop("checked");
         console.log(checked);
         location.href = replaceParamVal(location.href, "hasStock", checked ? 1 : 0, false)
     })
 
-    $("#priceSearchBtn").click(function () {
-        var priceFrom = $("#priceFrom").val();
-        var priceTo = $("#priceTo").val();
-        location.href = replaceParamVal(location.href, "price", priceFrom + "_" + priceTo, false);
+    $("#skuPriceSearchBtn").click(function () {
+        var skuPriceFrom = $("#skuPriceFrom").val();
+        var skuPriceTo = $("#skuPriceTo").val();
+        location.href = replaceParamVal(location.href, "skuPrice", skuPriceFrom + "_" + skuPriceTo, false);
     })
 
     // $(".sort_a").click(function () {
@@ -2048,12 +2043,11 @@
         $(".dizhi_con").css({display: "none"})
     });
     $(".dizhi_con").hover(function () {
-        console.log("hover")
         $(this).css({display: "block"})
     }, function () {
         $(this).css({display: "none"})
     });
-    //显示隐藏
+
     var $li = $(".JD_nav_logo>div:gt(3)").hide();
     $('.JD_show span').click(function () {
         if ($li.is(':hidden')) {
@@ -2110,7 +2104,6 @@
     });
 
 
-    //右侧侧边栏
     $(".header_bar_box ul li").hover(function () {
         $(this).css({
             background: "#7A6E6E"
@@ -2130,7 +2123,6 @@
     });
 
 
-    //底部
     $(".footer_foot .p1 a").hover(function () {
         $(this).css("color", "#D70B1C")
     }, function () {
@@ -2142,7 +2134,6 @@
     }, function () {
         $(this).css("color", "#727272")
     })
-
 </script>
 </body>
 </html>

@@ -259,17 +259,17 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
             // _500
             if (MyStrUtils.startWith(skuPrice, SPLIT_CHAR)) {
                 String highPrice = MyStrUtils.split(skuPrice, SPLIT_CHAR).get(1);
-                boolQueryBuilder.filter().add(QueryBuilders.rangeQuery("price").lte(highPrice));
+                boolQueryBuilder.filter().add(QueryBuilders.rangeQuery("skuPrice").lte(highPrice));
             }
             // 1_
             else if (MyStrUtils.endWith(skuPrice, SPLIT_CHAR)) {
                 String lowPrice = MyStrUtils.split(skuPrice, SPLIT_CHAR).get(0);
-                boolQueryBuilder.filter().add(QueryBuilders.rangeQuery("price").gte(lowPrice));
+                boolQueryBuilder.filter().add(QueryBuilders.rangeQuery("skuPrice").gte(lowPrice));
             } else {
                 List<String> priceStringList = MyStrUtils.split(skuPrice, SPLIT_CHAR);
                 String lowPrice = priceStringList.get(0);
                 String highPrice = priceStringList.get(1);
-                boolQueryBuilder.filter().add(QueryBuilders.rangeQuery("price").gte(lowPrice).lte(highPrice));
+                boolQueryBuilder.filter().add(QueryBuilders.rangeQuery("skuPrice").gte(lowPrice).lte(highPrice));
             }
         }
         // attrs 属性 例如 1_5寸:8寸

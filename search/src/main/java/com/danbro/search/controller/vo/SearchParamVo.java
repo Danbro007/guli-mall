@@ -1,6 +1,5 @@
 package com.danbro.search.controller.vo;
 
-import java.io.Serializable;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
