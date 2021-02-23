@@ -13,7 +13,6 @@ import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -119,6 +117,12 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
             List<SearchResponseVo.AttrVo> attrVos = buildAttrVos(aggregations);
             searchResponseVo.setAttrs(attrVos);
         }
+        // 生成导航页
+        List<Integer> pageNavs = new ArrayList<>();
+        for (Integer i = 0; i < searchResponseVo.getTotalPages(); i++) {
+            pageNavs.add(i);
+        }
+        searchResponseVo.setPageNavs(pageNavs);
         return searchResponseVo;
     }
 
@@ -232,8 +236,8 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
             boolQueryBuilder.filter().add(QueryBuilders.termsQuery("brandId", searchParamVo.getBrandId()));
         }
         // 三级分类ID
-        if (MyObjectUtils.isNotNull(searchParamVo.getCatalog3Id())) {
-            boolQueryBuilder.filter().add(QueryBuilders.termQuery("catalogId", searchParamVo.getCatalog3Id()));
+        if (MyObjectUtils.isNotNull(searchParamVo.getCatalogId())) {
+            boolQueryBuilder.filter().add(QueryBuilders.termQuery("catalogId", searchParamVo.getCatalogId()));
         }
         // 排序规则 例如：hotScore_desc
         if (MyStrUtils.isNotEmpty(searchParamVo.getSort())) {

@@ -42,6 +42,11 @@ public class SearchResponseVo implements Serializable {
     private Long total;
 
     /**
+     * 导航页
+     */
+    private List<Integer> pageNavs;
+
+    /**
      * 查询结果里涉及到的品牌
      */
     private List<BrandVo> brandVos;

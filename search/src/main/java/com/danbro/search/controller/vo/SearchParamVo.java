@@ -28,7 +28,7 @@ public class SearchParamVo{
     /**
      * 三级分类的ID
      */
-    private Long catalog3Id;
+    private Long catalogId;
 
     /**
      * 品牌ID（支持多选）

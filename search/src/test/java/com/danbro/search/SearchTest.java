@@ -14,8 +14,6 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.metrics.AvgAggregationBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -148,7 +146,7 @@ public class SearchTest {
         searchParamVo.setAttrs(attrs);
         brandIds.add(2L);
         searchParamVo.setBrandId(brandIds);
-        searchParamVo.setCatalog3Id(225L);
+        searchParamVo.setCatalogId(225L);
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
         // 关键字查找
@@ -160,8 +158,8 @@ public class SearchTest {
             boolQueryBuilder.should(new TermsQueryBuilder("brandId", searchParamVo.getBrandId()));
         }
         // 三级分类ID
-        if (MyObjectUtils.isNotNull(searchParamVo.getCatalog3Id())) {
-            boolQueryBuilder.must(new TermQueryBuilder("catalogId", searchParamVo.getCatalog3Id()));
+        if (MyObjectUtils.isNotNull(searchParamVo.getCatalogId())) {
+            boolQueryBuilder.must(new TermQueryBuilder("catalogId", searchParamVo.getCatalogId()));
         }
 
         // 排序规则

@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="/static/search/css/index.css">
     <link rel="stylesheet" type="text/css" href="/static/search/font/iconfont.css">
-    <!--<script src="/static/search/./js/jquery-3.2.1.min.js"></script>-->
+    <!--    <script src="/static/search/./js/jquery-3.2.1.min.js"></script>-->
     <script src="/static/search/js/jquery-1.12.4.js"></script>
     <title>Document</title>
 </head>
@@ -818,6 +818,7 @@
                     <span>分类：</span>
                 </div>
                 <div class="JD_pre" th:each="catalog: ${result.getCatalogVos()}">
+
                     <div class="sl_value">
                         <ul>
                             <li><a href="#" th:text="${catalog.getCatalogName()}"
@@ -1253,12 +1254,12 @@
                                    th:attr="pn=${result.getPageNum()-1}">
                                     < 上一页
                                 </a>
-                                <!--                                <a href="#" class="page_a"-->
-                                <!--                                   th:each="page: ${result.pageNavs}"-->
-                                <!--                                   th:text="${page}"-->
-                                <!--                                   th:style="${page==result.pageNum?'border: 0;color:#ee2222;background: #fff':''}"-->
-                                <!--                                   th:attr="pn=${page}"-->
-                                <!--                                >1</a>-->
+                                <a href="#" class="page_a"
+                                   th:each="page: ${result.pageNavs}"
+                                   th:text="${page}"
+                                   th:style="${page==result.pageNum?'border: 0;color:#ee2222;background: #fff':''}"
+                                   th:attr="pn=${page}"
+                                >1</a>
                                 <a href="#" class="page_a" th:if="${result.pageNum<result.totalPages}"
                                    th:attr="pn=${result.getPageNum()+1}">
                                     下一页 >
