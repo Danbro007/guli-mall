@@ -6,11 +6,14 @@ import java.util.stream.Collectors;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.MyCollectionUtils;
+import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
+import com.danbro.search.controller.vo.PmsAttrDetailVo;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
+import com.danbro.search.rpc.PmsAttrClient;
 import com.danbro.search.service.SearchService;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -45,8 +48,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SearchServiceImpl implements SearchService, InitializingBean {
+    @Autowired
+    PmsAttrClient pmsAttrClient;
 
     private static final char SPLIT_CHAR = '_';
+
     private static final char VALUE_SPLIT_CHAR = ':';
     /**
      * 每页显示的数据数
@@ -115,6 +121,10 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
             // 封装属性聚合消息
             List<SearchResponseVo.AttrVo> attrVos = buildAttrVos(aggregations);
             searchResponseVo.setAttrs(attrVos);
+            if (MyCollectionUtils.isNotEmpty(searchParamVo.getAttrs())) {
+                List<SearchResponseVo.NavVo> navVos = buildNavVos(searchParamVo);
+                searchResponseVo.setNavs(navVos);
+            }
         }
         // 生成导航页
         List<Integer> pageNavs = new ArrayList<>();
@@ -123,6 +133,23 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
         }
         searchResponseVo.setPageNavs(pageNavs);
         return searchResponseVo;
+    }
+
+    private List<SearchResponseVo.NavVo> buildNavVos(SearchParamVo searchParamVo) {
+        return searchParamVo.getAttrs().stream().filter(attr -> MyStrUtils.split(attr, SPLIT_CHAR).size() == 2).map(attr -> {
+            // 对属性和属性值进行字符串分割
+            List<String> stringList = MyStrUtils.split(attr, SPLIT_CHAR);
+            // 属性ID
+            String attrId = stringList.get(0);
+            // rpc 查询属性名
+            PmsAttrDetailVo pmsAttr = MyCurdUtils.rpcResultHandle(pmsAttrClient.getAttrInfo(Long.getLong(attrId)));
+            // 属性值
+            String value = stringList.get(1);
+            // 数据封装
+            SearchResponseVo.NavVo navVo = new SearchResponseVo.NavVo();
+            navVo.setNavName(pmsAttr.getAttrName()).setNavValue(value);
+            return navVo;
+        }).collect(Collectors.toList());
     }
 
 

@@ -57,7 +57,7 @@ public class PmsAttrController {
 
     @ApiOperation("获取属性的详细信息")
     @GetMapping("info/{attrId}")
-    public ResultBean<PmsAttrDetailVo> getAttrInfo(@PathVariable Long attrId) {
+    public ResultBean<PmsAttrDetailVo> getAttrInfo(@PathVariable("attrId") Long attrId) {
         return ResultBean.ofSuccess(pmsAttrService.getAttrById(attrId));
     }
 

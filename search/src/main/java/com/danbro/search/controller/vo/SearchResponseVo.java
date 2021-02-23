@@ -60,6 +60,11 @@ public class SearchResponseVo implements Serializable {
      */
     private List<CatalogVo> catalogVos;
 
+    /**
+     * 面包屑导航栏
+     */
+    private List<NavVo> navs;
+
     @Data
     public static class BrandVo {
         private Long brandId;
@@ -79,6 +84,12 @@ public class SearchResponseVo implements Serializable {
     public static class CatalogVo {
         private Long catalogId;
         private String catalogName;
+    }
+
+    @Data
+    public static class NavVo {
+        private String navName;
+        private String navValue;
     }
 
 }
