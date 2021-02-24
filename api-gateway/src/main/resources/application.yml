@@ -70,6 +70,11 @@ spring:
           predicates:
             - Host=search.gulimall.com
 
+        - id: item_host_route
+          uri: lb://service-pms
+          predicates:
+            - Host=item.gulimall.com
+
         - id: product_host_route
           uri: lb://service-pms
           predicates:

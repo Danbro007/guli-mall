@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
 import com.danbro.product.controller.vo.PmsSkuInfoVo;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsSkuInfo;
 
 
@@ -53,4 +54,12 @@ public interface PmsSkuInfoService extends IService<PmsSkuInfo> {
      * @return sku信息列表
      */
     List<PmsSkuInfoVo> getSkuInfoListBySpuId(Long spuId);
+
+    /**
+     * 查询出sku的相关信息，并进行封装。
+     *
+     * @param skuId skuId
+     * @return 封装信息
+     */
+    SkuItemVo getItemBySkuId(Long skuId);
 }

@@ -3,6 +3,7 @@ package com.danbro.product.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +16,7 @@ import com.danbro.product.controller.vo.PmsSkuSaleAttrValueVo;
 import com.danbro.product.controller.vo.SmsMemberPriceVo;
 import com.danbro.product.controller.vo.SmsSkuFullReductionVo;
 import com.danbro.product.controller.vo.SmsSkuLadderVo;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsSkuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
 import com.danbro.product.rpc.clients.SmsMemberPriceClient;
@@ -65,11 +67,11 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             // 2、 到 pms_sku_image 保存，过滤掉 url 为空的
             List<PmsSkuImagesVo> skuImagesVoList = sku.getImages().stream().filter(image -> MyStrUtils.isNotEmpty(image.getImgUrl())).map(image -> image.setSkuId(sku.getSkuId())).
                     collect(Collectors.toList());
-            if (MyCollectionUtils.isNotEmpty(skuImagesVoList)){
+            if (MyCollectionUtils.isNotEmpty(skuImagesVoList)) {
                 pmsSkuImagesService.batchSaveSkuImages(skuImagesVoList);
             }
             // 3、 到 pms_sku_sale_attr_value 保存销售属性
-            if (MyCollectionUtils.isNotEmpty(sku.getMemberPrice())){
+            if (MyCollectionUtils.isNotEmpty(sku.getMemberPrice())) {
                 List<PmsSkuSaleAttrValueVo> attrValueVos = sku.getAttr().stream().map(saleAttr -> saleAttr.setSkuId(sku.getSkuId())).collect(Collectors.toList());
                 pmsSkuSaleAttrValueService.batchSaveSaleAttrValue(attrValueVos);
             }
@@ -137,6 +139,18 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     public List<PmsSkuInfoVo> getSkuInfoListBySpuId(Long spuId) {
         List<PmsSkuInfo> pmsSkuInfoList = MyCurdUtils.selectList(this.list(new QueryWrapper<PmsSkuInfo>().lambda().eq(PmsSkuInfo::getSpuId, spuId)), ResponseCode.NOT_FOUND);
         return ConvertUtils.batchConvert(pmsSkuInfoList, PmsSkuInfoVo.class);
+    }
+
+    @Override
+    public SkuItemVo getItemBySkuId(Long skuId) {
+        SkuItemVo skuItemVo = new SkuItemVo();
+        // Todo 1、到 pms_sku_info 查询 sku 的信息
+
+        // Todo 2、到 pms_sku_image 查询出 sku 的图片
+        // Todo 3、查询出 sku 对应的 spu 的相关基本属性
+        // Todo 4、查询出 sku 对应的 spu 介绍图(pms_spu_info_desc)
+        // Todo 5、查询出 sku 的所有销售属性
+        return skuItemVo;
     }
 
     /**
