@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.danbro.product.mapper.PmsSpuInfoMapper">
-
+    <resultMap id="saleAttrMapping" type="com.danbro.product.controller.vo.front.SkuItemVo$SkuSaleAttrValue">
+        <id column="attrId" property="attrId"/>
+        <result column="attrName" property="attrName"/>
+        <collection property="attrValues" ofType="java.lang.String">
+            <result column="attrValues"/>
+        </collection>
+    </resultMap>
+    <select id="getSaleAttrList" resultMap="saleAttrMapping">
+        select pssav.attr_id                           as attrId,
+               pssav.attr_name                         as attrName,
+               group_concat(distinct pssav.attr_value) as attrValues
+        from pms_sku_info psi
+                 left join pms_sku_sale_attr_value pssav on psi.sku_id = pssav.sku_id
+        where psi.spu_id = #{spuId}
+        group by pssav.attr_id, pssav.attr_name
+    </select>
 </mapper>

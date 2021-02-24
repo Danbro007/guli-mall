@@ -1,6 +1,8 @@
 package com.danbro.product.mapper;
 
+import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsSpuInfo;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface PmsSpuInfoMapper extends BaseMapper<PmsSpuInfo>{
- 
+
+    List<SkuItemVo.SkuSaleAttrValue> getSaleAttrList(Long spuId);
 }

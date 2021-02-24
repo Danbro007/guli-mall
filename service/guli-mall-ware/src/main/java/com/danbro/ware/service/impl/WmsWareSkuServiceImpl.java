@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.Pagination;
@@ -66,7 +67,11 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
 
     @Override
     public Boolean hasStockBySkuId(Long skuId) {
-        List<WmsWareSku> wareSkuList = MyCurdUtils.selectList(this.list(new QueryWrapper<WmsWareSku>().lambda().eq(WmsWareSku::getSkuId, skuId)), ResponseCode.NOT_FOUND);
+        List<WmsWareSku> wareSkuList = this.list(new QueryWrapper<WmsWareSku>().lambda().eq(WmsWareSku::getSkuId, skuId));
+        // 没查找库存数据就返回false
+        if (MyCollectionUtils.isEmpty(wareSkuList)) {
+            return false;
+        }
         // 计算出 sku 的总库存数（所有仓库的库存）
         AtomicReference<Integer> totalStock = new AtomicReference<>(0);
         wareSkuList.forEach(sku -> totalStock.updateAndGet(v -> v + sku.getStock()));

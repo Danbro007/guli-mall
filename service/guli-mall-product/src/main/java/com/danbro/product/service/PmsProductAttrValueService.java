@@ -2,10 +2,9 @@ package com.danbro.product.service;
 
 
 import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.danbro.product.controller.vo.PmsAttrDetailVo;
 import com.danbro.product.controller.vo.PmsProductAttrValueVo;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsProductAttrValue;
 
 
@@ -31,4 +30,6 @@ public interface PmsProductAttrValueService extends IService<PmsProductAttrValue
      * @return 相关属性
      */
     List<PmsProductAttrValueVo> getAttrValueListBySpuId(Long spuId);
+
+    List<SkuItemVo.SpuAttrGroupVo> getBaseAttrBySpuId(Long spuId);
 }

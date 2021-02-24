@@ -1,10 +1,12 @@
 package com.danbro.product.service;
 
 
+import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
 import com.danbro.product.controller.vo.PmsSpuInfoVo;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsSpuInfo;
 
 
@@ -40,5 +42,13 @@ public interface PmsSpuInfoService extends IService<PmsSpuInfo> {
      * @param spuId 商品spu 的 Id
      */
     void upSpu(Long spuId);
+
+    /**
+     * 获取商品详情里 spu 的所有销售属性
+     *
+     * @param spuId spuID
+     * @return 销售属性列表
+     */
+    List<SkuItemVo.SkuSaleAttrValue> getSaleAttrListBySpuId(Long spuId);
 
 }

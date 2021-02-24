@@ -22,9 +22,9 @@ public interface PmsSkuInfoService extends IService<PmsSkuInfo> {
     /**
      * 批量添加Sku
      *
-     * @param skus 批量的skuInfoVo
+     * @param skuInfoVoList 批量的skuInfoVo
      */
-    void batchSaveSkuInfo(List<PmsSkuInfoVo> skus);
+    void batchSaveSkuInfo(List<PmsSkuInfoVo> skuInfoVoList);
 
     /**
      * 分页查询 sku 信息

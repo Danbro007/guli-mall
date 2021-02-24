@@ -3,6 +3,7 @@ package com.danbro.product.service.impl;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.product.controller.vo.PmsSpuInfoDescVo;
@@ -25,5 +26,11 @@ public class PmsSpuInfoDescServiceImpl extends ServiceImpl<PmsSpuInfoDescMapper,
         // 图片之间用 ， 间隔处理
         PmsSpuInfoDesc pmsSpuInfoDesc = new PmsSpuInfoDesc().setDecript(MyStrUtils.join(",", images)).setSpuId(spuId);
         return MyCurdUtils.insertOrUpdate(PmsSpuInfoDescVo.builder().build().convertToVo(pmsSpuInfoDesc), this.save(pmsSpuInfoDesc), ResponseCode.INSERT_FAILURE);
+    }
+
+    @Override
+    public PmsSpuInfoDescVo getSpuDescBySpuId(Long spuId) {
+        PmsSpuInfoDesc pmsSpuInfoDesc = MyCurdUtils.select(this.getById(spuId), ResponseCode.NOT_FOUND);
+        return ConvertUtils.convert(pmsSpuInfoDesc, PmsSpuInfoDescVo.class);
     }
 }

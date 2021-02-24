@@ -3,29 +3,21 @@ package com.danbro.product.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
-import com.danbro.product.controller.vo.PmsSkuImagesVo;
-import com.danbro.product.controller.vo.PmsSkuInfoVo;
-import com.danbro.product.controller.vo.PmsSkuSaleAttrValueVo;
-import com.danbro.product.controller.vo.SmsMemberPriceVo;
-import com.danbro.product.controller.vo.SmsSkuFullReductionVo;
-import com.danbro.product.controller.vo.SmsSkuLadderVo;
+import com.danbro.product.controller.vo.*;
 import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsSkuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
 import com.danbro.product.rpc.clients.SmsMemberPriceClient;
 import com.danbro.product.rpc.clients.SmsSkuFullReductionClient;
 import com.danbro.product.rpc.clients.SmsSkuLadderClient;
-import com.danbro.product.service.PmsAttrService;
-import com.danbro.product.service.PmsSkuImagesService;
-import com.danbro.product.service.PmsSkuInfoService;
-import com.danbro.product.service.PmsSkuSaleAttrValueService;
+import com.danbro.product.rpc.clients.WmsWareSkuClient;
+import com.danbro.product.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +47,23 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Autowired
     SmsSkuFullReductionClient smsSkuFullReductionClient;
 
+    @Autowired
+    PmsSkuInfoService pmsSkuInfoService;
+
+    @Autowired
+    PmsSpuInfoDescService pmsSpuInfoDescService;
+
+    @Autowired
+    PmsAttrGroupService pmsAttrGroupService;
+
+    @Autowired
+    PmsProductAttrValueService pmsProductAttrValueService;
+
+    @Autowired
+    PmsSpuInfoService pmsSpuInfoService;
+
+    @Autowired
+    WmsWareSkuClient wmsWareSkuClient;
 
     @Override
     public void batchSaveSkuInfo(List<PmsSkuInfoVo> skuInfoVoList) {
@@ -145,11 +154,24 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     public SkuItemVo getItemBySkuId(Long skuId) {
         SkuItemVo skuItemVo = new SkuItemVo();
         // Todo 1、到 pms_sku_info 查询 sku 的信息
-
+        PmsSkuInfoVo skuInfoVo = pmsSkuInfoService.getSkuInfoById(skuId);
+        skuItemVo.setInfo(skuInfoVo);
         // Todo 2、到 pms_sku_image 查询出 sku 的图片
+        List<PmsSkuImagesVo> pmsSkuImageList = pmsSkuImagesService.getSkuImageBySkuId(skuId);
+        skuItemVo.setImages(pmsSkuImageList);
         // Todo 3、查询出 sku 对应的 spu 的相关基本属性
+        // 查询分类下的属性分组
+        List<SkuItemVo.SpuAttrGroupVo> baseAttrGroupList = pmsProductAttrValueService.getBaseAttrBySpuId(skuInfoVo.getSpuId());
+        skuItemVo.setGroupAttrs(baseAttrGroupList);
         // Todo 4、查询出 sku 对应的 spu 介绍图(pms_spu_info_desc)
+        PmsSpuInfoDescVo pmsSpuInfoDescVo = pmsSpuInfoDescService.getSpuDescBySpuId(skuInfoVo.getSpuId());
+        skuItemVo.setDesc(pmsSpuInfoDescVo);
         // Todo 5、查询出 sku 的所有销售属性
+        List<SkuItemVo.SkuSaleAttrValue> saleAttrValueList = pmsSpuInfoService.getSaleAttrListBySpuId(skuInfoVo.getSpuId());
+        skuItemVo.setSaleAttr(saleAttrValueList);
+        // Todo 6、查询出是否有库存
+        Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(skuInfoVo.getSpuId()), true);
+        skuItemVo.setHasStock(hasStock);
         return skuItemVo;
     }
 

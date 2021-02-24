@@ -10,6 +10,7 @@ import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.ConvertUtils;
 import com.danbro.product.controller.vo.PmsAttrDetailVo;
 import com.danbro.product.controller.vo.PmsProductAttrValueVo;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsProductAttrValue;
 import com.danbro.product.mapper.PmsProductAttrValueMapper;
 import com.danbro.product.service.PmsAttrService;
@@ -52,6 +53,11 @@ public class PmsProductAttrValueServiceImpl extends ServiceImpl<PmsProductAttrVa
                         eq(PmsProductAttrValue::getSpuId, spuId)),
                 ResponseCode.NOT_FOUND);
         return ConvertUtils.batchConvert(pmsProductAttrValues, PmsProductAttrValueVo.class);
+    }
+
+    @Override
+    public List<SkuItemVo.SpuAttrGroupVo> getBaseAttrBySpuId(Long spuId) {
+        return MyCurdUtils.select(this.baseMapper.getSpuAttrGroupBySpuId(spuId),ResponseCode.NOT_FOUND);
     }
 
 }

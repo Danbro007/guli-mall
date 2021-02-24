@@ -1,12 +1,10 @@
 package com.danbro.product;
 
 
+import java.util.List;
 import cn.hutool.core.util.StrUtil;
-import com.danbro.product.service.PmsAttrAttrgroupRelationService;
-import com.danbro.product.service.PmsAttrGroupService;
-import com.danbro.product.service.PmsAttrService;
-import com.danbro.product.service.PmsCategoryBrandRelationService;
-import com.danbro.product.service.PmsCategoryService;
+import com.danbro.product.controller.vo.front.SkuItemVo;
+import com.danbro.product.service.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,11 @@ public class ProductTest {
     @Autowired
     PmsAttrService attrService;
 
+    @Autowired
+    PmsProductAttrValueService pmsProductAttrValueService;
+
+    @Autowired
+    PmsSpuInfoService pmsSpuInfoService;
     @Test
     public void test1() {
         Long[] catIds = new Long[]{500L, 333L};
@@ -41,7 +44,9 @@ public class ProductTest {
 
     @Test
     public void test2() {
-        attrService.batchDeleteAttr(new Long[]{11L});
+        List<SkuItemVo.SpuAttrGroupVo> attrGroupBySpuId = pmsProductAttrValueService.getBaseAttrBySpuId(1363809437761437698L);
+        System.out.println(attrGroupBySpuId);
+
     }
 
     @Test
@@ -51,4 +56,13 @@ public class ProductTest {
         System.out.println(split[split.length-1]);
 
     }
+
+    @Test
+    public void test4() {
+        List<SkuItemVo.SkuSaleAttrValue> list = pmsSpuInfoService.getSaleAttrListBySpuId(1363830910244958209L);
+        System.out.println(list);
+
+    }
+
+
 }

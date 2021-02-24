@@ -14,6 +14,7 @@ import com.danbro.common.utils.*;
 import com.danbro.product.controller.esModel.ProductAttrEsModel;
 import com.danbro.product.controller.esModel.ProductSkuInfoEsModel;
 import com.danbro.product.controller.vo.*;
+import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.entity.PmsSpuInfo;
 import com.danbro.product.mapper.PmsSpuInfoMapper;
 import com.danbro.product.rpc.clients.SearchClient;
@@ -153,6 +154,11 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         // 11、发送成功则把spu状态设置为上架状态
         pmsSpuInfo.setPublishStatus(ProductPublishStatus.PUT_ON);
         MyCurdUtils.insertOrUpdate(pmsSpuInfoService.updateById(pmsSpuInfo), ResponseCode.UPDATE_FAILURE);
+    }
+
+    @Override
+    public List<SkuItemVo.SkuSaleAttrValue> getSaleAttrListBySpuId(Long spuId) {
+        return MyCurdUtils.select(this.baseMapper.getSaleAttrList(spuId), ResponseCode.NOT_FOUND);
     }
 
     /**
