@@ -2,22 +2,19 @@ package com.danbro.search.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import cn.hutool.core.util.ReUtil;
-import cn.hutool.core.util.URLUtil;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
-import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyObjectUtils;
-import com.danbro.common.utils.MyStrUtils;
+import com.danbro.common.utils.*;
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
-import com.danbro.search.controller.vo.PmsAttrDetailVo;
+import com.danbro.search.controller.interfaces.NavVoInterface;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
-import com.danbro.search.rpc.PmsAttrClient;
+import com.danbro.search.rpc.PmsClient;
 import com.danbro.search.service.SearchService;
+import com.danbro.search.utils.NavUtils;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
@@ -33,8 +30,11 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilde
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
@@ -52,13 +52,14 @@ import javax.servlet.http.HttpServletRequest;
  * @Created by Administrator
  */
 @Service
-public class SearchServiceImpl implements SearchService, InitializingBean {
+public class SearchServiceImpl implements SearchService, InitializingBean, ApplicationContextAware {
     @Autowired
-    PmsAttrClient pmsAttrClient;
+    PmsClient pmsClient;
 
     private static final char SPLIT_CHAR = '_';
 
     private static final char VALUE_SPLIT_CHAR = ':';
+
     /**
      * 每页显示的数据数
      */
@@ -67,6 +68,8 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
      * 默认的页数
      */
     private static final Integer DEFAULT_PAGE_NUM = 0;
+
+    private List<NavVoInterface> navVoInterfaces = new ArrayList<>();
 
 
     @Autowired
@@ -126,10 +129,8 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
             // 封装属性聚合消息
             List<SearchResponseVo.AttrVo> attrVos = buildAttrVos(aggregations);
             searchResponseVo.setAttrs(attrVos);
-            if (MyCollectionUtils.isNotEmpty(searchParamVo.getAttrs())) {
-                List<SearchResponseVo.NavVo> navVos = buildNavVos(searchParamVo, request);
-                searchResponseVo.setNavs(navVos);
-            }
+            List<SearchResponseVo.NavVo> navVos = NavUtils.buildNavList(searchParamVo, request, navVoInterfaces);
+            searchResponseVo.setNavs(navVos);
         }
         // 生成导航页
         List<Integer> pageNavs = new ArrayList<>();
@@ -139,52 +140,6 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
         searchResponseVo.setPageNavs(pageNavs);
         return searchResponseVo;
     }
-
-    private List<SearchResponseVo.NavVo> buildNavVos(SearchParamVo searchParamVo, HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        // 请求路径参数
-        String queryParam = request.getQueryString();
-        // 请求参数解码
-        String decodeQueryParam = URLUtil.decode(queryParam);
-        return searchParamVo.getAttrs().stream().filter(attr -> MyStrUtils.split(attr, SPLIT_CHAR).size() == 2).map(attr -> {
-            // 对属性和属性值进行字符串分割
-            List<String> stringList = MyStrUtils.split(attr, SPLIT_CHAR);
-            // 属性ID
-            String attrId = stringList.get(0);
-            // rpc 查询属性名
-            PmsAttrDetailVo pmsAttr = MyCurdUtils.rpcResultHandle(pmsAttrClient.getAttrInfo(Long.parseLong(attrId)));
-            // 属性值
-            String value = stringList.get(1);
-            // 数据封装
-            SearchResponseVo.NavVo navVo = new SearchResponseVo.NavVo();
-            // attrs为第一个筛选条件
-            String newQueryParam;
-            if (MyStrUtils.startWith(decodeQueryParam, "attrs")) {
-                // attrs=1364072662106714113_绿色&catalogId=225&skuPrice=1_900
-                // 替换成 ?catalogId=225&skuPrice=1_900
-                //
-                // attrs=1364072662106714113_绿色&catalogId=225&skuPrice=1_900 有一个以上的筛选条件并且是第一个筛选条件
-                if (MyStrUtils.contains(decodeQueryParam, "&")) {
-                    newQueryParam = ReUtil.replaceAll(decodeQueryParam, "^?attrs=.*?\\&", "");
-                }
-                // attrs=1364072662106714113_绿色 只有一个筛选条件
-                else {
-                    newQueryParam = "";
-                }
-            }
-            // attrs 不是第一个筛选条件
-            // catalogId=225&skuPrice=1_900&attrs=1364072662106714113_绿色
-            // 转换成 catalogId=225&skuPrice=1_900
-            else {
-                String format = String.format("&attrs=%s", attr);
-                newQueryParam = MyStrUtils.replace(decodeQueryParam, format, "");
-            }
-            String link = String.format("%s?%s", requestUri, newQueryParam);
-            navVo.setNavName(pmsAttr.getAttrName()).setNavValue(value).setLink(link);
-            return navVo;
-        }).collect(Collectors.toList());
-    }
-
 
     /**
      * 封装属性和属性值的聚合信息
@@ -393,5 +348,11 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
                 indexOperations.putMapping(mapping);
             }
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        Map<String, NavVoInterface> interfaceMap = applicationContext.getBeansOfType(NavVoInterface.class);
+        interfaceMap.forEach((k, v) -> navVoInterfaces.add(v));
     }
 }

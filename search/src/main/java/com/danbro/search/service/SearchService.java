@@ -6,6 +6,7 @@ import java.util.List;
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 

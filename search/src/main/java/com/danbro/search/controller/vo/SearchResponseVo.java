@@ -1,6 +1,7 @@
 package com.danbro.search.controller.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
@@ -63,7 +64,8 @@ public class SearchResponseVo implements Serializable {
     /**
      * 面包屑导航栏
      */
-    private List<NavVo> navs;
+    private List<NavVo> navs = new ArrayList<>();
+
 
     @Data
     public static class BrandVo {
