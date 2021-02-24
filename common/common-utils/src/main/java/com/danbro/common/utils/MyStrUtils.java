@@ -82,5 +82,20 @@ public class MyStrUtils {
         return StrUtil.contains(str, c);
     }
 
+    /**
+     * 指定字符串是否在字符串中出现过
+     *
+     * @param str       字符串
+     * @param searchStr 要查找的字符串
+     * @return 查询结果
+     */
+    public static Boolean contains(CharSequence str, CharSequence searchStr) {
+        return StrUtil.contains(str, searchStr);
+    }
+
+    public static Boolean startWith(CharSequence str, CharSequence prefix) {
+        return StrUtil.startWith(str, prefix);
+    }
+
 
 }

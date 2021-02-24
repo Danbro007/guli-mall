@@ -90,6 +90,7 @@ public class SearchResponseVo implements Serializable {
     public static class NavVo {
         private String navName;
         private String navValue;
+        private String link;
     }
 
 }

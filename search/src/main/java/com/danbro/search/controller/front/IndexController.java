@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @Classname IndexController
  * @Description TODO
@@ -22,8 +24,8 @@ public class IndexController {
     SearchService searchService;
 
     @GetMapping("list.html")
-    public String list(SearchParamVo searchParamVo, Model model) {
-        SearchResponseVo responseVo = searchService.search(searchParamVo);
+    public String list(SearchParamVo searchParamVo, Model model, HttpServletRequest request) {
+        SearchResponseVo responseVo = searchService.search(searchParamVo,request);
         model.addAttribute("result", responseVo);
         return "list";
     }

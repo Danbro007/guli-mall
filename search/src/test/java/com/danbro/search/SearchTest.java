@@ -2,6 +2,8 @@ package com.danbro.search;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.hutool.core.util.ReUtil;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.MyStrUtils;
@@ -120,6 +122,17 @@ public class SearchTest {
         List<String> split = MyStrUtils.split("_200", '_');
         System.out.println(split.size());
         System.out.println(split);
+    }
+
+    @Test
+    public void test2() {
+        // ?attrs开头
+        String str1 = "?attrs=1364072662106714113_绿色&catalogId=225&skuPrice=1_900";
+        String all = ReUtil.replaceAll(str1, "^?attrs=.*?\\&", "");
+        System.out.println(all);
+
+        String str2 = "?catalogId=225&skuPrice=1_900&attrs=1364072662106714113_绿色";
+
     }
 }
 

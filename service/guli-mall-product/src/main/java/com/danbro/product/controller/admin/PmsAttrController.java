@@ -1,6 +1,7 @@
 package com.danbro.product.controller.admin;
 
 import java.util.List;
+
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
@@ -57,7 +58,7 @@ public class PmsAttrController {
 
     @ApiOperation("获取属性的详细信息")
     @GetMapping("info/{attrId}")
-    public ResultBean<PmsAttrDetailVo> getAttrInfo(@PathVariable("attrId") Long attrId) {
+    public ResultBean<PmsAttrDetailVo> getAttrInfo(@PathVariable Long attrId) {
         return ResultBean.ofSuccess(pmsAttrService.getAttrById(attrId));
     }
 

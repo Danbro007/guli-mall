@@ -3,6 +3,9 @@ package com.danbro.search.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.URLUtil;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.MyCollectionUtils;
@@ -39,6 +42,8 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Classname SearchServiceImpl
@@ -77,9 +82,9 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
     }
 
     @Override
-    public SearchResponseVo search(SearchParamVo searchParamVo) {
+    public SearchResponseVo search(SearchParamVo searchParamVo, HttpServletRequest request) {
         SearchHits<ProductSkuInfoEsModel> searchHits = processSearchParam(searchParamVo);
-        return buildSearchResponse(searchHits, searchParamVo);
+        return buildSearchResponse(searchHits, searchParamVo, request);
     }
 
     /**
@@ -88,7 +93,7 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
      * @param searchHits 检索结果
      * @return 响应结果
      */
-    private SearchResponseVo buildSearchResponse(SearchHits<ProductSkuInfoEsModel> searchHits, SearchParamVo searchParamVo) {
+    private SearchResponseVo buildSearchResponse(SearchHits<ProductSkuInfoEsModel> searchHits, SearchParamVo searchParamVo, HttpServletRequest request) {
         SearchResponseVo searchResponseVo = new SearchResponseVo();
         // 封装总检索的商品数
         searchResponseVo.setTotal(searchHits.getTotalHits());
@@ -122,7 +127,7 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
             List<SearchResponseVo.AttrVo> attrVos = buildAttrVos(aggregations);
             searchResponseVo.setAttrs(attrVos);
             if (MyCollectionUtils.isNotEmpty(searchParamVo.getAttrs())) {
-                List<SearchResponseVo.NavVo> navVos = buildNavVos(searchParamVo);
+                List<SearchResponseVo.NavVo> navVos = buildNavVos(searchParamVo, request);
                 searchResponseVo.setNavs(navVos);
             }
         }
@@ -135,19 +140,47 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
         return searchResponseVo;
     }
 
-    private List<SearchResponseVo.NavVo> buildNavVos(SearchParamVo searchParamVo) {
+    private List<SearchResponseVo.NavVo> buildNavVos(SearchParamVo searchParamVo, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        // 请求路径参数
+        String queryParam = request.getQueryString();
+        // 请求参数解码
+        String decodeQueryParam = URLUtil.decode(queryParam);
         return searchParamVo.getAttrs().stream().filter(attr -> MyStrUtils.split(attr, SPLIT_CHAR).size() == 2).map(attr -> {
             // 对属性和属性值进行字符串分割
             List<String> stringList = MyStrUtils.split(attr, SPLIT_CHAR);
             // 属性ID
             String attrId = stringList.get(0);
             // rpc 查询属性名
-            PmsAttrDetailVo pmsAttr = MyCurdUtils.rpcResultHandle(pmsAttrClient.getAttrInfo(Long.getLong(attrId)));
+            PmsAttrDetailVo pmsAttr = MyCurdUtils.rpcResultHandle(pmsAttrClient.getAttrInfo(Long.parseLong(attrId)));
             // 属性值
             String value = stringList.get(1);
             // 数据封装
             SearchResponseVo.NavVo navVo = new SearchResponseVo.NavVo();
-            navVo.setNavName(pmsAttr.getAttrName()).setNavValue(value);
+            // attrs为第一个筛选条件
+            String newQueryParam;
+            if (MyStrUtils.startWith(decodeQueryParam, "attrs")) {
+                // attrs=1364072662106714113_绿色&catalogId=225&skuPrice=1_900
+                // 替换成 ?catalogId=225&skuPrice=1_900
+                //
+                // attrs=1364072662106714113_绿色&catalogId=225&skuPrice=1_900 有一个以上的筛选条件并且是第一个筛选条件
+                if (MyStrUtils.contains(decodeQueryParam, "&")) {
+                    newQueryParam = ReUtil.replaceAll(decodeQueryParam, "^?attrs=.*?\\&", "");
+                }
+                // attrs=1364072662106714113_绿色 只有一个筛选条件
+                else {
+                    newQueryParam = "";
+                }
+            }
+            // attrs 不是第一个筛选条件
+            // catalogId=225&skuPrice=1_900&attrs=1364072662106714113_绿色
+            // 转换成 catalogId=225&skuPrice=1_900
+            else {
+                String format = String.format("&attrs=%s", attr);
+                newQueryParam = MyStrUtils.replace(decodeQueryParam, format, "");
+            }
+            String link = String.format("%s?%s", requestUri, newQueryParam);
+            navVo.setNavName(pmsAttr.getAttrName()).setNavValue(value).setLink(link);
             return navVo;
         }).collect(Collectors.toList());
     }

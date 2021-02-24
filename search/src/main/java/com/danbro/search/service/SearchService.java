@@ -2,9 +2,12 @@ package com.danbro.search.service;
 
 
 import java.util.List;
+
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface SearchService {
 
@@ -17,8 +20,9 @@ public interface SearchService {
 
     /**
      * 商品的查询检索
+     *
      * @param searchParamVo 查询条件
      * @return
      */
-    SearchResponseVo search(SearchParamVo searchParamVo);
+    SearchResponseVo search(SearchParamVo searchParamVo, HttpServletRequest request);
 }

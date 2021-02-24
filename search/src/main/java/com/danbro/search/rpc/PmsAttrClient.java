@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @FeignClient(name = "service-pms", fallback = PmsAttrFallback.class)
 public interface PmsAttrClient {
 
-    @ResponseBody
-    @ApiOperation("获取属性的详细信息")
     @GetMapping("product/attr/info/{attrId}")
-    ResultBean<PmsAttrDetailVo> getAttrInfo(@PathVariable("attrId") Long attrId);
+    ResultBean<PmsAttrDetailVo> getAttrInfo(@PathVariable Long attrId);
 }
