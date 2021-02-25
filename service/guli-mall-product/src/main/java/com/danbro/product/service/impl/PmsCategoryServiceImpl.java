@@ -38,6 +38,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     @Autowired
     private PmsAttrService pmsAttrService;
 
+
     @Cacheable(value = "category", key = "'getCategoryTree'", sync = true)
     @Override
     public List<PmsCategoryVo> getCategoryTree() {
@@ -115,6 +116,7 @@ public class PmsCategoryServiceImpl extends ServiceImpl<PmsCategoryMapper, PmsCa
     }
 
 
+    @Cacheable(value = "category", key = "'getCategory1Level'", sync = true)
     @Override
     public List<PmsCategoryVo> getCategoryByCatLevel(Integer catLevel) {
         List<PmsCategory> categoryList = this.list(new QueryWrapper<PmsCategory>().lambda().eq(PmsCategory::getCatLevel, catLevel));

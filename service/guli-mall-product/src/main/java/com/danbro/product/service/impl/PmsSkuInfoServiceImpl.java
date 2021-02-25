@@ -156,6 +156,7 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
         return ConvertUtils.batchConvert(pmsSkuInfoList, PmsSkuInfoVo.class);
     }
 
+    // Todo 商品详情缓存起来
     @Override
     public SkuItemVo getItemBySkuId(Long skuId) throws ExecutionException, InterruptedException {
         // 使用异步编排
@@ -177,7 +178,6 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             List<SkuItemVo.SpuAttrGroupVo> baseAttrGroupList = pmsProductAttrValueService.getBaseAttrBySpuId(pmsSkuInfoVo.getSpuId());
             skuItemVo.setGroupAttrs(baseAttrGroupList);
         }, threadPoolExecutor);
-
         // 查询出 sku 对应的 spu 介绍图(pms_spu_info_desc)
         CompletableFuture<Void> spuInfoFuture = pmsSkuInfoFuture.thenAcceptAsync(pmsSkuInfoVo -> {
             PmsSpuInfoDescVo pmsSpuInfoDescVo = pmsSpuInfoDescService.getSpuDescBySpuId(pmsSkuInfoVo.getSpuId());

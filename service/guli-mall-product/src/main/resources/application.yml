@@ -36,6 +36,7 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+# 线程池大小
 thread:
   pool:
     core-pool-size: 20
