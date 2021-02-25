@@ -4,15 +4,19 @@
     <resultMap id="saleAttrMapping" type="com.danbro.product.controller.vo.front.SkuItemVo$SkuSaleAttrValue">
         <id column="attrId" property="attrId"/>
         <result column="attrName" property="attrName"/>
-        <result column="attrValues" property="attrValues"/>
+        <collection property="attrValues" ofType="com.danbro.product.controller.vo.front.SkuItemVo$ValueWithSkuId">
+            <result column="attrValue" property="attrValue"/>
+            <result column="skuIds" property="skuIds"/>
+        </collection>
     </resultMap>
     <select id="getSaleAttrList" resultMap="saleAttrMapping">
-        select pssav.attr_id                           as attrId,
-               pssav.attr_name                         as attrName,
-               group_concat(distinct pssav.attr_value) as attrValues
+        select pssav.attr_id                       as attrId,
+               pssav.attr_name                     as attrName,
+               pssav.attr_value                    as attrValue,
+               group_concat(distinct pssav.sku_id) as skuIds
         from pms_sku_info psi
                  left join pms_sku_sale_attr_value pssav on psi.sku_id = pssav.sku_id
         where psi.spu_id = #{spuId}
-        group by pssav.attr_id, pssav.attr_name
+        group by pssav.attr_id, pssav.attr_name, pssav.attr_value
     </select>
 </mapper>

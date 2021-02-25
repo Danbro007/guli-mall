@@ -78,7 +78,16 @@ public class SkuItemVo {
     public static class SkuSaleAttrValue {
         private Long attrId;
         private String attrName;
-        private String attrValues;
+        private List<ValueWithSkuId> attrValues;
 
+    }
+
+    /**
+     * 属性值和对应的skuID
+     */
+    @Data
+    public static class ValueWithSkuId {
+        private String attrValue;
+        private String skuIds;
     }
 }
