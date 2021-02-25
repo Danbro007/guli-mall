@@ -4,7 +4,7 @@ import cn.hutool.core.util.ReUtil;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
-import com.danbro.search.controller.interfaces.NavVoInterface;
+import com.danbro.search.controller.interfaces.Condition;
 import com.danbro.search.controller.vo.PmsAttrDetailVo;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 /**
  * @author Danrbo
  * @Classname AttrCondition
- * @Description TODO
+ * @Description TODO 属性筛选条件
  * @Date 2021/2/24 13:10
  */
 @Component
-public class AttrCondition implements NavVoInterface {
+public class AttrCondition implements Condition {
 
-    private static final char SPLIT_CHAR = '_';
     private static final String ATTRS = "attrs";
+    private static final char SPLIT_CHAR = '_';
     /**
      * 请求参数的分隔符
      */

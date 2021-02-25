@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * @author Danrbo
  * @Classname PmsBrandVo
- * @Description TODO
+ * @Description TODO 品牌Vo
  * @Date 2021/2/24 12:31
  */
 @Data

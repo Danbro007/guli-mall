@@ -9,7 +9,7 @@ import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.*;
 import com.danbro.search.controller.esModel.ProductSkuInfoEsModel;
-import com.danbro.search.controller.interfaces.NavVoInterface;
+import com.danbro.search.controller.interfaces.Condition;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
 import com.danbro.search.rpc.PmsClient;
@@ -69,7 +69,7 @@ public class SearchServiceImpl implements SearchService, InitializingBean, Appli
      */
     private static final Integer DEFAULT_PAGE_NUM = 0;
 
-    private List<NavVoInterface> navVoInterfaces = new ArrayList<>();
+    private List<Condition> conditions = new ArrayList<>();
 
 
     @Autowired
@@ -129,7 +129,7 @@ public class SearchServiceImpl implements SearchService, InitializingBean, Appli
             // 封装属性聚合消息
             List<SearchResponseVo.AttrVo> attrVos = buildAttrVos(aggregations);
             searchResponseVo.setAttrs(attrVos);
-            List<SearchResponseVo.NavVo> navVos = NavUtils.buildNavList(searchParamVo, request, navVoInterfaces);
+            List<SearchResponseVo.NavVo> navVos = NavUtils.buildNavList(searchParamVo, request, conditions);
             searchResponseVo.setNavs(navVos);
         }
         // 生成导航页
@@ -352,7 +352,7 @@ public class SearchServiceImpl implements SearchService, InitializingBean, Appli
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Map<String, NavVoInterface> interfaceMap = applicationContext.getBeansOfType(NavVoInterface.class);
-        interfaceMap.forEach((k, v) -> navVoInterfaces.add(v));
+        Map<String, Condition> interfaceMap = applicationContext.getBeansOfType(Condition.class);
+        interfaceMap.forEach((k, v) -> conditions.add(v));
     }
 }

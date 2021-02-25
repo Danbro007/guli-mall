@@ -4,9 +4,7 @@
     <resultMap id="saleAttrMapping" type="com.danbro.product.controller.vo.front.SkuItemVo$SkuSaleAttrValue">
         <id column="attrId" property="attrId"/>
         <result column="attrName" property="attrName"/>
-        <collection property="attrValues" ofType="java.lang.String">
-            <result column="attrValues"/>
-        </collection>
+        <result column="attrValues" property="attrValues"/>
     </resultMap>
     <select id="getSaleAttrList" resultMap="saleAttrMapping">
         select pssav.attr_id                           as attrId,

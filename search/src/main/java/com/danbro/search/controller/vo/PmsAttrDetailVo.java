@@ -1,6 +1,7 @@
 package com.danbro.search.controller.vo;
 
 import java.io.Serializable;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,7 +9,7 @@ import lombok.Data;
 
 /**
  * @Classname PmsAttrDetailVo
- * @Description TODO
+ * @Description TODO pms 属性vo
  * @Date 2021/2/23 20:49
  * @Created by Administrator
  */

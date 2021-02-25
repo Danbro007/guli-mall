@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * @author Danrbo
  * @Classname PmsCategoryVo
- * @Description TODO
+ * @Description TODO 分类Vo
  * @Date 2021/2/24 14:12
  */
 @Data

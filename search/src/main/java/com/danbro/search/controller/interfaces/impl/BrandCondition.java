@@ -4,7 +4,7 @@ import cn.hutool.core.util.ReUtil;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
-import com.danbro.search.controller.interfaces.NavVoInterface;
+import com.danbro.search.controller.interfaces.Condition;
 import com.danbro.search.controller.vo.PmsBrandVo;
 import com.danbro.search.controller.vo.SearchParamVo;
 import com.danbro.search.controller.vo.SearchResponseVo;
@@ -18,15 +18,16 @@ import java.util.stream.Collectors;
 /**
  * @author Danrbo
  * @Classname BrandCondition
- * @Description TODO
+ * @Description TODO 品牌筛选条件
  * @Date 2021/2/24 14:19
  */
 @Component
-public class BrandCondition implements NavVoInterface {
+public class BrandCondition implements Condition {
     @Autowired
     PmsClient pmsClient;
 
     private static final String BRAND = "brandId";
+    private static final String NAV_NAME = "品牌";
     /**
      * 请求参数的分隔符
      */
@@ -50,7 +51,7 @@ public class BrandCondition implements NavVoInterface {
                     newQueryParam = MyStrUtils.replace(decodeQueryParam, format, "");
                 }
                 String link = String.format("%s?%s", requestUri, newQueryParam);
-                navVo.setNavName("品牌").setNavValue(pmsBrandVo.getName()).setLink(link);
+                navVo.setNavName(NAV_NAME).setNavValue(pmsBrandVo.getName()).setLink(link);
                 return navVo;
             }).collect(Collectors.toList());
         }

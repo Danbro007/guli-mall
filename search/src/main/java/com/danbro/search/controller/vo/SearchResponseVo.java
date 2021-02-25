@@ -94,5 +94,4 @@ public class SearchResponseVo implements Serializable {
         private String navValue;
         private String link;
     }
-
 }

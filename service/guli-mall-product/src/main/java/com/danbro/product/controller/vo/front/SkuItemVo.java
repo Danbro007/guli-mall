@@ -43,6 +43,9 @@ public class SkuItemVo {
      */
     private List<SkuSaleAttrValue> saleAttr;
 
+    /**
+     * 是否有库存
+     */
     private Boolean hasStock;
 
     /**
@@ -75,7 +78,7 @@ public class SkuItemVo {
     public static class SkuSaleAttrValue {
         private Long attrId;
         private String attrName;
-        private List<String> attrValues;
+        private String attrValues;
 
     }
 }

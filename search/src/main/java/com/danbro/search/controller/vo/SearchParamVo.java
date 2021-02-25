@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
+ * @author liweimo
  * @Classname SearchParamVo
- * @Description TODO
+ * @Description TODO 商品检索条件Vo
  * @Date 2021/2/20 16:14
  * @Created by Administrator
  */

@@ -9,8 +9,9 @@ import com.danbro.search.rpc.PmsClient;
 import org.springframework.stereotype.Component;
 
 /**
+ * @author liweimo
  * @Classname PmsAttrFallback
- * @Description TODO
+ * @Description TODO PmsClient的fallback
  * @Date 2021/2/23 20:48
  * @Created by Administrator
  */
