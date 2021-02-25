@@ -1,5 +1,7 @@
 package com.danbro.product.controller.front;
 
+import java.util.concurrent.ExecutionException;
+import javax.annotation.Resource;
 import com.danbro.product.controller.vo.front.SkuItemVo;
 import com.danbro.product.service.PmsSkuInfoService;
 import org.springframework.stereotype.Controller;
@@ -7,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.annotation.Resource;
 
 /**
  * @author Danrbo
@@ -24,7 +24,7 @@ public class ItemController {
     PmsSkuInfoService pmsSkuInfoService;
 
     @GetMapping("{skuId}.html")
-    public String getItem(@PathVariable Long skuId, Model model) {
+    public String getItem(@PathVariable Long skuId, Model model) throws ExecutionException, InterruptedException {
         SkuItemVo item = pmsSkuInfoService.getItemBySkuId(skuId);
         model.addAttribute("item", item);
         return "item";

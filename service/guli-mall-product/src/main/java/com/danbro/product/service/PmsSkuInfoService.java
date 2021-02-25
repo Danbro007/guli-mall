@@ -3,6 +3,7 @@ package com.danbro.product.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
@@ -61,5 +62,5 @@ public interface PmsSkuInfoService extends IService<PmsSkuInfo> {
      * @param skuId skuId
      * @return 封装信息
      */
-    SkuItemVo getItemBySkuId(Long skuId);
+    SkuItemVo getItemBySkuId(Long skuId) throws ExecutionException, InterruptedException;
 }

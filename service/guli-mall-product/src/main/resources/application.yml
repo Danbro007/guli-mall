@@ -35,3 +35,9 @@ mybatis-plus:
       logic-not-delete-value: 0
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+thread:
+  pool:
+    core-pool-size: 20
+    maximum-pool-size: 30
+    keep-alive-time: 10

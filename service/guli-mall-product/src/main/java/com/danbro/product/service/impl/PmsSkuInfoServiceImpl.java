@@ -2,6 +2,9 @@ package com.danbro.product.service.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -64,6 +67,9 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
 
     @Autowired
     WmsWareSkuClient wmsWareSkuClient;
+
+    @Autowired
+    ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     public void batchSaveSkuInfo(List<PmsSkuInfoVo> skuInfoVoList) {
@@ -151,27 +157,43 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     }
 
     @Override
-    public SkuItemVo getItemBySkuId(Long skuId) {
+    public SkuItemVo getItemBySkuId(Long skuId) throws ExecutionException, InterruptedException {
+        // 使用异步编排
         SkuItemVo skuItemVo = new SkuItemVo();
-        // Todo 1、到 pms_sku_info 查询 sku 的信息
-        PmsSkuInfoVo skuInfoVo = pmsSkuInfoService.getSkuInfoById(skuId);
-        skuItemVo.setInfo(skuInfoVo);
-        // Todo 2、到 pms_sku_image 查询出 sku 的图片
-        List<PmsSkuImagesVo> pmsSkuImageList = pmsSkuImagesService.getSkuImageBySkuId(skuId);
-        skuItemVo.setImages(pmsSkuImageList);
-        // Todo 3、查询出 sku 对应的 spu 的相关基本属性
+        // 到 pms_sku_image 查询出 sku 的图片
+        CompletableFuture<Void> skuImageFuture = CompletableFuture.runAsync(() -> {
+            List<PmsSkuImagesVo> pmsSkuImageList = pmsSkuImagesService.getSkuImageBySkuId(skuId);
+            skuItemVo.setImages(pmsSkuImageList);
+        }, threadPoolExecutor);
+        // 查询出 sku 的 spu 信息
+        CompletableFuture<PmsSkuInfoVo> pmsSkuInfoFuture = CompletableFuture.supplyAsync(() -> {
+            PmsSkuInfoVo skuInfoVo = pmsSkuInfoService.getSkuInfoById(skuId);
+            skuItemVo.setInfo(skuInfoVo);
+            return skuInfoVo;
+        }, threadPoolExecutor);
+        // 查询出 sku 对应的 spu 的相关基本属性
         // 查询分类下的属性分组
-        List<SkuItemVo.SpuAttrGroupVo> baseAttrGroupList = pmsProductAttrValueService.getBaseAttrBySpuId(skuInfoVo.getSpuId());
-        skuItemVo.setGroupAttrs(baseAttrGroupList);
-        // Todo 4、查询出 sku 对应的 spu 介绍图(pms_spu_info_desc)
-        PmsSpuInfoDescVo pmsSpuInfoDescVo = pmsSpuInfoDescService.getSpuDescBySpuId(skuInfoVo.getSpuId());
-        skuItemVo.setDesc(pmsSpuInfoDescVo);
-        // Todo 5、查询出 sku 的所有销售属性
-        List<SkuItemVo.SkuSaleAttrValue> saleAttrValueList = pmsSpuInfoService.getSaleAttrListBySpuId(skuInfoVo.getSpuId());
-        skuItemVo.setSaleAttr(saleAttrValueList);
-        // Todo 6、查询出是否有库存
-        Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(skuInfoVo.getSpuId()), true);
-        skuItemVo.setHasStock(hasStock);
+        CompletableFuture<Void> baseAttrGroupFuture = pmsSkuInfoFuture.thenAcceptAsync(pmsSkuInfoVo -> {
+            List<SkuItemVo.SpuAttrGroupVo> baseAttrGroupList = pmsProductAttrValueService.getBaseAttrBySpuId(pmsSkuInfoVo.getSpuId());
+            skuItemVo.setGroupAttrs(baseAttrGroupList);
+        }, threadPoolExecutor);
+
+        // 查询出 sku 对应的 spu 介绍图(pms_spu_info_desc)
+        CompletableFuture<Void> spuInfoFuture = pmsSkuInfoFuture.thenAcceptAsync(pmsSkuInfoVo -> {
+            PmsSpuInfoDescVo pmsSpuInfoDescVo = pmsSpuInfoDescService.getSpuDescBySpuId(pmsSkuInfoVo.getSpuId());
+            skuItemVo.setDesc(pmsSpuInfoDescVo);
+        }, threadPoolExecutor);
+        // 查询出 sku 的所有销售属性
+        CompletableFuture<Void> skuSaleAttrFuture = pmsSkuInfoFuture.thenAcceptAsync(pmsSkuInfoVo -> {
+            List<SkuItemVo.SkuSaleAttrValue> saleAttrValueList = pmsSpuInfoService.getSaleAttrListBySpuId(pmsSkuInfoVo.getSpuId());
+            skuItemVo.setSaleAttr(saleAttrValueList);
+        }, threadPoolExecutor);
+        //查询出是否有库存
+        CompletableFuture<Void> skuStockFuture = pmsSkuInfoFuture.thenAcceptAsync(pmsSkuInfoVo -> {
+            Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(pmsSkuInfoVo.getSpuId()), true);
+            skuItemVo.setHasStock(hasStock);
+        }, threadPoolExecutor);
+        CompletableFuture.allOf(skuImageFuture, baseAttrGroupFuture, spuInfoFuture, skuSaleAttrFuture, skuStockFuture).get();
         return skuItemVo;
     }
 
