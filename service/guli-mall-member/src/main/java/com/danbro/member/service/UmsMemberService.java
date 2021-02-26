@@ -4,6 +4,7 @@ package com.danbro.member.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.member.controller.vo.MemberLoginParamVo;
 import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberVo;
 import com.danbro.member.entity.UmsMember;
@@ -49,4 +50,11 @@ public interface UmsMemberService extends IService<UmsMember> {
      */
     Boolean phoneIsExist(String phone);
 
+    /**
+     * 用户登录
+     *
+     * @param memberLoginParamVo 用户的用户名或者手机号和密码
+     * @return 用户信息
+     */
+    UmsMemberVo getMember(MemberLoginParamVo memberLoginParamVo);
 }

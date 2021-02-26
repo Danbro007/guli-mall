@@ -1,19 +1,17 @@
 package com.danbro.auth.controller;
 
+import com.danbro.auth.controller.vo.MemberLoginParamVo;
 import com.danbro.auth.controller.vo.MemberRegisterParamVo;
 import com.danbro.auth.controller.vo.UmsMemberVo;
 import com.danbro.auth.rpc.UmsClient;
 import com.danbro.auth.service.AuthService;
 import com.danbro.common.entity.ResultBean;
-import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -77,7 +75,7 @@ public class LoginController {
             // 删除验证码
             redisTemplate.delete(phoneCode);
             // rpc 注册用户成功
-            ResultBean<UmsMemberVo> resultBean = umsClient.insertMember(registerParamVo);
+            ResultBean<UmsMemberVo> resultBean = umsClient.registerMember(registerParamVo);
             if (resultBean.getSuccess()) {
                 return "redirect:http://auth.gulimall.com/login.html";
             }
@@ -93,4 +91,26 @@ public class LoginController {
         return "redirect:http://auth.gulimall.com/reg.html";
     }
 
+
+    @PostMapping("login")
+    public String login(@Valid MemberLoginParamVo memberLoginParamVo, BindingResult result, RedirectAttributes redirectAttributes) {
+        // 参数校验
+        if (result.hasErrors()) {
+            Map<String, String> errors = result.getFieldErrors().stream().
+                    collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:http://auth.gulimall.com/login.html";
+        }
+        // 会员登录
+        ResultBean<UmsMemberVo> resultBean = umsClient.loginMember(memberLoginParamVo);
+        // 成功
+        if (resultBean.getSuccess()) {
+            return "redirect:http://gulimall.com";
+        }
+        // 失败
+        HashMap<String, String> errors = new HashMap<>(1);
+        errors.put("errors", resultBean.getMsg());
+        redirectAttributes.addFlashAttribute("errors", errors);
+        return "redirect:http://auth.gulimall.com/login.html";
+    }
 }

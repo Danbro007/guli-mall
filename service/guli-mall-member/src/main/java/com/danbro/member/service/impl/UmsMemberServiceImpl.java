@@ -7,6 +7,7 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.*;
+import com.danbro.member.controller.vo.MemberLoginParamVo;
 import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberLevelVo;
 import com.danbro.member.controller.vo.UmsMemberVo;
@@ -72,6 +73,21 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public Boolean phoneIsExist(String phone) {
         return this.count(new QueryWrapper<UmsMember>().lambda().eq(UmsMember::getMobile, phone)) > 0;
+    }
+
+    @Override
+    public UmsMemberVo getMember(MemberLoginParamVo loginParamVo) {
+        UmsMember umsMember = MyCurdUtils.select(this.getOne(new QueryWrapper<UmsMember>().lambda().
+                        eq(UmsMember::getUsername, loginParamVo.getLoginacct()).or().
+                        eq(UmsMember::getEmail, loginParamVo.getLoginacct()).or().
+                        eq(UmsMember::getMobile, loginParamVo.getLoginacct())),
+                ResponseCode.NOT_FOUND);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        boolean matches = passwordEncoder.matches(loginParamVo.getPassword(), umsMember.getPassword());
+        if (matches) {
+            return ConvertUtils.convert(umsMember, UmsMemberVo.class);
+        }
+        throw new GuliMallException(ResponseCode.MEMBER_PASSWORD_ERROR);
     }
 
 

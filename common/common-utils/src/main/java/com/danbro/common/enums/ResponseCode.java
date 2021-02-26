@@ -20,6 +20,7 @@ public enum ResponseCode implements ResultCode {
     CODE_HAVE_SENT("验证码已发送！", 4001),
     USERNAME_IS_EXIST("用户已存在！", 4002),
     PHONE_IS_EXIST("手机号已存在！", 4003),
+    MEMBER_PASSWORD_ERROR("用户密码错误！", 4004),
 
     /**
      * 业务代码

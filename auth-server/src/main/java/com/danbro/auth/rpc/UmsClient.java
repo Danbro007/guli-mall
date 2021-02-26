@@ -1,5 +1,6 @@
 package com.danbro.auth.rpc;
 
+import com.danbro.auth.controller.vo.MemberLoginParamVo;
 import com.danbro.auth.controller.vo.MemberRegisterParamVo;
 import com.danbro.auth.controller.vo.UmsMemberVo;
 import com.danbro.common.entity.ResultBean;
@@ -16,11 +17,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(value = "service-ums")
 public interface UmsClient {
     /**
-     * 添加会员
+     * 会员注册
      *
      * @param memberRegisterParamVo 会员的参数
      * @return 添加完毕后的会员数据
      */
-    @PostMapping("member/member")
-    ResultBean<UmsMemberVo> insertMember(@RequestBody MemberRegisterParamVo memberRegisterParamVo);
+    @PostMapping("member/member/register")
+    ResultBean<UmsMemberVo> registerMember(@RequestBody MemberRegisterParamVo memberRegisterParamVo);
+
+    /**
+     * 会员登录
+     *
+     * @param memberLoginParamVo 登录会员的参数
+     * @return 登录成功返回的会员信息
+     */
+    @PostMapping("member/member/login")
+    ResultBean<UmsMemberVo> loginMember(@RequestBody MemberLoginParamVo memberLoginParamVo);
 }

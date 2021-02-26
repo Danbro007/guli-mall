@@ -4,6 +4,7 @@ import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.member.controller.vo.MemberLoginParamVo;
 import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberVo;
 import com.danbro.member.entity.UmsMember;
@@ -40,9 +41,15 @@ public class UmsMemberController {
     }
 
     @ApiOperation("添加会员")
-    @PostMapping("")
+    @PostMapping("register")
     public ResultBean<UmsMemberVo> insertMember(@RequestBody MemberRegisterParamVo memberRegisterParamVo) {
         return ResultBean.ofSuccess(umsMemberService.insertMember(memberRegisterParamVo));
+    }
+
+    @ApiOperation("会员登录")
+    @PostMapping("login")
+    public ResultBean<UmsMemberVo> getMember(@RequestBody MemberLoginParamVo memberLoginParamVo) {
+        return ResultBean.ofSuccess(umsMemberService.getMember(memberLoginParamVo));
     }
 
 
