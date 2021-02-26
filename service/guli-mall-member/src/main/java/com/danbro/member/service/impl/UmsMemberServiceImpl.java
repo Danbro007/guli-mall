@@ -90,5 +90,19 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         throw new GuliMallException(ResponseCode.MEMBER_PASSWORD_ERROR);
     }
 
-
+    @Override
+    public UmsMemberVo wxLogin(UmsMemberVo umsMemberVo) {
+        UmsMember umsMember = this.getOne(new QueryWrapper<UmsMember>().lambda().eq(UmsMember::getSocialUid, umsMemberVo.getSocialUid()));
+        // 此前注册过
+        if (MyObjectUtils.isNotNull(umsMember)) {
+            umsMember.setAccessToken(umsMemberVo.getAccessToken()).setExpiresIn(umsMemberVo.getExpiresIn());
+            boolean update = this.updateById(umsMember);
+            MyCurdUtils.insertOrUpdate(update, ResponseCode.WECHAT_LOGIN_FAILURE);
+            return ConvertUtils.convert(umsMember, UmsMemberVo.class);
+        }
+        // 没有注册过则创建一个账户
+        UmsMember newUmsMember = umsMemberVo.convertToEntity();
+        MyCurdUtils.insertOrUpdate(this.save(newUmsMember), ResponseCode.WECHAT_LOGIN_FAILURE);
+        return ConvertUtils.convert(newUmsMember, UmsMemberVo.class);
+    }
 }

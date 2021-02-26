@@ -21,6 +21,7 @@ public enum ResponseCode implements ResultCode {
     USERNAME_IS_EXIST("用户已存在！", 4002),
     PHONE_IS_EXIST("手机号已存在！", 4003),
     MEMBER_PASSWORD_ERROR("用户密码错误！", 4004),
+    WECHAT_LOGIN_FAILURE("微信登录失败！", 4005),
 
     /**
      * 业务代码

@@ -17,6 +17,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @Created by Administrator
  */
 
+@EnableConfigurationProperties
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableFeignClients

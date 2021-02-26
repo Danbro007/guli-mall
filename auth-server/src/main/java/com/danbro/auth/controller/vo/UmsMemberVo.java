@@ -1,27 +1,13 @@
 package com.danbro.auth.controller.vo;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.danbro.common.interfaces.Converter;
-import com.danbro.common.utils.MyBeanUtils;
-import com.danbro.service.common.validtors.anotations.IsBirthday;
-import com.danbro.service.common.validtors.anotations.IsBool;
-import com.danbro.service.common.validtors.anotations.IsMobile;
-import com.danbro.service.common.validtors.groups.Insert;
-import com.danbro.service.common.validtors.groups.Update;
+import java.io.Serializable;
+import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author Danrbo
@@ -89,5 +75,15 @@ public class UmsMemberVo implements Serializable {
 
     @ApiModelProperty("注册时间")
     private Date createTime;
+
+    @ApiModelProperty("社交账户ID")
+    private String socialUid;
+
+    @ApiModelProperty("token")
+    private String accessToken;
+
+    @ApiModelProperty("过期时间")
+    private Integer expiresIn;
+
 
 }

@@ -76,5 +76,14 @@ public class UmsMember implements Serializable {
     @ApiModelProperty("注册时间")
     private Date createTime;
 
+    @ApiModelProperty("社交账户ID")
+    private String socialUid;
+
+    @ApiModelProperty("token")
+    private String accessToken;
+
+    @ApiModelProperty("过期时间")
+    private Integer expiresIn;
+
 
 }

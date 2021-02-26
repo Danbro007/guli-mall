@@ -23,4 +23,11 @@ public interface AuthService {
      * @return 返回的视图页面
      */
     String register(MemberRegisterParamVo registerParamVo);
+
+    /**
+     * 微信用户登录
+     * @param code
+     * @return
+     */
+    String wxLogin(String code);
 }

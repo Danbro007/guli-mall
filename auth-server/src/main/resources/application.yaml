@@ -10,6 +10,8 @@ spring:
   redis:
     host: 192.168.0.109
 server:
-  port: 8400
-
-
+  port: 8150
+wechat:
+  app-id: wxed9954c01bb89b47
+  app-secret: a7482517235173ddb4083788de60b90e
+  redirect-url: http://guli.shop/api/ucenter/wx/callback

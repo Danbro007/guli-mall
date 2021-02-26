@@ -33,4 +33,14 @@ public interface UmsClient {
      */
     @PostMapping("member/member/login")
     ResultBean<UmsMemberVo> loginMember(@RequestBody MemberLoginParamVo memberLoginParamVo);
+
+    /**
+     * 微信用户登录
+     *
+     * @param memberVo
+     * @return
+     */
+    @PostMapping("member/wx/login")
+    ResultBean<UmsMemberVo> weChatUserLogin(@RequestBody UmsMemberVo memberVo);
+
 }

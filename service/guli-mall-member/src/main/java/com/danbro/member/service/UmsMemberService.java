@@ -57,4 +57,11 @@ public interface UmsMemberService extends IService<UmsMember> {
      * @return 用户信息
      */
     UmsMemberVo getMember(MemberLoginParamVo memberLoginParamVo);
+
+    /**
+     * 微信用户登录
+     * @param umsMemberVo 用户参数
+     * @return
+     */
+    UmsMemberVo wxLogin(UmsMemberVo umsMemberVo);
 }

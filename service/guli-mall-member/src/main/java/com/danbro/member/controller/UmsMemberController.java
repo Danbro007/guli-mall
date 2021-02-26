@@ -3,7 +3,6 @@ package com.danbro.member.controller;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
-import com.danbro.common.utils.Pagination;
 import com.danbro.member.controller.vo.MemberLoginParamVo;
 import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberVo;
@@ -13,9 +12,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -27,12 +30,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Setter
-@RequestMapping("member/member")
+@RequestMapping("member")
 public class UmsMemberController {
     private UmsMemberService umsMemberService;
 
     @ApiOperation("分页查询会员")
-    @GetMapping("list")
+    @GetMapping("member/list")
     public ResultPageBean<UmsMemberVo, UmsMember> getMemberList(@RequestParam("page") Long page,
                                                                 @RequestParam("limit") Long limit,
                                                                 @RequestParam(value = "key", required = false) String key) {
@@ -41,15 +44,21 @@ public class UmsMemberController {
     }
 
     @ApiOperation("添加会员")
-    @PostMapping("register")
+    @PostMapping("member/register")
     public ResultBean<UmsMemberVo> insertMember(@RequestBody MemberRegisterParamVo memberRegisterParamVo) {
         return ResultBean.ofSuccess(umsMemberService.insertMember(memberRegisterParamVo));
     }
 
     @ApiOperation("会员登录")
-    @PostMapping("login")
-    public ResultBean<UmsMemberVo> getMember(@RequestBody MemberLoginParamVo memberLoginParamVo) {
+    @PostMapping("member/login")
+    public ResultBean<UmsMemberVo> loginMember(@RequestBody MemberLoginParamVo memberLoginParamVo) {
         return ResultBean.ofSuccess(umsMemberService.getMember(memberLoginParamVo));
+    }
+
+    @ApiOperation("微信用户登录")
+    @PostMapping("wx/login")
+    public ResultBean<UmsMemberVo> wxLogin(@RequestBody UmsMemberVo umsMemberVo) {
+        return ResultBean.ofSuccess(umsMemberService.wxLogin(umsMemberVo));
     }
 
 
