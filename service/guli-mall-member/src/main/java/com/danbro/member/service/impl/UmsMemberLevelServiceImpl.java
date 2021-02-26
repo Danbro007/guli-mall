@@ -51,14 +51,20 @@ public class UmsMemberLevelServiceImpl extends ServiceImpl<UmsMemberLevelMapper,
     @Override
     public UmsMemberLevelVo getMemberLevelInfoById(Long memberLevelId) {
         UmsMemberLevel memberLevel = this.getById(memberLevelId);
-        UmsMemberLevelVo umsMemberLevelVo = ConvertUtils.convert(memberLevel,UmsMemberLevelVo.class);
+        UmsMemberLevelVo umsMemberLevelVo = ConvertUtils.convert(memberLevel, UmsMemberLevelVo.class);
         return MyCurdUtils.select(umsMemberLevelVo, ResponseCode.NOT_FOUND, true);
     }
 
     @Override
     public UmsMemberLevelVo getMemberLevelInfoByName(String memberLevelName) {
         UmsMemberLevel memberLevel = this.getOne(new QueryWrapper<UmsMemberLevel>().lambda().eq(UmsMemberLevel::getName, memberLevelName));
-        UmsMemberLevelVo memberLevelVo = ConvertUtils.convert(memberLevel,UmsMemberLevelVo.class);
+        UmsMemberLevelVo memberLevelVo = ConvertUtils.convert(memberLevel, UmsMemberLevelVo.class);
         return MyCurdUtils.select(memberLevelVo, ResponseCode.NOT_FOUND);
+    }
+
+    @Override
+    public UmsMemberLevelVo getDefaultMemberLevel() {
+        UmsMemberLevel memberLevel = MyCurdUtils.select(this.getOne(new QueryWrapper<UmsMemberLevel>().lambda().eq(UmsMemberLevel::getDefaultStatus, true)), ResponseCode.NOT_FOUND);
+        return ConvertUtils.convert(memberLevel, UmsMemberLevelVo.class);
     }
 }

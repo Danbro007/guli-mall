@@ -1,6 +1,7 @@
 package com.danbro.common.utils;
 
 import java.util.List;
+
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
@@ -205,6 +206,10 @@ public class MyCurdUtils {
      */
     public static <T> T rpcResultHandle(ResultBean<T> resultBean, Boolean needThrowException) {
         if (resultBean.getSuccess()) {
+            return resultBean.getData();
+        }
+        // 失败但是带有失败消息的
+        if (MyObjectUtils.isNotNull(resultBean.getData())) {
             return resultBean.getData();
         }
         if (needThrowException) {

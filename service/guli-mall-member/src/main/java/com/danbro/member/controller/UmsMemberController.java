@@ -1,8 +1,10 @@
 package com.danbro.member.controller;
 
+import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberVo;
 import com.danbro.member.entity.UmsMember;
 import com.danbro.member.service.UmsMemberService;
@@ -35,6 +37,12 @@ public class UmsMemberController {
                                                                 @RequestParam(value = "key", required = false) String key) {
         PageParam<UmsMember> pageParam = new PageParam<UmsMember>().setPage(page).setLimit(limit);
         return ResultPageBean.ofSuccess(umsMemberService.getMemberList(pageParam, key));
+    }
+
+    @ApiOperation("添加会员")
+    @PostMapping("")
+    public ResultBean<UmsMemberVo> insertMember(@RequestBody MemberRegisterParamVo memberRegisterParamVo) {
+        return ResultBean.ofSuccess(umsMemberService.insertMember(memberRegisterParamVo));
     }
 
 

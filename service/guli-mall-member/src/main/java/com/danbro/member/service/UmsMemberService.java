@@ -4,6 +4,7 @@ package com.danbro.member.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberVo;
 import com.danbro.member.entity.UmsMember;
 
@@ -23,4 +24,29 @@ public interface UmsMemberService extends IService<UmsMember> {
      * @return 会员等级列表
      */
     Pagination<UmsMemberVo, UmsMember> getMemberList(PageParam<UmsMember> pageParam, String key);
+
+    /**
+     * 添加会员
+     *
+     * @param memberRegisterParamVo 添加会员的参数
+     * @return 添加完毕后的会员参数
+     */
+    UmsMemberVo insertMember(MemberRegisterParamVo memberRegisterParamVo);
+
+    /**
+     * 会员中有没有与当前会员名相同的
+     *
+     * @param username 会员名
+     * @return 是否相同的结果
+     */
+    Boolean userNameIsExist(String username);
+
+    /**
+     * 会员中有没有与当前会员手机号相同的
+     *
+     * @param phone 手机号
+     * @return 是否相同的结果
+     */
+    Boolean phoneIsExist(String phone);
+
 }

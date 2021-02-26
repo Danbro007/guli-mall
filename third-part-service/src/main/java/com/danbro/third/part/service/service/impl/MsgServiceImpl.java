@@ -19,18 +19,9 @@ import org.springframework.stereotype.Service;
 public class MsgServiceImpl implements MsgService {
     @Autowired
     MsgComponent msgComponent;
-    @Autowired
-    StringRedisTemplate redisTemplate;
 
     @Override
-    public void sendCode(String phone) {
-        // 缓存里取不到再去生成验证码 超时时间为 60 秒
-        String code = redisTemplate.opsForValue().get(String.format("code:%s", phone));
-        if (MyStrUtils.isNotEmpty(code)) {
-            return;
-        }
-        String newCode = Integer.toString(RandomUtil.randomInt(1, 9999));
-        msgComponent.sendCode(newCode, phone);
-        redisTemplate.opsForValue().set(String.format("code:%s", phone), newCode, 60, TimeUnit.SECONDS);
+    public void sendCode(String code,String phone) {
+        msgComponent.sendCode(code,phone);
     }
 }

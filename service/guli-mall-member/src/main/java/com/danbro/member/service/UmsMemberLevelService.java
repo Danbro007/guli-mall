@@ -51,4 +51,10 @@ public interface UmsMemberLevelService extends IService<UmsMemberLevel> {
      * @return 会员等级的详细信息
      */
     UmsMemberLevelVo getMemberLevelInfoByName(String memberLevelName);
+
+    /**
+     * 获取会员的默认等级
+     * @return 默认等级
+     */
+    UmsMemberLevelVo getDefaultMemberLevel();
 }

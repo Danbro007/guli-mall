@@ -7,6 +7,9 @@ spring:
         server-addr: 192.168.0.109
   thymeleaf:
     cache: false
+  redis:
+    host: 192.168.0.109
 server:
-  port: 8002
+  port: 8400
+
 

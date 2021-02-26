@@ -9,6 +9,7 @@ import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.ValidCode;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,4 +66,5 @@ public class MyExceptionHandler {
         return result;
 
     }
+
 }

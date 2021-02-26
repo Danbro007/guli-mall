@@ -49,26 +49,27 @@ public class MsgComponent {
         String urlSend = String.format("%s%s?param=%s&phone=%s&sign=%s&skin=%s", host, path, code, phone, sign, skin);
         try {
             URL url = new URL(urlSend);
-            HttpURLConnection httpURLCon = (HttpURLConnection) url.openConnection();
-            httpURLCon.setRequestProperty("Authorization", "APPCODE " + appCode);// 格式Authorization:APPCODE (中间是英文空格)
-            int httpCode = httpURLCon.getResponseCode();
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            // 格式Authorization:APPCODE (中间是英文空格)
+            urlConnection.setRequestProperty("Authorization", "APPCODE " + appCode);
+            int httpCode = urlConnection.getResponseCode();
             if (httpCode == 200) {
-                String json = read(httpURLCon.getInputStream());
+                String json = read(urlConnection.getInputStream());
                 System.out.println("正常请求计费(其他均不计费)");
                 System.out.println("获取返回的json:");
                 System.out.print(json);
             } else {
-                Map<String, List<String>> map = httpURLCon.getHeaderFields();
+                Map<String, List<String>> map = urlConnection.getHeaderFields();
                 String error = map.get("X-Ca-Error-Message").get(0);
-                if (httpCode == 400 && error.equals("Invalid AppCode `not exists`")) {
+                if (httpCode == 400 && "Invalid AppCode `not exists`".equals(error)) {
                     System.out.println("AppCode错误 ");
-                } else if (httpCode == 400 && error.equals("Invalid Url")) {
+                } else if (httpCode == 400 && "Invalid Url".equals(error)) {
                     System.out.println("请求的 Method、Path 或者环境错误");
-                } else if (httpCode == 400 && error.equals("Invalid Param Location")) {
+                } else if (httpCode == 400 && "Invalid Param Location".equals(error)) {
                     System.out.println("参数错误");
-                } else if (httpCode == 403 && error.equals("Unauthorized")) {
+                } else if (httpCode == 403 && "Unauthorized".equals(error)) {
                     System.out.println("服务未被授权（或URL和Path不正确）");
-                } else if (httpCode == 403 && error.equals("Quota Exhausted")) {
+                } else if (httpCode == 403 && "Quota Exhausted".equals(error)) {
                     System.out.println("套餐包次数用完 ");
                 } else {
                     System.out.println("参数名错误 或 其他错误");
@@ -88,8 +89,11 @@ public class MsgComponent {
 
     }
 
-    /*
+    /**
      * 读取返回结果
+     * @param is
+     * @return
+     * @throws IOException
      */
     private static String read(InputStream is) throws IOException {
         StringBuffer sb = new StringBuffer();

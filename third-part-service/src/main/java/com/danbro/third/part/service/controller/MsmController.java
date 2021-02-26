@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Created by Administrator
  */
 @RestController
-@RequestMapping("/sms")
+@RequestMapping("/third-part")
 public class MsmController {
 
     @Autowired
@@ -24,8 +24,9 @@ public class MsmController {
 
     @ApiOperation("发送验证码")
     @GetMapping("sendCode")
-    public ResultBean<Void> sendCode(@RequestParam String phone) {
-        msgService.sendCode(phone);
+    public ResultBean<Void> sendCode(@RequestParam("phone") String phone,
+                                     @RequestParam("code") String code) {
+        msgService.sendCode(code, phone);
         return ResultBean.ofSuccess();
     }
 
