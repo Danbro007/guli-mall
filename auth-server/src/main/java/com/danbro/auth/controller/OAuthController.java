@@ -1,8 +1,19 @@
 package com.danbro.auth.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import cn.hutool.http.HttpUtil;
 import com.danbro.auth.config.WeChatProperties;
+import com.danbro.auth.controller.dto.WeChatReturnAccessTokenDto;
+import com.danbro.auth.controller.dto.WeChatUserInfoDto;
+import com.danbro.auth.controller.vo.UmsMemberVo;
+import com.danbro.auth.enums.MemberSourceType;
+import com.danbro.auth.rpc.UmsClient;
 import com.danbro.auth.service.AuthService;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyJSONUtils;
+import com.danbro.common.utils.MyStrUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +35,9 @@ public class OAuthController {
     @Autowired
     WeChatProperties weChatProperties;
 
+    @Autowired
+    UmsClient umsClient;
+
     @ApiOperation("返回微信登录的二维码")
     @GetMapping("login")
     public String getWxCode() {
@@ -34,7 +48,28 @@ public class OAuthController {
 
     @ApiOperation("返回微信登录的二维码")
     @GetMapping("callback")
-    public String callback(String code) {
-        return authService.wxLogin(code);
+    public String callback(String code, HttpSession session) {
+        if (MyStrUtils.isNotEmpty(code)) {
+            String url = String.format(weChatProperties.getTokenUrl(), weChatProperties.getAppId(), weChatProperties.getAppSecret(), code);
+            String tokenInfo = HttpUtil.get(url);
+            if (MyStrUtils.isNotEmpty(tokenInfo)) {
+                WeChatReturnAccessTokenDto tokenDto = MyJSONUtils.parseObject(tokenInfo, WeChatReturnAccessTokenDto.class);
+                if (MyStrUtils.isNotEmpty(tokenDto.getAccessToken()) && MyStrUtils.isNotEmpty(tokenDto.getOpenid())) {
+                    String userInfo = HttpUtil.get(String.format(weChatProperties.getWeChatUserInfoUrl(), tokenDto.getAccessToken(), tokenDto.getOpenid()));
+                    WeChatUserInfoDto weChatUserInfoDto = MyJSONUtils.parseObject(userInfo, WeChatUserInfoDto.class);
+                    UmsMemberVo memberVo = new UmsMemberVo();
+                    MyBeanUtils.copyProperties(weChatUserInfoDto, memberVo);
+                    MyBeanUtils.copyProperties(tokenDto, memberVo);
+                    memberVo.setSourceType(MemberSourceType.WECHAT);
+                    memberVo.setStatus(true);
+                    // 登录返回token
+                    UmsMemberVo umsMemberVo = MyCurdUtils.rpcResultHandle(umsClient.weChatUserLogin(memberVo));
+                    session.setAttribute("loginUser", umsMemberVo);
+                    return "redirect:http://gulimall.com";
+                }
+            }
+        }
+        // 其他失败都重定向到登录页面
+        return "redirect:http://auth.gulimall.com/login.html";
     }
 }

@@ -25,6 +25,10 @@ spring:
       use-key-prefix: true
       cache-null-values: true
       time-to-live: 36000
+  session:
+    store-type: redis
+    redis:
+      namespace: gulimall:session
 server:
   port: 8004
 
@@ -42,3 +46,4 @@ thread:
     core-pool-size: 20
     maximum-pool-size: 30
     keep-alive-time: 10
+

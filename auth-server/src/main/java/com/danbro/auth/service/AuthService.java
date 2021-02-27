@@ -1,5 +1,6 @@
 package com.danbro.auth.service;
 
+import javax.servlet.http.HttpSession;
 import com.danbro.auth.controller.vo.MemberRegisterParamVo;
 
 /**
@@ -29,5 +30,5 @@ public interface AuthService {
      * @param code
      * @return
      */
-    String wxLogin(String code);
+    String wxLogin(String code, HttpSession session);
 }

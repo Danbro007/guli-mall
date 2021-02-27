@@ -1,6 +1,7 @@
 package com.danbro.auth.service.impl;
 
 import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpSession;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 import com.danbro.auth.config.WeChatProperties;
@@ -65,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String wxLogin(String code) {
+    public String wxLogin(String code, HttpSession session) {
         if (MyStrUtils.isNotEmpty(code)) {
             String url = String.format(weChatProperties.getTokenUrl(), weChatProperties.getAppId(), weChatProperties.getAppSecret(), code);
             String tokenInfo = HttpUtil.get(url);
@@ -82,13 +83,13 @@ public class AuthServiceImpl implements AuthService {
                     // 登录返回token
                     UmsMemberVo umsMemberVo = MyCurdUtils.rpcResultHandle(umsClient.weChatUserLogin(memberVo));
                     if (MyStrUtils.isNotEmpty(umsMemberVo.getAccessToken())) {
+                        session.setAttribute("loginUser",umsMemberVo);
                         return String.format("redirect:http://gulimall.com?token=%s", umsMemberVo.getAccessToken());
                     }
                 }
             }
         }
-        throw new GuliMallException(ResponseCode.WECHAT_LOGIN_FAILURE);
+        // 其他失败都重定向到登录页面
+        return "redirect:http://auth.gulimall.com/login.html";
     }
-
-
 }

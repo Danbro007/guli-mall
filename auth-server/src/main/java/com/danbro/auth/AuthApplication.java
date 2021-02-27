@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @Date 2021/2/25 17:55
  * @Created by Administrator
  */
-
+//@EnableRedisHttpSession
 @EnableConfigurationProperties
 @EnableSwagger2
 @EnableDiscoveryClient
