@@ -6,10 +6,10 @@ import cn.hutool.http.HttpUtil;
 import com.danbro.auth.config.WeChatProperties;
 import com.danbro.auth.controller.dto.WeChatReturnAccessTokenDto;
 import com.danbro.auth.controller.dto.WeChatUserInfoDto;
-import com.danbro.auth.controller.vo.UmsMemberVo;
 import com.danbro.auth.enums.MemberSourceType;
 import com.danbro.auth.rpc.UmsClient;
 import com.danbro.auth.service.AuthService;
+import com.danbro.common.dto.UmsMemberDto;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyJSONUtils;
@@ -57,14 +57,15 @@ public class OAuthController {
                 if (MyStrUtils.isNotEmpty(tokenDto.getAccessToken()) && MyStrUtils.isNotEmpty(tokenDto.getOpenid())) {
                     String userInfo = HttpUtil.get(String.format(weChatProperties.getWeChatUserInfoUrl(), tokenDto.getAccessToken(), tokenDto.getOpenid()));
                     WeChatUserInfoDto weChatUserInfoDto = MyJSONUtils.parseObject(userInfo, WeChatUserInfoDto.class);
-                    UmsMemberVo memberVo = new UmsMemberVo();
+                    UmsMemberDto memberVo = new UmsMemberDto();
                     MyBeanUtils.copyProperties(weChatUserInfoDto, memberVo);
                     MyBeanUtils.copyProperties(tokenDto, memberVo);
                     memberVo.setSourceType(MemberSourceType.WECHAT);
                     memberVo.setStatus(true);
                     // 登录返回token
-                    UmsMemberVo umsMemberVo = MyCurdUtils.rpcResultHandle(umsClient.weChatUserLogin(memberVo));
-                    session.setAttribute("loginUser", umsMemberVo);
+                    // Todo session存储后会找不到session
+                    UmsMemberDto umsMemberDto = MyCurdUtils.rpcResultHandle(umsClient.weChatUserLogin(memberVo));
+                    session.setAttribute("loginUser", umsMemberDto);
                     return "redirect:http://gulimall.com";
                 }
             }

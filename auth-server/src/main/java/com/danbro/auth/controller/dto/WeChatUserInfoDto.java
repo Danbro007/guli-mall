@@ -2,7 +2,7 @@ package com.danbro.auth.controller.dto;
 
 import java.util.List;
 import cn.hutool.core.annotation.Alias;
-import com.danbro.auth.controller.vo.UmsMemberVo;
+import com.danbro.common.dto.UmsMemberDto;
 import com.danbro.common.interfaces.Converter;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ import lombok.Data;
  * @Author Danrbo
  */
 @Data
-public class WeChatUserInfoDto implements Converter<UmsMemberVo,WeChatUserInfoDto> {
+public class WeChatUserInfoDto implements Converter<UmsMemberDto,WeChatUserInfoDto> {
     @Alias("socialUid")
     private String openid;
     private String nickname;
@@ -34,12 +34,12 @@ public class WeChatUserInfoDto implements Converter<UmsMemberVo,WeChatUserInfoDt
     private String unionid;
 
     @Override
-    public WeChatUserInfoDto convertToVo(UmsMemberVo umsMemberVo) {
+    public WeChatUserInfoDto convertToVo(UmsMemberDto umsMemberDto) {
         return null;
     }
 
     @Override
-    public UmsMemberVo convertToEntity() {
+    public UmsMemberDto convertToEntity() {
         return null;
     }
 }

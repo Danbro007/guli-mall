@@ -6,7 +6,7 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
 import com.danbro.member.controller.vo.MemberLoginParamVo;
 import com.danbro.member.controller.vo.MemberRegisterParamVo;
-import com.danbro.member.controller.vo.UmsMemberVo;
+import com.danbro.common.dto.UmsMemberDto;
 import com.danbro.member.entity.UmsMember;
 
 
@@ -24,7 +24,7 @@ public interface UmsMemberService extends IService<UmsMember> {
      * @param key       关键字
      * @return 会员等级列表
      */
-    Pagination<UmsMemberVo, UmsMember> getMemberList(PageParam<UmsMember> pageParam, String key);
+    Pagination<UmsMemberDto, UmsMember> getMemberList(PageParam<UmsMember> pageParam, String key);
 
     /**
      * 添加会员
@@ -32,7 +32,7 @@ public interface UmsMemberService extends IService<UmsMember> {
      * @param memberRegisterParamVo 添加会员的参数
      * @return 添加完毕后的会员参数
      */
-    UmsMemberVo insertMember(MemberRegisterParamVo memberRegisterParamVo);
+    UmsMemberDto insertMember(MemberRegisterParamVo memberRegisterParamVo);
 
     /**
      * 会员中有没有与当前会员名相同的
@@ -56,12 +56,12 @@ public interface UmsMemberService extends IService<UmsMember> {
      * @param memberLoginParamVo 用户的用户名或者手机号和密码
      * @return 用户信息
      */
-    UmsMemberVo getMember(MemberLoginParamVo memberLoginParamVo);
+    UmsMemberDto getMember(MemberLoginParamVo memberLoginParamVo);
 
     /**
      * 微信用户登录
-     * @param umsMemberVo 用户参数
+     * @param umsMemberDto 用户参数
      * @return
      */
-    UmsMemberVo wxLogin(UmsMemberVo umsMemberVo);
+    UmsMemberDto wxLogin(UmsMemberDto umsMemberDto);
 }

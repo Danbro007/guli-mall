@@ -54,6 +54,8 @@
 				<span><a href="/static/login/#">更安全</a></span>
 			</p>
 		</div>
+		<a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.username}]]</a>
+
 		<div class="si_bom1 tab" style="display: none;">
 			<div class="error">
 				<div></div>

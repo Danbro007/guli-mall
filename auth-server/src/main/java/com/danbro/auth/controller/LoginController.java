@@ -1,10 +1,15 @@
 package com.danbro.auth.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import com.danbro.auth.controller.vo.MemberLoginParamVo;
 import com.danbro.auth.controller.vo.MemberRegisterParamVo;
-import com.danbro.auth.controller.vo.UmsMemberVo;
 import com.danbro.auth.rpc.UmsClient;
 import com.danbro.auth.service.AuthService;
+import com.danbro.common.dto.UmsMemberDto;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.utils.MyStrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +17,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Danrbo
@@ -39,6 +42,7 @@ public class LoginController {
     StringRedisTemplate redisTemplate;
 
     private final static String CODE_PREFIX = "sms:code:";
+    private final static String LOGIN_USER = "loginUser";
 
     @ResponseBody
     @GetMapping("/sms/sendCode")
@@ -75,7 +79,7 @@ public class LoginController {
             // 删除验证码
             redisTemplate.delete(phoneCode);
             // rpc 注册用户成功
-            ResultBean<UmsMemberVo> resultBean = umsClient.registerMember(registerParamVo);
+            ResultBean<UmsMemberDto> resultBean = umsClient.registerMember(registerParamVo);
             if (resultBean.getSuccess()) {
                 return "redirect:http://auth.gulimall.com/login.html";
             }
@@ -93,7 +97,10 @@ public class LoginController {
 
 
     @PostMapping("login")
-    public String login(@Valid MemberLoginParamVo memberLoginParamVo, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String login(@Valid MemberLoginParamVo memberLoginParamVo,
+                        BindingResult result,
+                        RedirectAttributes redirectAttributes,
+                        HttpSession session) {
         // 参数校验
         if (result.hasErrors()) {
             Map<String, String> errors = result.getFieldErrors().stream().
@@ -102,9 +109,10 @@ public class LoginController {
             return "redirect:http://auth.gulimall.com/login.html";
         }
         // 会员登录
-        ResultBean<UmsMemberVo> resultBean = umsClient.loginMember(memberLoginParamVo);
+        ResultBean<UmsMemberDto> resultBean = umsClient.loginMember(memberLoginParamVo);
         // 成功
         if (resultBean.getSuccess()) {
+            session.setAttribute(LOGIN_USER,resultBean.getData());
             return "redirect:http://gulimall.com";
         }
         // 失败

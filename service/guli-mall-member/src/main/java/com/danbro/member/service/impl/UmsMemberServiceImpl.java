@@ -10,7 +10,7 @@ import com.danbro.common.utils.*;
 import com.danbro.member.controller.vo.MemberLoginParamVo;
 import com.danbro.member.controller.vo.MemberRegisterParamVo;
 import com.danbro.member.controller.vo.UmsMemberLevelVo;
-import com.danbro.member.controller.vo.UmsMemberVo;
+import com.danbro.common.dto.UmsMemberDto;
 import com.danbro.member.entity.UmsMember;
 import com.danbro.member.mapper.UmsMemberMapper;
 import com.danbro.member.service.UmsMemberLevelService;
@@ -33,16 +33,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     UmsMemberLevelService umsMemberLevelService;
 
     @Override
-    public Pagination<UmsMemberVo, UmsMember> getMemberList(PageParam<UmsMember> pageParam, String key) {
+    public Pagination<UmsMemberDto, UmsMember> getMemberList(PageParam<UmsMember> pageParam, String key) {
         LambdaQueryWrapper<UmsMember> wrapper = new LambdaQueryWrapper<>();
         if (MyStrUtils.isNotEmpty(key)) {
             wrapper.like(UmsMember::getNickname, key).or().like(UmsMember::getUsername, key);
         }
-        return new Pagination<>(this.page(new Query<UmsMember>().getPage(pageParam), wrapper), UmsMemberVo.class);
+        return new Pagination<>(this.page(new Query<UmsMember>().getPage(pageParam), wrapper), UmsMemberDto.class);
     }
 
     @Override
-    public UmsMemberVo insertMember(MemberRegisterParamVo paramVo) {
+    public UmsMemberDto insertMember(MemberRegisterParamVo paramVo) {
         // 校验用户名有没有冲突
         if (this.userNameIsExist(paramVo.getUserName())) {
             throw new GuliMallException(ResponseCode.USERNAME_IS_EXIST);
@@ -61,8 +61,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         // 会员的默认等级
         umsMember.setLevelId(defaultMemberLevel.getId());
         boolean save = this.save(umsMember);
-        UmsMemberVo umsMemberVo = ConvertUtils.convert(umsMember, UmsMemberVo.class);
-        return MyCurdUtils.insertOrUpdate(umsMemberVo, save, ResponseCode.INSERT_FAILURE);
+        UmsMemberDto umsMemberDto = ConvertUtils.convert(umsMember, UmsMemberDto.class);
+        return MyCurdUtils.insertOrUpdate(umsMemberDto, save, ResponseCode.INSERT_FAILURE);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
-    public UmsMemberVo getMember(MemberLoginParamVo loginParamVo) {
+    public UmsMemberDto getMember(MemberLoginParamVo loginParamVo) {
         UmsMember umsMember = MyCurdUtils.select(this.getOne(new QueryWrapper<UmsMember>().lambda().
                         eq(UmsMember::getUsername, loginParamVo.getLoginacct()).or().
                         eq(UmsMember::getEmail, loginParamVo.getLoginacct()).or().
@@ -85,24 +85,25 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         boolean matches = passwordEncoder.matches(loginParamVo.getPassword(), umsMember.getPassword());
         if (matches) {
-            return ConvertUtils.convert(umsMember, UmsMemberVo.class);
+            return ConvertUtils.convert(umsMember, UmsMemberDto.class);
         }
         throw new GuliMallException(ResponseCode.MEMBER_PASSWORD_ERROR);
     }
 
     @Override
-    public UmsMemberVo wxLogin(UmsMemberVo umsMemberVo) {
-        UmsMember umsMember = this.getOne(new QueryWrapper<UmsMember>().lambda().eq(UmsMember::getSocialUid, umsMemberVo.getSocialUid()));
+    public UmsMemberDto wxLogin(UmsMemberDto umsMemberDto) {
+        UmsMember umsMember = this.getOne(new QueryWrapper<UmsMember>().lambda().eq(UmsMember::getSocialUid, umsMemberDto.getSocialUid()));
         // 此前注册过
         if (MyObjectUtils.isNotNull(umsMember)) {
-            umsMember.setAccessToken(umsMemberVo.getAccessToken()).setExpiresIn(umsMemberVo.getExpiresIn());
+            umsMember.setAccessToken(umsMemberDto.getAccessToken()).setExpiresIn(umsMemberDto.getExpiresIn());
             boolean update = this.updateById(umsMember);
             MyCurdUtils.insertOrUpdate(update, ResponseCode.WECHAT_LOGIN_FAILURE);
-            return ConvertUtils.convert(umsMember, UmsMemberVo.class);
+            return ConvertUtils.convert(umsMember, UmsMemberDto.class);
         }
         // 没有注册过则创建一个账户
-        UmsMember newUmsMember = umsMemberVo.convertToEntity();
+        UmsMember newUmsMember = new UmsMember();
+        MyBeanUtils.copyProperties(umsMemberDto,newUmsMember);
         MyCurdUtils.insertOrUpdate(this.save(newUmsMember), ResponseCode.WECHAT_LOGIN_FAILURE);
-        return ConvertUtils.convert(newUmsMember, UmsMemberVo.class);
+        return ConvertUtils.convert(newUmsMember, UmsMemberDto.class);
     }
 }
