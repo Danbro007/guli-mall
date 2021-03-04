@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class CartInterceptor implements HandlerInterceptor {
     public static final String LOGIN_USER = "loginUser";
     public static final String USER_KEY = "user-key";
+    public static final String DOMAIN = "gulimall.com";
     public static int COOKIE_TIME_OUT = 60 * 60 * 24 * 30;
     public static ThreadLocal<UserInfoDto> threadLocal = new ThreadLocal<>();
 
@@ -34,9 +35,10 @@ public class CartInterceptor implements HandlerInterceptor {
         // 用户已登录
         if (MyObjectUtils.isNotNull(memberDto)) {
             userInfoDto.setId(memberDto.getId());
+            // 设置为非零时用户
             userInfoDto.setTempUser(false);
         }
-        // 查看有没有 user-key 的cookie
+        // 查看有没有 user-key 的 cookie
         Cookie[] cookies = request.getCookies();
         if (MyObjectUtils.isNotNull(cookies) && cookies.length > 0) {
             for (Cookie cookie : cookies) {
@@ -57,7 +59,7 @@ public class CartInterceptor implements HandlerInterceptor {
         if (MyObjectUtils.isNotNull(userInfoDto) && userInfoDto.getTempUser() && MyStrUtils.isEmpty(userInfoDto.getUserKey())) {
             String randomUUID = MyRandomUtils.randomUUID();
             Cookie cookie = new Cookie(USER_KEY, randomUUID);
-            cookie.setDomain("gulimall.com");
+            cookie.setDomain(DOMAIN);
             cookie.setMaxAge(COOKIE_TIME_OUT);
             response.addCookie(cookie);
         }

@@ -21,4 +21,10 @@ public class CartController {
         System.out.println(userInfoDto);
         return "cartList";
     }
+
+    @GetMapping("addToCart")
+    public String addToCart() {
+        return "success";
+    }
+
 }
