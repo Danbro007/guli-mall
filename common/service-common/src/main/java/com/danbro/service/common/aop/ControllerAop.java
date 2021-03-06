@@ -26,7 +26,7 @@ public abstract class ControllerAop {
             // 校验失败异常会先走异常处理器再走这里
             Object result = joinPoint.proceed();
             long expandTime = System.currentTimeMillis() - start;
-            log.info(String.format("【%s】----->use time:%s", joinPoint.getSignature(), expandTime));
+            log.info(String.format("【%s】----->use time:%s ms", joinPoint.getSignature(), expandTime));
             return result;
         } catch (Throwable throwable) {
             return handleException(joinPoint, throwable);

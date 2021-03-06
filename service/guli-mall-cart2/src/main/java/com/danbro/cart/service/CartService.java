@@ -38,4 +38,12 @@ public interface CartService {
      * 合并购物车
      */
     CartVo mergeCart();
+
+    /**
+     * 修改购物车里的商品选中状态
+     * @param skuId skuId
+     * @param check 商品的选中状态
+     */
+    void checkItem(Long skuId, Boolean check);
+
 }

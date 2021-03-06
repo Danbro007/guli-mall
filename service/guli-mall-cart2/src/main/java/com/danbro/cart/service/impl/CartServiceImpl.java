@@ -6,9 +6,7 @@ import com.danbro.cart.controller.vo.CartVo;
 import com.danbro.cart.controller.vo.PmsSkuInfoVo;
 import com.danbro.cart.interceptor.CartInterceptor;
 import com.danbro.cart.service.CartService;
-import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyMapUtils;
+import com.danbro.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -40,7 +38,7 @@ public class CartServiceImpl implements CartService {
         String cartKey = getCartKey();
         BoundHashOperations<String, Object, Object> hashOperations = getBoundHashOps(cartKey);
         // 判断要添加购物车的商品原来的购物车里有没有
-        CartItemVo cartItemFromCache = (CartItemVo) hashOperations.get(skuId);
+        CartItemVo cartItemFromCache = getValueFromRedis(hashOperations.get(skuId), CartItemVo.class);
         // 没有则创建一个 CartItem 对象
         CartItemVo cartItemVo;
         if (cartItemFromCache == null) {
@@ -49,12 +47,11 @@ public class CartServiceImpl implements CartService {
             // 封装成例如：颜色：黑色，内存：128G
             List<String> attrValueList = pmsSkuInfoVo.getAttr().stream().map(attr -> attr.getAttrName() + ":" + attr.getAttrValue()).collect(Collectors.toList());
             cartItemVo = buildCartItem(skuId, num, pmsSkuInfoVo, attrValueList);
-            hashOperations.put(skuId, cartItemVo);
         } else {
             // 原来的购物车里有就在原来的数量上添加
             cartItemVo = cartItemFromCache.setCount(cartItemFromCache.getCount() + num);
-            hashOperations.put(skuId, cartItemFromCache);
         }
+        hashOperations.put(skuId, MyJSONUtils.toJSONString(cartItemVo));
         return cartItemVo;
     }
 
@@ -82,12 +79,13 @@ public class CartServiceImpl implements CartService {
     public CartVo getCartList() {
         String cartKey = getCartKey();
         BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
+        // Todo 需要 debug 判断
         Map<Object, Object> entries = boundHashOps.entries();
         CartVo cartVo = new CartVo();
         // 购物车为空
         if (MyMapUtils.isNotEmpty(entries)) {
             ArrayList<CartItemVo> cartItemVos = new ArrayList<>();
-            entries.values().stream().map(o -> cartItemVos.add((CartItemVo) o)).collect(Collectors.toList());
+            entries.values().stream().map(o -> cartItemVos.add((getValueFromRedis(o, CartItemVo.class)))).collect(Collectors.toList());
             cartVo.setItems(cartItemVos);
         }
         return cartVo;
@@ -97,7 +95,7 @@ public class CartServiceImpl implements CartService {
     public CartItemVo getCartItem(Long skuId) {
         String cartKey = getCartKey();
         BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
-        return (CartItemVo) boundHashOps.get(skuId);
+        return getValueFromRedis(boundHashOps.get(skuId), CartItemVo.class);
     }
 
     @Override
@@ -125,12 +123,23 @@ public class CartServiceImpl implements CartService {
         else {
             cartKey = MEMBER_CART_PREFIX + userInfoDto.getUserKey();
             cartItemList = getCartItemList(cartKey);
-            cartVo.setItems(cartItemList);
         }
         cartVo.setItems(cartItemList);
         return cartVo;
 
 
+    }
+
+    @Override
+    public void checkItem(Long skuId, Boolean check) {
+        String cartKey = getCartKey();
+        BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
+        CartItemVo cartItemVo = getCartItem(skuId);
+        // 查找出商品修改选中状态
+        if (MyObjectUtils.isNotNull(cartItemVo)) {
+            cartItemVo.setCheck(check);
+            boundHashOps.put(skuId, MyJSONUtils.toJSONString(cartItemVo));
+        }
     }
 
     /**
@@ -162,7 +171,7 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * 通过 cartKey 获取购物车商品
+     * 通过 cartKey 获取购物车里所有的商品
      *
      * @param cartKey cartKey
      * @return 商品列表
@@ -170,9 +179,16 @@ public class CartServiceImpl implements CartService {
     private List<CartItemVo> getCartItemList(String cartKey) {
         BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
         if (MyMapUtils.isNotEmpty(boundHashOps.entries())) {
-            return boundHashOps.entries().values().stream().map(o -> (CartItemVo) o).collect(Collectors.toList());
+            // Todo
+            return boundHashOps.entries().values().stream().map(o -> getValueFromRedis(o, CartItemVo.class)).collect(Collectors.toList());
         }
         return null;
     }
+
+    private <T> T getValueFromRedis(Object obj, Class<T> clazz) {
+        String json = (String) obj;
+        return MyJSONUtils.parseObject(json, clazz);
+    }
+
 
 }

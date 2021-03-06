@@ -49,4 +49,11 @@ public class CartController {
         return "success";
     }
 
+    @GetMapping("checkItem")
+    public String checkItem(@RequestParam("skuId") Long skuId,
+                            @RequestParam("check") Boolean check) {
+        cartService.checkItem(skuId, check);
+        return "redirect:http://http://cart.gulimall.com/cart.html";
+    }
+
 }

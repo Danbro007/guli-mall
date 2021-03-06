@@ -18,7 +18,17 @@ public class MyJSONUtils {
      * @param <T>   转换成的对象
      * @return
      */
-    public static  <T> T parseObject(String json, Class<T> clazz) {
+    public static <T> T parseObject(String json, Class<T> clazz) {
         return JSON.parseObject(json, clazz);
+    }
+
+    /**
+     * 把对象解析成 JSON 字符串
+     *
+     * @param object 要解析的对象
+     * @return JSON 字符串
+     */
+    public static String toJSONString(Object object) {
+        return JSON.toJSONString(object);
     }
 }

@@ -18,7 +18,6 @@ public class ResultBeanControllerAop extends ControllerAop {
     @Pointcut("execution(public com.danbro.common.entity.ResultBean *.*(..))")
     @Override
     protected void targetMethod() {
-
     }
 
     @Override
