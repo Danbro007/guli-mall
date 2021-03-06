@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class UmsMemberDto implements Serializable {
+public class UmsMemberVo implements Serializable {
 
     private Long id;
 

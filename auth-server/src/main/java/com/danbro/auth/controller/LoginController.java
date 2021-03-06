@@ -9,7 +9,7 @@ import com.danbro.auth.controller.vo.MemberLoginParamVo;
 import com.danbro.auth.controller.vo.MemberRegisterParamVo;
 import com.danbro.auth.rpc.UmsClient;
 import com.danbro.auth.service.AuthService;
-import com.danbro.common.dto.UmsMemberDto;
+import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.utils.MyStrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ public class LoginController {
             // 删除验证码
             redisTemplate.delete(phoneCode);
             // rpc 注册用户成功
-            ResultBean<UmsMemberDto> resultBean = umsClient.registerMember(registerParamVo);
+            ResultBean<UmsMemberVo> resultBean = umsClient.registerMember(registerParamVo);
             if (resultBean.getSuccess()) {
                 return "redirect:http://auth.gulimall.com/login.html";
             }
@@ -109,7 +109,7 @@ public class LoginController {
             return "redirect:http://auth.gulimall.com/login.html";
         }
         // 会员登录
-        ResultBean<UmsMemberDto> resultBean = umsClient.loginMember(memberLoginParamVo);
+        ResultBean<UmsMemberVo> resultBean = umsClient.loginMember(memberLoginParamVo);
         // 成功
         if (resultBean.getSuccess()) {
             session.setAttribute(LOGIN_USER,resultBean.getData());

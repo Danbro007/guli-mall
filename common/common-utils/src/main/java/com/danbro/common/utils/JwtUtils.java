@@ -2,7 +2,7 @@ package com.danbro.common.utils;
 
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
-import com.danbro.common.dto.UmsMemberDto;
+import com.danbro.common.dto.UmsMemberVo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -83,14 +83,14 @@ public class JwtUtils {
      * @param request 请求
      * @return 用户id
      */
-    public static UmsMemberDto getMemberIdByJwtToken(HttpServletRequest request) {
+    public static UmsMemberVo getMemberIdByJwtToken(HttpServletRequest request) {
         String jwtToken = request.getHeader("token");
         if (StringUtils.isEmpty(jwtToken)) {
             return null;
         }
         Jws<Claims> claimsJws = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJws(jwtToken);
         Claims claims = claimsJws.getBody();
-        return new UmsMemberDto().setHeader(claims.get("avatar", String.class))
+        return new UmsMemberVo().setHeader(claims.get("avatar", String.class))
                 .setId(claims.get("id", Long.class)).
                 setNickname(claims.get("nickname", String.class));
     }

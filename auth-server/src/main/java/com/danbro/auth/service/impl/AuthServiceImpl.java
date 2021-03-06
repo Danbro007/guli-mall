@@ -12,7 +12,7 @@ import com.danbro.auth.enums.MemberSourceType;
 import com.danbro.auth.rpc.ThirdPartServiceClient;
 import com.danbro.auth.rpc.UmsClient;
 import com.danbro.auth.service.AuthService;
-import com.danbro.common.dto.UmsMemberDto;
+import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.common.utils.MyBeanUtils;
@@ -75,13 +75,13 @@ public class AuthServiceImpl implements AuthService {
                 if (MyStrUtils.isNotEmpty(tokenDto.getAccessToken()) && MyStrUtils.isNotEmpty(tokenDto.getOpenid())) {
                     String userInfo = HttpUtil.get(String.format(weChatProperties.getWeChatUserInfoUrl(), tokenDto.getAccessToken(), tokenDto.getOpenid()));
                     WeChatUserInfoDto weChatUserInfoDto = MyJSONUtils.parseObject(userInfo, WeChatUserInfoDto.class);
-                    UmsMemberDto memberVo = new UmsMemberDto();
+                    UmsMemberVo memberVo = new UmsMemberVo();
                     MyBeanUtils.copyProperties(weChatUserInfoDto, memberVo);
                     MyBeanUtils.copyProperties(tokenDto, memberVo);
                     memberVo.setSourceType(MemberSourceType.WECHAT);
                     memberVo.setStatus(true);
                     // 登录返回token
-                    UmsMemberDto umsMemberDto = MyCurdUtils.rpcResultHandle(umsClient.weChatUserLogin(memberVo));
+                    UmsMemberVo umsMemberVo = MyCurdUtils.rpcResultHandle(umsClient.weChatUserLogin(memberVo));
                     return "redirect:http://gulimall.com";
                 }
             }

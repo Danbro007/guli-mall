@@ -2,11 +2,10 @@ package com.danbro.cart.controller.vo;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 /**
  * @Classname CartItemVo
@@ -16,6 +15,10 @@ import lombok.Setter;
  */
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Accessors(chain = true)
 public class CartItemVo {
     private Long skuId;
 

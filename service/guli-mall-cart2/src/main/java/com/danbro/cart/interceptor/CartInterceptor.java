@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.danbro.cart.controller.dto.UserInfoDto;
-import com.danbro.common.dto.UmsMemberDto;
+import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.MyRandomUtils;
 import com.danbro.common.utils.MyStrUtils;
@@ -31,7 +31,7 @@ public class CartInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         UserInfoDto userInfoDto = new UserInfoDto();
-        UmsMemberDto memberDto = (UmsMemberDto) session.getAttribute(LOGIN_USER);
+        UmsMemberVo memberDto = (UmsMemberVo) session.getAttribute(LOGIN_USER);
         // 用户已登录
         if (MyObjectUtils.isNotNull(memberDto)) {
             userInfoDto.setId(memberDto.getId());
