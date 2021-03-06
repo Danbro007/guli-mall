@@ -23,7 +23,7 @@ public class MyCollectionUtils {
     }
 
     public static Boolean isNotEmpty(Collection<?> collection) {
-        return !CollectionUtil.isEmpty(collection);
+        return CollectionUtil.isNotEmpty(collection);
     }
 
 

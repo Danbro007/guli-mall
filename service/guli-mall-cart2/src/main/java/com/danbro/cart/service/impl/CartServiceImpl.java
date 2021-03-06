@@ -8,6 +8,7 @@ import com.danbro.cart.interceptor.CartInterceptor;
 import com.danbro.cart.service.CartService;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyMapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -84,7 +85,7 @@ public class CartServiceImpl implements CartService {
         Map<Object, Object> entries = boundHashOps.entries();
         CartVo cartVo = new CartVo();
         // 购物车为空
-        if (entries != null && !entries.isEmpty()) {
+        if (MyMapUtils.isNotEmpty(entries)) {
             ArrayList<CartItemVo> cartItemVos = new ArrayList<>();
             entries.values().stream().map(o -> cartItemVos.add((CartItemVo) o)).collect(Collectors.toList());
             cartVo.setItems(cartItemVos);
@@ -97,6 +98,39 @@ public class CartServiceImpl implements CartService {
         String cartKey = getCartKey();
         BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
         return (CartItemVo) boundHashOps.get(skuId);
+    }
+
+    @Override
+    public CartVo mergeCart() {
+        UserInfoDto userInfoDto = CartInterceptor.threadLocal.get();
+        // 用户购物车的key
+        String cartKey;
+        CartVo cartVo = new CartVo();
+        List<CartItemVo> cartItemList;
+        // 登录用户
+        if (userInfoDto.getId() != null) {
+            cartKey = MEMBER_CART_PREFIX + userInfoDto.getId().toString();
+            String tempCartKey = MEMBER_CART_PREFIX + userInfoDto.getUserKey();
+            // 临时购物车里的东西
+            List<CartItemVo> tempCartItemList = getCartItemList(tempCartKey);
+            // 合并购物车
+            if (MyCollectionUtils.isNotEmpty(tempCartItemList)) {
+                tempCartItemList.forEach(cartItem -> addToCart(cartItem.getSkuId(), cartItem.getCount()));
+            }
+            // 清空临时购物车
+            redisTemplate.delete(tempCartKey);
+            cartItemList = getCartItemList(cartKey);
+        }
+        // 临时用户
+        else {
+            cartKey = MEMBER_CART_PREFIX + userInfoDto.getUserKey();
+            cartItemList = getCartItemList(cartKey);
+            cartVo.setItems(cartItemList);
+        }
+        cartVo.setItems(cartItemList);
+        return cartVo;
+
+
     }
 
     /**
@@ -125,6 +159,20 @@ public class CartServiceImpl implements CartService {
      */
     private BoundHashOperations<String, Object, Object> getBoundHashOps(String cartKey) {
         return redisTemplate.boundHashOps(cartKey);
+    }
+
+    /**
+     * 通过 cartKey 获取购物车商品
+     *
+     * @param cartKey cartKey
+     * @return 商品列表
+     */
+    private List<CartItemVo> getCartItemList(String cartKey) {
+        BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
+        if (MyMapUtils.isNotEmpty(boundHashOps.entries())) {
+            return boundHashOps.entries().values().stream().map(o -> (CartItemVo) o).collect(Collectors.toList());
+        }
+        return null;
     }
 
 }

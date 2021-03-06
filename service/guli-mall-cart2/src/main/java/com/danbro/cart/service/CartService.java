@@ -33,4 +33,9 @@ public interface CartService {
      * @return 查询到的商品
      */
     CartItemVo getCartItem(Long skuId);
+
+    /**
+     * 合并购物车
+     */
+    CartVo mergeCart();
 }
