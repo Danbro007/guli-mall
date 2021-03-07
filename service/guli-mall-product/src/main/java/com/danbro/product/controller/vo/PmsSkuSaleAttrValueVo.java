@@ -33,7 +33,6 @@ public class PmsSkuSaleAttrValueVo implements Serializable, Converter<PmsSkuSale
     @ApiModelProperty("sku_id")
     private Long skuId;
 
-
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("attr_id")
     private Long attrId;

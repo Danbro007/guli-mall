@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>购物车</title>
-    <link rel="icon" href="/static/cart/img/心04.png" type="/image/x-icon"/>
-    <link rel="stylesheet" href="/static/cart/css/One_bdyStyle.css">
-    <link rel="stylesheet" href="/static/cart/css/index.css">
+    <link rel="icon" href="/static/cart//img/心04.png" type="/image/x-icon"/>
+    <link rel="stylesheet" href="/static/cart//css/One_bdyStyle.css">
+    <link rel="stylesheet" href="/static/cart//css/index.css">
     <script src="/static/cart/js/jquery-3.1.1.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="/static/cart/css/One_mainFoot.css">
-    <link rel="stylesheet" href="/static/cart/css/font-awesome-4.7.0/css/font-awesome.css"/>
+    <link rel="stylesheet" href="/static/cart//css/One_mainFoot.css">
+    <link rel="stylesheet" href="/static/cart//css/font-awesome-4.7.0/css/font-awesome.css"/>
 </head>
 <body>
 <header>
@@ -25,7 +25,7 @@
             <ul class="header-right">
                 <li>
                     <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/login.html" class="li_2">你好，请登录</a>
-                    <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.username}]]</a>
+                    <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.nickname}]]</a>
                 </li>
                 <li>
                     <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/reg.html"
@@ -94,16 +94,14 @@
                     </div>
                     <div>
                         <ol>
-                            <li><input type="checkbox" th:attr="skuId=${item.skuId}" class="itemChecked"
-                                       th:checked="${item.check}"></li>
+                            <li><input type="checkbox" th:attr="skuId=${item.skuId}" class="itemChecked" th:checked="${item.check}"></li>
                             <li>
                                 <dt><img th:src="${item.image}" alt=""></dt>
                                 <dd style="width: 300px;">
                                     <p>
                                         <span th:text="${item.title}">TCL 55A950C 55英寸32核</span>
                                         <br/>
-                                        <span th:each="attr:${item.getSkuAttr()}"
-                                              th:text="${attr}">尺码: 55时 超薄曲面 人工智能</span>
+                                        <span th:each="attr:${item.skuAttrValues}" th:text="${attr}">尺码: 55时 超薄曲面 人工智能</span>
                                     </p>
                                 </dd>
                             </li>
@@ -127,7 +125,7 @@
                     </div>
                 </li>
 
-            </ul>
+            </ul >
         </div>
         <div class="One_ShopFootBuy fix1">
             <div>
@@ -146,16 +144,17 @@
                     <li><img src="/static/cart/img/buyNumright.png" alt=""></li>
                 </ul>
             </div>
-            <ol>
-                <li>总价:<span style="color:#e64346;font-weight:bold;font-size:16px;" class="fnt">￥[[${#numbers.formatDecimal(cart.totalAmount, 3, 2)}]]</span>
-                <li>优惠：￥[[${#numbers.formatDecimal(cart.reduce,1,2)}]]</li>
-            </ol>
-        </div>
-        <div>
-            <button onclick="toTrade()" type="button">去结算</button>
+            <div>
+                <ol>
+                    <li>总价:<span style="color:#e64346;font-weight:bold;font-size:16px;" class="fnt">￥[[${#numbers.formatDecimal(cart.totalAmount, 3, 2)}]]</span>
+                    <li>优惠：￥[[${#numbers.formatDecimal(cart.reduce,1,2)}]]</li>
+                </ol>
+            </div>
+            <div>
+                <button onclick="toTrade()" type="button">去结算</button>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="One_isDel">
@@ -218,10 +217,10 @@
 
 </div>
 </body>
-<script src="/static/cart/./js/index.js" charset="utf-8"></script>
+<script src="/static/cart/js/index.js" charset="utf-8"></script>
 <script type="text/javascript">
     function toTrade() {
-        window.location.href = "http://cart.gmall.com:8087/toTrade";
+        window.location.href = "http://order.gulimall.com/toTrade";
     }
 
     function toItem(skuId) {
@@ -230,7 +229,7 @@
 
     function login() {
         var s = encodeURIComponent("http://cart.gmall.com:8087/cartList");
-        window.location.href = "http://passport.atguigu.com/index?originUrl=" + s;
+        window.location.href = "http://auth.gulimall.com/login.html";
     }
 
     function checkSku(chkbox) {
@@ -451,12 +450,6 @@
             $(".allCheck").prop("checked", false)
         }
     })
-
-    $(".countOpsBtn").click(function () {
-        const skuId = $(this).parent().attr("skuId");
-        const num = $(this).parent().find(".countOpsNum").text();
-        location.href = "http://cart.gulimall.com/countItem?skuId=" + skuId + "&num=" + num;
-    });
     //删除已选的商品
     $(".One_ShopFootBuy>div:first-child ul li:nth-child(2)").click(function () {
         // $(".check").each(function(){
@@ -599,17 +592,6 @@
             "color": "gray"
         });
     })
-
-
-    //删除购物车选项
-    function deleteItem() {
-        location.href = "http://cart.gulimall.com/deleteItem?skuId=" + deleteId;
-    }
-    let deleteId = 0;
-    $(".deleteItemBtn").click(function () {
-        deleteId = $(this).attr("skuId");
-    });
-
     $(".One_ShopCon ul li>div:nth-child(2) ol>li:nth-child(6) p:nth-child(2)").click(function () {
         $(".One_mb").show();
         $(".One_moveMyGz").show();
@@ -722,11 +704,7 @@
     $(".nmbd dd:last-child button:last-child").click(function () {
         $(this).parent().parent().slideUp(100)
     })
-    $(".itemChecked").click(function () {
-        const skuId = $(this).attr("skuId");
-        const checked = $(this).prop("checked");
-        location.href = "http://cart.gulimall.com/checkItem?skuId=" + skuId + "&checked=" + (checked ? true : false);
-    });
+
 
     //active
     $(".one_main_div1 .one_main_ul>li").mouseover(function () {
@@ -786,6 +764,34 @@
         $(this).children("p").children("img").attr("src", "img/one_mian_gwc2.png")
     }).mouseout(function () {
         $(this).children("p").children("img").attr("src", "img/one_mian_gwc1.png")
-    })
+    });
+
+    $(".itemChecked").click(function () {
+        const skuId = $(this).attr("skuId");
+        const checked = $(this).prop("checked");
+        location.href = "http://cart.gulimall.com/checkItem?skuId=" + skuId + "&checked=" + (checked ? true : false);
+    });
+
+
+    $(".countOpsBtn").click(function () {
+        const skuId = $(this).parent().attr("skuId");
+        const num = $(this).parent().find(".countOpsNum").text();
+        location.href = "http://cart.gulimall.com/countItem?skuId=" + skuId + "&num=" + num;
+    });
+
+
+    let deleteId = 0;
+    $(".deleteItemBtn").click(function () {
+        deleteId = $(this).attr("skuId");
+        alert(deleteId)
+    });
+
+    //删除购物车选项
+    function deleteItem() {
+        location.href = "http://cart.gulimall.com/deleteItem?skuId=" + deleteId;
+    }
+
+
+
 </script>
 </html>

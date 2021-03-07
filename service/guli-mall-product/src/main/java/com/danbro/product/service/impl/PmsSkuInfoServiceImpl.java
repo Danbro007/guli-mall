@@ -71,6 +71,7 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Autowired
     ThreadPoolExecutor threadPoolExecutor;
 
+
     @Override
     public void batchSaveSkuInfo(List<PmsSkuInfoVo> skuInfoVoList) {
         skuInfoVoList.forEach(sku -> {
@@ -147,7 +148,12 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Override
     public PmsSkuInfoVo getSkuInfoById(Long skuId) {
         PmsSkuInfo pmsSkuInfo = MyCurdUtils.select(this.getById(skuId), ResponseCode.NOT_FOUND);
-        return ConvertUtils.convert(pmsSkuInfo, PmsSkuInfoVo.class);
+        PmsSkuInfoVo skuInfoVo = ConvertUtils.convert(pmsSkuInfo, PmsSkuInfoVo.class);
+        List<PmsSkuSaleAttrValueVo> saleValueList = pmsSkuSaleAttrValueService.getSaleAttrValueListBySkuId(skuId);
+        if (MyCollectionUtils.isNotEmpty(saleValueList)) {
+            skuInfoVo.setAttr(saleValueList);
+        }
+        return skuInfoVo;
     }
 
     @Override

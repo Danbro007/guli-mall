@@ -46,4 +46,16 @@ public interface CartService {
      */
     void checkItem(Long skuId, Boolean check);
 
+    /**
+     * 修改购物车里商品的数量
+     * @param skuId 商品ID
+     * @param num 商品数量
+     */
+    void countItem(Long skuId, Integer num);
+
+    /**
+     * 删除购物车里的商品
+     * @param skuId
+     */
+    void deleteItem(Long skuId);
 }
