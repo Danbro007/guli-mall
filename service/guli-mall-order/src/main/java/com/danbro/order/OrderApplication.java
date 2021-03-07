@@ -1,5 +1,6 @@
 package com.danbro.order;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -13,6 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @Date 2021/1/28 19:18
  * @Created by Administrator
  */
+@EnableRabbit
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableDiscoveryClient
 @EnableSwagger2

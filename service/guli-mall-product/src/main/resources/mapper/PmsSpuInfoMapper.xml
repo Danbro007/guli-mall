@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.danbro.product.mapper.PmsSpuInfoMapper">
-    <resultMap id="saleAttrMapping" type="com.danbro.product.controller.vo.front.SkuItemVo$SkuSaleAttrValue">
+<mapper namespace="com.danbro.order.mapper.PmsSpuInfoMapper">
+    <resultMap id="saleAttrMapping" type="com.danbro.order.controller.vo.front.SkuItemVo$SkuSaleAttrValue">
         <id column="attrId" property="attrId"/>
         <result column="attrName" property="attrName"/>
-        <collection property="attrValues" ofType="com.danbro.product.controller.vo.front.SkuItemVo$ValueWithSkuId">
+        <collection property="attrValues" ofType="com.danbro.order.controller.vo.front.SkuItemVo$ValueWithSkuId">
             <result column="attrValue" property="attrValue"/>
             <result column="skuIds" property="skuIds"/>
         </collection>
