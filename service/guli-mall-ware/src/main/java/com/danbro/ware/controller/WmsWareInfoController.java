@@ -1,11 +1,11 @@
 package com.danbro.ware.controller;
- 
-import java.util.List;
+
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
+import com.danbro.ware.controller.vo.FareVo;
 import com.danbro.ware.controller.vo.WmsWareInfoVo;
 import com.danbro.ware.entity.WmsWareInfo;
 import com.danbro.ware.service.WmsWareInfoService;
@@ -13,48 +13,49 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
- 
- 
+
+import java.util.List;
+
+
 /**
  * @author makejava
  * @since 2021-01-28 19:06:16
  */
-@Api(tags = "仓库信息(WmsWareInfo)") 
+@Api(tags = "仓库信息(WmsWareInfo)")
 @Validated
 @RestController
 @AllArgsConstructor
 @Setter
 @RequestMapping("ware/wareinfo")
 public class WmsWareInfoController {
-    private  WmsWareInfoService wmsWareInfoService;
+    private WmsWareInfoService wmsWareInfoService;
 
     @ApiOperation("分页查询仓库")
     @GetMapping("list")
-    public ResultPageBean<WmsWareInfoVo,WmsWareInfo> getWareInfoList(@RequestParam("page") Long page,
-                                                                     @RequestParam("limit") Long limit,
-                                                                     @RequestParam(value = "key",required = false) String key){
+    public ResultPageBean<WmsWareInfoVo, WmsWareInfo> getWareInfoList(@RequestParam("page") Long page,
+                                                                      @RequestParam("limit") Long limit,
+                                                                      @RequestParam(value = "key", required = false) String key) {
         PageParam<WmsWareInfo> pageParam = new PageParam<WmsWareInfo>().setPage(page).setLimit(limit);
-        return ResultPageBean.ofSuccess(wmsWareInfoService.queryPageByCondition(pageParam,key));
+        return ResultPageBean.ofSuccess(wmsWareInfoService.queryPageByCondition(pageParam, key));
     }
 
     @ApiOperation("添加仓库")
     @PostMapping("")
-    public ResultBean<WmsWareInfoVo> insertWare(@Validated(Insert.class) @RequestBody WmsWareInfoVo wmsWareInfoVo){
+    public ResultBean<WmsWareInfoVo> insertWare(@Validated(Insert.class) @RequestBody WmsWareInfoVo wmsWareInfoVo) {
         return ResultBean.ofSuccess(wmsWareInfoService.insertWare(wmsWareInfoVo));
     }
 
     @ApiOperation("修改仓库")
     @PutMapping("")
-    public ResultBean<WmsWareInfoVo> updateWare(@Validated(Update.class) @RequestBody WmsWareInfoVo wmsWareInfoVo){
+    public ResultBean<WmsWareInfoVo> updateWare(@Validated(Update.class) @RequestBody WmsWareInfoVo wmsWareInfoVo) {
         return ResultBean.ofSuccess(wmsWareInfoService.updateWare(wmsWareInfoVo));
     }
 
     @ApiOperation("获取仓库的详细信息")
     @GetMapping("info/{wareId}")
-    public ResultBean<WmsWareInfoVo> getWareInfo(@PathVariable Long wareId){
+    public ResultBean<WmsWareInfoVo> getWareInfo(@PathVariable Long wareId) {
         return ResultBean.ofSuccess(wmsWareInfoService.getWareInfoById(wareId));
     }
 
@@ -65,5 +66,9 @@ public class WmsWareInfoController {
         return ResultBean.ofSuccess();
     }
 
-
+    @ApiOperation("获取邮费信息和寄送地址")
+    @GetMapping("fare/{addressId}")
+    public ResultBean<FareVo> getFare(@PathVariable Long addressId) {
+        return ResultBean.ofSuccess(wmsWareInfoService.calculateFare(addressId));
+    }
 }

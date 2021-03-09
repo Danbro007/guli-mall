@@ -1,12 +1,14 @@
 package com.danbro.ware.service;
 
 
-import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.ware.controller.vo.FareVo;
 import com.danbro.ware.controller.vo.WmsWareInfoVo;
 import com.danbro.ware.entity.WmsWareInfo;
+
+import java.util.List;
 
 
 /**
@@ -51,7 +53,16 @@ public interface WmsWareInfoService extends IService<WmsWareInfo> {
 
     /**
      * 批量删除仓库
+     *
      * @param wareIdList 要删除的仓库ID列表
      */
     void batchDeleteWare(List<Long> wareIdList);
+
+    /**
+     * 通过地址计算出运费
+     *
+     * @param addressId 地址ID
+     * @return
+     */
+    FareVo calculateFare(Long addressId);
 }

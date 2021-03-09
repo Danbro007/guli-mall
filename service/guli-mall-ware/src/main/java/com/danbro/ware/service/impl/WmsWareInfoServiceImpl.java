@@ -1,20 +1,27 @@
 package com.danbro.ware.service.impl;
 
-import java.util.List;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.common.utils.Pagination;
 import com.danbro.common.utils.Query;
+import com.danbro.ware.controller.vo.FareVo;
+import com.danbro.ware.controller.vo.UmsMemberReceiveAddressVo;
 import com.danbro.ware.controller.vo.WmsWareInfoVo;
 import com.danbro.ware.entity.WmsWareInfo;
 import com.danbro.ware.mapper.WmsWareInfoMapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danbro.ware.service.MemberFeignService;
 import com.danbro.ware.service.WmsWareInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 仓库信息(WmsWareInfo)表服务实现类
@@ -24,6 +31,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WmsWareInfoServiceImpl extends ServiceImpl<WmsWareInfoMapper, WmsWareInfo> implements WmsWareInfoService {
+
+    @Autowired
+    MemberFeignService memberFeignService;
 
     @Override
     public Pagination<WmsWareInfoVo, WmsWareInfo> queryPageByCondition(PageParam<WmsWareInfo> pageParam, String key) {
@@ -61,5 +71,15 @@ public class WmsWareInfoServiceImpl extends ServiceImpl<WmsWareInfoMapper, WmsWa
     @Override
     public void batchDeleteWare(List<Long> wareIdList) {
         MyCurdUtils.batchDelete(this.removeByIds(wareIdList), ResponseCode.DELETE_FAILURE);
+    }
+
+    @Override
+    public FareVo calculateFare(Long addressId) {
+        FareVo fareVo = new FareVo();
+        // 这里运费是用随机生成的
+        fareVo.setFare(new BigDecimal(RandomUtil.randomInt(5, 20)));
+        UmsMemberReceiveAddressVo addressVo = MyCurdUtils.rpcResultHandle(memberFeignService.getAddressInfoByAddressId(addressId));
+        fareVo.setAddress(addressVo);
+        return fareVo;
     }
 }

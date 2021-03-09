@@ -3,6 +3,8 @@ package com.danbro.cart.service;
 import com.danbro.cart.controller.vo.CartItemVo;
 import com.danbro.cart.controller.vo.CartVo;
 
+import java.util.List;
+
 /**
  * @author Danrbo
  * @Classname CartService
@@ -55,7 +57,16 @@ public interface CartService {
 
     /**
      * 删除购物车里的商品
+     *
      * @param skuId
      */
     void deleteItem(Long skuId);
+
+    /**
+     * 获取会员购物车里选中商品的信息（价格是最新的）
+     *
+     * @param memberId 会员ID
+     * @return 购物车里的商品信息
+     */
+    List<CartItemVo> getCartItemList(Long memberId);
 }

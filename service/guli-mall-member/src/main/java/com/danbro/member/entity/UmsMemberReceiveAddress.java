@@ -1,13 +1,12 @@
 package com.danbro.member.entity;
 
-import java.io.Serializable;
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * @author makejava
@@ -52,6 +51,4 @@ public class UmsMemberReceiveAddress implements Serializable {
 
     @ApiModelProperty("是否默认")
     private Boolean defaultStatus;
-
-
 }

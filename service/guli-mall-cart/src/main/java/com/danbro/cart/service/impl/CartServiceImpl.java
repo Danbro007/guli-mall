@@ -1,22 +1,20 @@
 package com.danbro.cart.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import com.danbro.cart.controller.dto.UserInfoDto;
 import com.danbro.cart.controller.vo.CartItemVo;
 import com.danbro.cart.controller.vo.CartVo;
 import com.danbro.cart.controller.vo.PmsSkuInfoVo;
 import com.danbro.cart.interceptor.CartInterceptor;
 import com.danbro.cart.service.CartService;
-import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyJSONUtils;
-import com.danbro.common.utils.MyMapUtils;
-import com.danbro.common.utils.MyObjectUtils;
+import com.danbro.cart.service.PmsFeignService;
+import com.danbro.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Danrbo
@@ -30,7 +28,7 @@ public class CartServiceImpl implements CartService {
     StringRedisTemplate redisTemplate;
 
     @Autowired
-    PmsService pmsService;
+    PmsFeignService pmsService;
 
     private static final String MEMBER_CART_PREFIX = "member:cart:";
 
@@ -155,6 +153,25 @@ public class CartServiceImpl implements CartService {
         String cartKey = getCartKey();
         BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
         boundHashOps.delete(skuId.toString());
+    }
+
+    @Override
+    public List<CartItemVo> getCartItemList(Long memberId) {
+        String cartKey = MEMBER_CART_PREFIX + memberId;
+        List<CartItemVo> cartItemList = getCartItemList(cartKey);
+        if (MyCollectionUtils.isNotEmpty(cartItemList)) {
+            return cartItemList.stream().map(item -> {
+                // 查询最新价格
+                PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsService.getSkuInfo(item.getSkuId()), false);
+                if (MyObjectUtils.isNotNull(pmsSkuInfoVo)) {
+                    item.setPrice(pmsSkuInfoVo.getPrice());
+                }
+                // 查询库存
+                return item;
+            }).filter(CartItemVo::getCheck).collect(Collectors.toList());
+        }
+        return null;
+
     }
 
     /**

@@ -17,5 +17,13 @@ spring:
   rabbitmq:
     addresses: 192.168.0.109
     port: 5672
+  session:
+    store-type: redis
 server:
   port: 8003
+# 线程池大小
+thread:
+  pool:
+    core-pool-size: 20
+    maximum-pool-size: 30
+    keep-alive-time: 10
