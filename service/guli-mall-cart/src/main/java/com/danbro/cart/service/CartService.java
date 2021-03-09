@@ -1,9 +1,8 @@
 package com.danbro.cart.service;
 
+import java.util.List;
 import com.danbro.cart.controller.vo.CartItemVo;
 import com.danbro.cart.controller.vo.CartVo;
-
-import java.util.List;
 
 /**
  * @author Danrbo
@@ -58,7 +57,7 @@ public interface CartService {
     /**
      * 删除购物车里的商品
      *
-     * @param skuId
+     * @param skuId skuID
      */
     void deleteItem(Long skuId);
 

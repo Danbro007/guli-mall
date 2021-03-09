@@ -1,5 +1,7 @@
 package com.danbro.cart.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import com.danbro.cart.controller.dto.UserInfoDto;
 import com.danbro.cart.controller.vo.CartItemVo;
 import com.danbro.cart.controller.vo.CartVo;
@@ -7,14 +9,15 @@ import com.danbro.cart.controller.vo.PmsSkuInfoVo;
 import com.danbro.cart.interceptor.CartInterceptor;
 import com.danbro.cart.service.CartService;
 import com.danbro.cart.service.PmsFeignService;
-import com.danbro.common.utils.*;
+import com.danbro.common.utils.MyCollectionUtils;
+import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyJSONUtils;
+import com.danbro.common.utils.MyMapUtils;
+import com.danbro.common.utils.MyObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Danrbo
@@ -101,7 +104,7 @@ public class CartServiceImpl implements CartService {
         CartVo cartVo = new CartVo();
         List<CartItemVo> cartItemList;
         // 登录用户
-        if (userInfoDto.getId() != null) {
+        if (MyObjectUtils.isNotNull(userInfoDto.getId())) {
             cartKey = MEMBER_CART_PREFIX + userInfoDto.getId().toString();
             String tempCartKey = MEMBER_CART_PREFIX + userInfoDto.getUserKey();
             // 临时购物车里的东西
@@ -209,7 +212,6 @@ public class CartServiceImpl implements CartService {
     private List<CartItemVo> getCartItemList(String cartKey) {
         BoundHashOperations<String, Object, Object> boundHashOps = getBoundHashOps(cartKey);
         if (MyMapUtils.isNotEmpty(boundHashOps.entries())) {
-            // Todo
             return boundHashOps.entries().values().stream().map(o -> getValueFromRedis(o, CartItemVo.class)).collect(Collectors.toList());
         }
         return null;
