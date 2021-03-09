@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyRandomUtils;
 import com.danbro.product.controller.vo.CartItemVo;
 import com.danbro.product.controller.vo.OrderConfirmVo;
+import com.danbro.product.controller.vo.SubmitOrderVo;
 import com.danbro.product.controller.vo.UmsMemberReceiveAddressVo;
 import com.danbro.product.entity.OmsOrder;
 import com.danbro.product.interceptor.LoginInterceptor;
@@ -14,6 +16,7 @@ import com.danbro.product.service.CartFeignService;
 import com.danbro.product.service.MemberFeignService;
 import com.danbro.product.service.OmsOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 订单(OmsOrder)表服务实现类
@@ -30,6 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Service
 public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> implements OmsOrderService {
+    public static final String ORDER_TOKEN = "order:token:";
     @Autowired
     MemberFeignService memberFeignService;
 
@@ -39,6 +44,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Autowired
     ThreadPoolExecutor executor;
 
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Override
     public OrderConfirmVo createConfirmOrder() throws ExecutionException, InterruptedException {
@@ -72,6 +79,15 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         orderConfirmVo.setPayPrice(totalPrice);
         orderConfirmVo.setTotalPrice(totalPrice);
+        // 实现幂等性的令牌
+        String token = MyRandomUtils.randomUUID();
+        redisTemplate.opsForValue().set(ORDER_TOKEN + memberVo.getId(), token, 30L, TimeUnit.MINUTES);
+        orderConfirmVo.setOrderToken(token);
         return orderConfirmVo;
+    }
+
+    @Override
+    public void createOrder(SubmitOrderVo orderVo) {
+        // 1、
     }
 }

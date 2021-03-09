@@ -3,6 +3,7 @@ package com.danbro.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.product.controller.vo.OrderConfirmVo;
+import com.danbro.product.controller.vo.SubmitOrderVo;
 import com.danbro.product.entity.OmsOrder;
 
 import java.util.concurrent.ExecutionException;
@@ -23,4 +24,10 @@ public interface OmsOrderService extends IService<OmsOrder> {
      */
     OrderConfirmVo createConfirmOrder() throws ExecutionException, InterruptedException;
 
+    /**
+     * 创建订单
+     *
+     * @param orderVo 订单的信息
+     */
+    void createOrder(SubmitOrderVo orderVo);
 }
