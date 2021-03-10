@@ -52,4 +52,12 @@ public interface PmsSpuInfoService extends IService<PmsSpuInfo> {
      */
     List<SkuItemVo.SkuSaleAttrValue> getSaleAttrListBySpuId(Long spuId);
 
+    /**
+     * 通过 SpuId 查询出 Spu 信息
+     *
+     * @param spuId SpuId
+     * @return spu 信息
+     */
+    PmsSpuInfoVo getSpuInfoBySpuId(Long spuId);
+
 }

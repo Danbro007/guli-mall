@@ -1,13 +1,15 @@
 package com.danbro.ware.service;
 
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
+import com.danbro.ware.controller.vo.OmsOrderItem;
+import com.danbro.ware.controller.vo.WmsLockStockResultVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareSku;
+
+import java.util.List;
 
 
 /**
@@ -65,4 +67,12 @@ public interface WmsWareSkuService extends IService<WmsWareSku> {
      * @return 是否有库存
      */
     Boolean hasStockBySkuId(Long skuId);
+
+    /**
+     * 锁库存
+     *
+     * @param items 要锁库存的商品列表
+     * @return 锁库存的结果
+     */
+    List<WmsLockStockResultVo> lockStock(List<OmsOrderItem> items);
 }

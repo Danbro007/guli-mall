@@ -38,7 +38,7 @@ public class UmsMemberReceiveAddressController {
 
     @ApiOperation("通过地址ID查找地址")
     @GetMapping("info/{addressId}")
-    public ResultBean<UmsMemberReceiveAddressVo> getMemberAddress(@PathVariable Long addressId) {
+    public ResultBean<UmsMemberReceiveAddressVo> getMemberAddressByAddId(@PathVariable Long addressId) {
         return ResultBean.ofSuccess(umsMemberReceiveAddressService.getAddressByAddressId(addressId));
     }
 }
