@@ -162,6 +162,12 @@ public class PmsSpuInfoServiceImpl extends ServiceImpl<PmsSpuInfoMapper, PmsSpuI
         return MyCurdUtils.select(this.baseMapper.getSaleAttrList(spuId), ResponseCode.NOT_FOUND);
     }
 
+    @Override
+    public PmsSpuInfoVo getSpuInfoBySpuId(Long spuId) {
+        PmsSpuInfo spuInfo = MyCurdUtils.select(this.getById(spuId), ResponseCode.NOT_FOUND);
+        return ConvertUtils.convert(spuInfo, PmsSpuInfoVo.class);
+    }
+
     /**
      * 构建 SkuInfoModel 数据模型列表
      *

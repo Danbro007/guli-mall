@@ -47,7 +47,7 @@ spring:
         - id: order_route
           uri: lb://service-oms
           predicates:
-            - Path=/api/order/**
+            - Path=/api/product/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
 

@@ -1,12 +1,12 @@
 package com.danbro.ware.controller;
 
-import java.util.List;
-
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
+import com.danbro.ware.controller.vo.OmsOrderItem;
+import com.danbro.ware.controller.vo.WmsLockStockResultVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareSku;
 import com.danbro.ware.service.WmsWareSkuService;
@@ -14,9 +14,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -71,6 +72,12 @@ public class WmsWareSkuController {
     @GetMapping("hasStock/{skuId}")
     public ResultBean<Boolean> hasStock(@PathVariable Long skuId) {
         return ResultBean.ofSuccess(wmsWareSkuService.hasStockBySkuId(skuId));
+    }
+
+    @ApiOperation("批量锁商品的库存")
+    @PostMapping("lockStock")
+    public ResultBean<List<WmsLockStockResultVo>> lockStock(@RequestBody List<OmsOrderItem> items) {
+        return ResultBean.ofSuccess(wmsWareSkuService.lockStock(items));
     }
 
 }

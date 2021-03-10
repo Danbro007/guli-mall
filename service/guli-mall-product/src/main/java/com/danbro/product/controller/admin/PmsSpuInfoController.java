@@ -54,4 +54,10 @@ public class PmsSpuInfoController {
         return ResultBean.ofSuccess();
     }
 
+    @ApiOperation("查询spu信息")
+    @GetMapping("{spuId}}")
+    public ResultBean<PmsSpuInfoVo> getSpuInfoBySpuId(@PathVariable Long spuId) {
+        return ResultBean.ofSuccess(pmsSpuInfoService.getSpuInfoBySpuId(spuId));
+    }
+
 }

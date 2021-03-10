@@ -1,23 +1,23 @@
 package com.danbro.ware.service.impl;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
-import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyObjectUtils;
-import com.danbro.common.utils.Pagination;
-import com.danbro.common.utils.Query;
+import com.danbro.common.exceptions.GuliMallException;
+import com.danbro.common.utils.*;
+import com.danbro.ware.controller.vo.OmsOrderItem;
+import com.danbro.ware.controller.vo.WmsLockStockResultVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareSku;
 import com.danbro.ware.mapper.WmsWareSkuMapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.ware.service.WmsWareSkuService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 商品库存(WmsWareSku)表服务实现类
@@ -76,5 +76,36 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
         AtomicReference<Integer> totalStock = new AtomicReference<>(0);
         wareSkuList.forEach(sku -> totalStock.updateAndGet(v -> v + sku.getStock()));
         return totalStock.get() > 0;
+    }
+
+    @Override
+    public List<WmsLockStockResultVo> lockStock(List<OmsOrderItem> items) {
+        List<WmsLockStockResultVo> resultVos = new ArrayList<>();
+        // 1、循环遍历所有的商品
+        for (OmsOrderItem item : items) {
+            // 锁库存成功标志符号，默认是 false
+            boolean lockItemSuccess = false;
+            // 2、查找出有当前商品库存的仓库ID（库存数-被锁定的库存数）
+            List<Long> wareIdList = this.baseMapper.getWareIdListHasStock(item.getSkuId());
+            // 4、遍历所有的仓库开始锁库存
+            for (Long wareId : wareIdList) {
+                Long result = this.baseMapper.lockStockBySkuId(item.getSkuId(), wareId, item.getSkuQuantity());
+                // 锁库存成功跳出循环锁下一个商品的库存
+                if (result == 1) {
+                    WmsLockStockResultVo resultVo = new WmsLockStockResultVo().
+                            setStock(item.getSkuQuantity()).
+                            setSkuId(item.getSkuId()).
+                            setSuccess(true);
+                    resultVos.add(resultVo);
+                    lockItemSuccess = true;
+                    break;
+                }
+            }
+            // 只要有一个锁库存失败则停止后面的锁库存操作
+            if (!lockItemSuccess) {
+                throw new GuliMallException(ResponseCode.LOCK_STOCK_FAILURE);
+            }
+        }
+        return resultVos;
     }
 }

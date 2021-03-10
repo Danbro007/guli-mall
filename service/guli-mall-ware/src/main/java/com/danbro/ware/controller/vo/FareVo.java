@@ -2,16 +2,17 @@ package com.danbro.ware.controller.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * @author Danrbo
  * @Classname FareVo
- * @Description TODO
+ * @Description TODO 邮费信息
  * @Date 2021/3/9 15:09
  */
 @Data
-public class FareVo {
+public class FareVo implements Serializable {
     private BigDecimal fare;
     private UmsMemberReceiveAddressVo address;
 }

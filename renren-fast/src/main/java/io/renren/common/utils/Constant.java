@@ -31,9 +31,9 @@ public class Constant {
     /**
      * 排序方式
      */
-    public static final String ORDER = "order";
+    public static final String ORDER = "product";
     /**
-     *  升序
+     * 升序
      */
     public static final String ASC = "asc";
 	/**

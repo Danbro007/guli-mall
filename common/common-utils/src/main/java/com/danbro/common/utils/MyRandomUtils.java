@@ -1,5 +1,6 @@
 package com.danbro.common.utils;
 
+import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 
 /**
@@ -10,7 +11,22 @@ import cn.hutool.core.util.IdUtil;
  */
 public class MyRandomUtils {
 
-    public static String randomUUID(){
+    /**
+     * 随机UUID
+     *
+     * @return UUID
+     */
+    public static String randomUUID() {
         return IdUtil.randomUUID();
+    }
+
+    /**
+     * 通过雪花算法生成 ID
+     *
+     * @return ID
+     */
+    public static String snowFlakeId() {
+        Snowflake snowflake = IdUtil.getSnowflake(1, 1);
+        return snowflake.nextIdStr();
     }
 }
