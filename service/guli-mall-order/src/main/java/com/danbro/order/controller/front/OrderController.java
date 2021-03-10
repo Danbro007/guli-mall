@@ -1,6 +1,7 @@
 package com.danbro.order.controller.front;
 
 
+import com.danbro.common.exceptions.GuliMallException;
 import com.danbro.order.controller.vo.OrderConfirmVo;
 import com.danbro.order.controller.vo.OrderToResponseVo;
 import com.danbro.order.controller.vo.SubmitOrderVo;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
@@ -50,12 +52,13 @@ public class OrderController {
 
     @ApiOperation("提交订单")
     @PostMapping("submitOrder")
-    public String submitOrder(SubmitOrderVo orderVo) {
-        OrderToResponseVo responseVo = omsOrderService.createOrder(orderVo);
-        // 成功进入支付页面
-        if (responseVo.getCode() == 0) {
+    public String submitOrder(SubmitOrderVo orderVo, RedirectAttributes redirectAttributes, Model model) {
+        try {
+            OrderToResponseVo responseVo = omsOrderService.createOrder(orderVo);
+            model.addAttribute("submitOrderResp", responseVo);
             return "pay";
-        } else {
+        } catch (GuliMallException e) {
+            redirectAttributes.addAttribute("msg", e.getMessage());
             return "redirect:http://order.gulimall.com/confirm.html";
         }
     }

@@ -1,4 +1,4 @@
-package com.danbro.product;
+package com.danbro.order;
 
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;

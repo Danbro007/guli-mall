@@ -22,8 +22,4 @@ public class OrderToResponseVo implements Serializable {
     private List<OmsOrderItem> items;
     private BigDecimal payPrice;
     private BigDecimal fare;
-    /**
-     * 状态码 0 表示创建订单成功
-     */
-    private Integer code = 0;
 }

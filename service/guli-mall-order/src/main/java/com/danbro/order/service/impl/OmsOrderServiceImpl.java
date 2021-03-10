@@ -150,7 +150,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     /**
      * 商品验价
      *
-     * @param responseVo
+     * @param responseVo 返回的响应
      */
     private void validPrice(OrderToResponseVo responseVo) {
         List<OmsOrderItem> items = responseVo.getItems();
