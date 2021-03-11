@@ -26,4 +26,8 @@ public class WmsLockStockResultVo implements Serializable {
      * 要锁的库存数
      */
     private Integer stock;
+    /**
+     * 仓库ID
+     */
+    private Long wareId;
 }

@@ -1,7 +1,5 @@
 package com.danbro.ware.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -10,27 +8,22 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.enums.wms.PurchaseDetailStatus;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyObjectUtils;
-import com.danbro.common.utils.MyStrUtils;
-import com.danbro.common.utils.Pagination;
-import com.danbro.common.utils.Query;
-import com.danbro.ware.controller.vo.DonePurchaseDetailVo;
-import com.danbro.ware.controller.vo.DonePurchaseVo;
-import com.danbro.ware.controller.vo.MergePurchaseVo;
-import com.danbro.ware.controller.vo.PmsSkuInfoVo;
-import com.danbro.ware.controller.vo.WmsPurchaseVo;
+import com.danbro.common.utils.*;
+import com.danbro.ware.controller.vo.*;
 import com.danbro.ware.entity.WmsPurchase;
 import com.danbro.ware.entity.WmsPurchaseDetail;
 import com.danbro.ware.entity.WmsWareSku;
 import com.danbro.ware.mapper.WmsPurchaseMapper;
-import com.danbro.ware.rpc.clients.PmsSkuInfoClient;
+import com.danbro.ware.service.PmsFeignService;
 import com.danbro.ware.service.WmsPurchaseDetailService;
 import com.danbro.ware.service.WmsPurchaseService;
 import com.danbro.ware.service.WmsWareSkuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 采购信息(WmsPurchase)表服务实现类
@@ -45,7 +38,7 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
     WmsPurchaseDetailService wmsPurchaseDetailService;
 
     @Autowired
-    PmsSkuInfoClient pmsSkuInfoClient;
+    PmsFeignService pmsFeignService;
 
     @Autowired
     WmsWareSkuService wmsWareSkuService;
@@ -183,7 +176,7 @@ public class WmsPurchaseServiceImpl extends ServiceImpl<WmsPurchaseMapper, WmsPu
     private void productInBound(DonePurchaseDetailVo detail) {
         WmsPurchaseDetail purchaseDetail = MyCurdUtils.select(wmsPurchaseDetailService.getById(detail.getItemId()), ResponseCode.NOT_FOUND);
         // 先查询到采购的商品信息（到 pms 查询）
-        PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsSkuInfoClient.getSkuInfo(purchaseDetail.getSkuId()));
+        PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsFeignService.getSkuInfo(purchaseDetail.getSkuId()));
         // 查询出入库之前的库存
         WmsWareSku wmsWareSku = MyCurdUtils.select(wmsWareSkuService.getOne(new QueryWrapper<WmsWareSku>().
                         lambda().

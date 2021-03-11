@@ -1,10 +1,12 @@
 package com.danbro.order.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.exceptions.GuliMallException;
+import com.danbro.common.utils.ConvertUtils;
 import com.danbro.common.utils.MyCollectionUtils;
 import com.danbro.common.utils.MyCurdUtils;
 import com.danbro.common.utils.MyRandomUtils;
@@ -68,7 +70,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Override
     public OrderConfirmVo createConfirmOrder() throws ExecutionException, InterruptedException {
         OrderConfirmVo orderConfirmVo = new OrderConfirmVo();
-        UmsMemberVo memberVo = LoginInterceptor.MEMBER_THREADLOCAL.get();
+        UmsMemberVo memberVo = LoginInterceptor.MEMBER_THREADED.get();
         CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
             // 1、异步查找会员的收货地址
             List<UmsMemberReceiveAddressVo> addressVoList = MyCurdUtils.rpcResultHandle(memberFeignService.getMemberAddressListByMemberId(memberVo.getId()));
@@ -108,7 +110,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Override
     public OrderToResponseVo createOrder(SubmitOrderVo orderVo) {
         OrderToResponseVo orderToResponseVo = new OrderToResponseVo();
-        UmsMemberVo memberVo = LoginInterceptor.MEMBER_THREADLOCAL.get();
+        UmsMemberVo memberVo = LoginInterceptor.MEMBER_THREADED.get();
         String orderToken = orderVo.getOrderToken();
         String key = ORDER_TOKEN + memberVo.getId();
         // 原子删除token
@@ -119,12 +121,15 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             OrderToResponseVo responseVo = buildOrder(orderVo, memberVo, orderToResponseVo);
             // 验价
             validPrice(responseVo);
-            // 锁库存
             // 验价成功
             if (responseVo.getPayPrice().compareTo(orderToResponseVo.getPayPrice()) == 0) {
+                // 保存订单
                 this.save(orderToResponseVo.getOrder());
+                // 保存订单项
                 orderItemService.saveBatch(orderToResponseVo.getItems());
+                // 锁库存
                 Boolean lockResult = lockStocks(orderToResponseVo);
+                int i = 1 / 0;
                 if (!lockResult) {
                     throw new GuliMallException(ResponseCode.LOCK_STOCK_FAILURE);
                 }
@@ -136,6 +141,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return null;
     }
 
+    @Override
+    public OmsOrderVo getOrderInfoByOrderSn(String orderSn) {
+        OmsOrder omsOrder = MyCurdUtils.select(this.getOne(new QueryWrapper<OmsOrder>().lambda().eq(OmsOrder::getOrderSn, orderSn)), ResponseCode.NOT_FOUND);
+        return ConvertUtils.convert(omsOrder, OmsOrderVo.class);
+    }
+
     /**
      * 锁商品的库存
      *
@@ -143,7 +154,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      * @return 锁库存的结果
      */
     private Boolean lockStocks(OrderToResponseVo orderToResponseVo) {
-        ResultBean<List<WmsLockStockResultVo>> result = wmsFeignService.lockStock(orderToResponseVo.getItems());
+        ResultBean<List<WmsLockStockResultVo>> result = wmsFeignService.lockStock(orderToResponseVo);
         return result.getSuccess();
     }
 

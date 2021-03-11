@@ -1,13 +1,15 @@
 package com.danbro.ware.entity;
 
-import java.io.Serializable;
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * @author makejava
@@ -16,6 +18,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 @Data
 @Accessors(chain = true)
 @ApiModel("库存工作单")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class WmsWareOrderTaskDetail implements Serializable {
     private static final long serialVersionUID = -85001193774750349L;
 
@@ -35,5 +40,9 @@ public class WmsWareOrderTaskDetail implements Serializable {
     @ApiModelProperty("工作单id")
     private Long taskId;
 
+    @ApiModelProperty("订单项锁定状态：1-锁定 2-解锁 3-扣减")
+    private Integer lockStatus;
 
+    @ApiModelProperty("库存ID")
+    private Long wareId;
 }

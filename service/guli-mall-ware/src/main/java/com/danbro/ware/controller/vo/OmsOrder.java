@@ -1,4 +1,4 @@
-package com.danbro.order.entity;
+package com.danbro.ware.controller.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.danbro.common.enums.oms.OrderStatus;

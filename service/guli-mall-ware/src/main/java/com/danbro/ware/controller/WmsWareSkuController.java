@@ -5,7 +5,7 @@ import com.danbro.common.entity.ResultPageBean;
 import com.danbro.common.enums.PageParam;
 import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
-import com.danbro.ware.controller.vo.OmsOrderItem;
+import com.danbro.ware.controller.vo.OrderToResponseVo;
 import com.danbro.ware.controller.vo.WmsLockStockResultVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareSku;
@@ -76,8 +76,8 @@ public class WmsWareSkuController {
 
     @ApiOperation("批量锁商品的库存")
     @PostMapping("lockStock")
-    public ResultBean<List<WmsLockStockResultVo>> lockStock(@RequestBody List<OmsOrderItem> items) {
-        return ResultBean.ofSuccess(wmsWareSkuService.lockStock(items));
+    public ResultBean<List<WmsLockStockResultVo>> lockStock(@RequestBody OrderToResponseVo responseVo) {
+        return ResultBean.ofSuccess(wmsWareSkuService.lockStock(responseVo));
     }
 
 }

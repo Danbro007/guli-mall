@@ -2,6 +2,7 @@ package com.danbro.order.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.order.controller.vo.OmsOrderVo;
 import com.danbro.order.controller.vo.OrderConfirmVo;
 import com.danbro.order.controller.vo.OrderToResponseVo;
 import com.danbro.order.controller.vo.SubmitOrderVo;
@@ -31,4 +32,13 @@ public interface OmsOrderService extends IService<OmsOrder> {
      * @param orderVo 订单的信息
      */
     OrderToResponseVo createOrder(SubmitOrderVo orderVo);
+
+    /**
+     * 通过 orderSs 获取订单信息
+     *
+     * @param orderSn 订单编号
+     * @return 订单信息
+     */
+    OmsOrderVo getOrderInfoByOrderSn(String orderSn);
+
 }

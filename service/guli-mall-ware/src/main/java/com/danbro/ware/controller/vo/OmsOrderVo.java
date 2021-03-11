@@ -1,6 +1,5 @@
-package com.danbro.order.entity;
+package com.danbro.ware.controller.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.danbro.common.enums.oms.OrderStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,9 +17,8 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @ApiModel("订单")
-public class OmsOrder implements Serializable {
+public class OmsOrderVo implements Serializable {
     private static final long serialVersionUID = 246711648041979262L;
-    @TableId
     @ApiModelProperty("id")
     private Long id;
 
@@ -147,9 +145,8 @@ public class OmsOrder implements Serializable {
     @ApiModelProperty("修改时间")
     private Date modifyTime;
 
-    public OmsOrder() {
+    public OmsOrderVo() {
         this.autoConfirmDay = 7;
         this.status = OrderStatus.WAIT_PAY;
     }
-
 }

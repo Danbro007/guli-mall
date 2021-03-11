@@ -4,11 +4,13 @@ package com.danbro.ware.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
-import com.danbro.ware.controller.vo.OmsOrderItem;
+import com.danbro.ware.controller.vo.OrderToResponseVo;
 import com.danbro.ware.controller.vo.WmsLockStockResultVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
+import com.danbro.ware.entity.WmsWareOrderTaskDetail;
 import com.danbro.ware.entity.WmsWareSku;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -71,8 +73,20 @@ public interface WmsWareSkuService extends IService<WmsWareSku> {
     /**
      * 锁库存
      *
-     * @param items 要锁库存的商品列表
+     * @param responseVo 要锁库存的信息
      * @return 锁库存的结果
      */
-    List<WmsLockStockResultVo> lockStock(List<OmsOrderItem> items);
+    List<WmsLockStockResultVo> lockStock(OrderToResponseVo responseVo);
+
+    /**
+     * 释放库存
+     *
+     * @param stock
+     * @param skuId
+     * @param wareId
+     * @return
+     */
+    Boolean releaseLockStock(Integer stock, Long skuId, Long wareId);
+
+    void releaseStock(List<WmsWareOrderTaskDetail> detailList) throws IOException;
 }

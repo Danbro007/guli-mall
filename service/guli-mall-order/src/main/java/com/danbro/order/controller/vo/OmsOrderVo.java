@@ -1,7 +1,10 @@
-package com.danbro.order.entity;
+package com.danbro.order.controller.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.danbro.common.enums.oms.OrderStatus;
+import com.danbro.common.interfaces.Converter;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.order.entity.OmsOrder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,7 +21,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @ApiModel("订单")
-public class OmsOrder implements Serializable {
+public class OmsOrderVo implements Serializable, Converter<OmsOrder, OmsOrderVo> {
     private static final long serialVersionUID = 246711648041979262L;
     @TableId
     @ApiModelProperty("id")
@@ -147,9 +150,21 @@ public class OmsOrder implements Serializable {
     @ApiModelProperty("修改时间")
     private Date modifyTime;
 
-    public OmsOrder() {
+    public OmsOrderVo() {
         this.autoConfirmDay = 7;
         this.status = OrderStatus.WAIT_PAY;
     }
 
+    @Override
+    public OmsOrderVo convertToVo(OmsOrder omsOrder) {
+        MyBeanUtils.copyProperties(omsOrder, this);
+        return this;
+    }
+
+    @Override
+    public OmsOrder convertToEntity() {
+        OmsOrder omsOrder = new OmsOrder();
+        MyBeanUtils.copyProperties(this, omsOrder);
+        return omsOrder;
+    }
 }

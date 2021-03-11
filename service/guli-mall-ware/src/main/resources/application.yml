@@ -12,7 +12,13 @@ spring:
         server-addr: 192.168.0.109:8848
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
-
+  rabbitmq:
+    addresses: 192.168.0.109
+    port: 5672
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
 server:
   port: 8005
 

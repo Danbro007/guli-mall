@@ -1,8 +1,7 @@
-package com.danbro.ware.rpc.clients;
+package com.danbro.ware.service;
 
 import com.danbro.common.entity.ResultBean;
 import com.danbro.ware.controller.vo.PmsSkuInfoVo;
-import com.danbro.ware.rpc.fallbacks.PmsSkuInfoFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @Created by Administrator
  */
 @Component
-@FeignClient(name = "service-pms", fallback = PmsSkuInfoFallback.class)
-public interface PmsSkuInfoClient {
+@FeignClient(name = "service-pms")
+public interface PmsFeignService {
     /**
      * 获取sku的详细信息
      *

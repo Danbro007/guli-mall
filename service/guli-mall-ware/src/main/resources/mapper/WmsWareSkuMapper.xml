@@ -15,4 +15,10 @@
           and stock - stock_locked >= #{stock}
           and ware_id = #{wareId};
     </update>
+    <update id="releaseStockLock">
+        update wms_ware_sku
+        set stock_locked = stock_locked - #{stock}
+        where ware_id = #{wareId}
+          and sku_id = #{skuId}
+    </update>
 </mapper>
