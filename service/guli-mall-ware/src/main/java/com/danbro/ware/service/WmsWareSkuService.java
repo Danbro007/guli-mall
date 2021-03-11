@@ -10,7 +10,6 @@ import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareOrderTaskDetail;
 import com.danbro.ware.entity.WmsWareSku;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -81,12 +80,15 @@ public interface WmsWareSkuService extends IService<WmsWareSku> {
     /**
      * 释放库存
      *
-     * @param stock
-     * @param skuId
-     * @param wareId
-     * @return
+     * @param stock  库存数
+     * @param skuId  商品ID
+     * @param wareId 仓库ID
+     * @return 库存解锁结果
      */
     Boolean releaseLockStock(Integer stock, Long skuId, Long wareId);
 
-    void releaseStock(List<WmsWareOrderTaskDetail> detailList) throws IOException;
+    /**
+     * @param detailList 要解锁库存的商品列表
+     */
+    void releaseStock(List<WmsWareOrderTaskDetail> detailList);
 }
