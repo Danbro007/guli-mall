@@ -171,14 +171,16 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
                 consignee(order.getReceiverName()).consigneeTel(order.getReceiverPhone()).build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void releaseStock(List<WmsWareOrderTaskDetail> detailList) {
         // 1、查询订单的状态，如果还是 WAIT_PAY、CLOSED、INVALID_ORDER 状态则解锁库存
         Long taskId = detailList.get(0).getTaskId();
+        // wareOrderTask 没找到则说明库存记录也没有
         WmsWareOrderTask wareOrderTask = wmsWareOrderTaskService.getOne(new QueryWrapper<WmsWareOrderTask>().lambda().eq(WmsWareOrderTask::getId, taskId));
         if (MyObjectUtils.isNotNull(wareOrderTask)) {
             // 情况1：订单存在但是过了规定时间没有付款
-            // 情况2：订单不存在则可能在创建订单时候记录回滚了，但是库存被锁定了
+            // 情况2：订单不存在则可能在创建订单时候订单记录回滚了，但是库存记录没有回滚导致库存被锁定了
             OmsOrderVo omsOrderVo = MyCurdUtils.rpcResultHandle(omsFeignService.getOrderInfoByOrderSn(wareOrderTask.getOrderSn()), false);
             if (omsOrderVo == null || omsOrderVo.getStatus() < OrderStatus.DELIVERED) {
                 // 2、解锁库存
@@ -189,7 +191,7 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
 
     private void doReleaseStock(List<WmsWareOrderTaskDetail> detailList) {
         for (WmsWareOrderTaskDetail wareOrderTaskDetail : detailList) {
-            // 2.1 到 wms_ware_order_task_detail 里查看还处于锁库存状态的记录
+            // 2.1 到 wms_ware_order_task_detail 里查看还处于库存锁定状态的记录
             // 如果查不到就不进行库存释放
             WmsWareOrderTaskDetail detail = wmsWareOrderTaskDetailService.
                     getOne(new QueryWrapper<WmsWareOrderTaskDetail>().lambda().
@@ -198,9 +200,10 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
             if (MyObjectUtils.isNotNull(detail)) {
                 // 解锁库存
                 MyCurdUtils.insertOrUpdate(this.releaseLockStock(detail.getSkuNum(), detail.getSkuId(), detail.getWareId()), ResponseCode.UPDATE_FAILURE);
+                // 锁定状态修改为解锁状态
+                detail.setLockStatus(OrderItemLockStatus.UNLOCKED);
+                MyCurdUtils.insertOrUpdate(wmsWareOrderTaskDetailService.updateById(detail), ResponseCode.UPDATE_FAILURE);
             }
         }
     }
-
-
 }
