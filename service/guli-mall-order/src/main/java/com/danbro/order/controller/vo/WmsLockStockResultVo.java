@@ -1,6 +1,8 @@
 package com.danbro.order.controller.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,6 +13,8 @@ import java.io.Serializable;
  * @Date 2021/3/10 14:01
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class WmsLockStockResultVo implements Serializable {
     /**
      * 商品的skuId
@@ -24,4 +28,8 @@ public class WmsLockStockResultVo implements Serializable {
      * 要锁的库存数
      */
     private Integer stock;
+    /**
+     * 仓库ID
+     */
+    private Long wareId;
 }

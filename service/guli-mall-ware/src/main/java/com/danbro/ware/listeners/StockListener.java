@@ -4,10 +4,11 @@ import com.danbro.ware.config.MyRabbitMqConfig;
 import com.danbro.ware.entity.WmsWareOrderTaskDetail;
 import com.danbro.ware.service.WmsWareSkuService;
 import com.rabbitmq.client.Channel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +19,8 @@ import java.util.List;
  * @Description TODO
  * @Date 2021/3/11 15:55
  */
-@Component
+@Slf4j
+@Service
 public class StockListener {
 
     @Autowired

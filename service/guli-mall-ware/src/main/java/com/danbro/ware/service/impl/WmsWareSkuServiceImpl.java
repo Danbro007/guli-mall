@@ -105,14 +105,14 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
      * 2、本地方法执行成功，但是接下来其他服务会执行出错，则通过延迟消息队列进行库存释放。
      *
      * @param responseVo 要锁库存的商品列表
-     * @return
+     * @return 锁库存的结果
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public List<WmsLockStockResultVo> lockStock(OrderToResponseVo responseVo) {
         List<WmsLockStockResultVo> resultVos = new ArrayList<>();
         // 1、循环遍历所有的商品
-        for (OmsOrderItem item : responseVo.getItems()) {
+        for (OmsOrderItemVo item : responseVo.getItems()) {
             // 锁库存成功标志符号，默认是 false
             boolean lockItemSuccess = false;
             // 2、查找出有当前商品库存的仓库ID（库存数-被锁定的库存数）
@@ -163,12 +163,12 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuMapper, WmsWare
     /**
      * 构建库存订单任务
      *
-     * @param order 订单对象
+     * @param omsOrderVo 订单对象
      * @return 库存订单任务
      */
-    private WmsWareOrderTask createWareOrderTask(OmsOrder order) {
-        return WmsWareOrderTask.builder().orderSn(order.getOrderSn()).deliveryAddress(order.getReceiverDetailAddress()).
-                consignee(order.getReceiverName()).consigneeTel(order.getReceiverPhone()).build();
+    private WmsWareOrderTask createWareOrderTask(OmsOrderVo omsOrderVo) {
+        return WmsWareOrderTask.builder().orderSn(omsOrderVo.getOrderSn()).deliveryAddress(omsOrderVo.getReceiverDetailAddress()).
+                consignee(omsOrderVo.getReceiverName()).consigneeTel(omsOrderVo.getReceiverPhone()).build();
     }
 
     @Transactional(rollbackFor = Exception.class)

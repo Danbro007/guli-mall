@@ -5,17 +5,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.ResponseCode;
+import com.danbro.common.enums.oms.OrderStatus;
 import com.danbro.common.exceptions.GuliMallException;
-import com.danbro.common.utils.ConvertUtils;
-import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyRandomUtils;
+import com.danbro.common.utils.*;
+import com.danbro.order.config.MyRabbitMqConfig;
 import com.danbro.order.controller.vo.*;
 import com.danbro.order.entity.OmsOrder;
 import com.danbro.order.entity.OmsOrderItem;
 import com.danbro.order.interceptor.LoginInterceptor;
 import com.danbro.order.mapper.OmsOrderMapper;
 import com.danbro.order.service.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -67,6 +67,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Autowired
     OmsOrderItemService orderItemService;
 
+    @Autowired
+    RabbitTemplate rabbitTemplate;
+
     @Override
     public OrderConfirmVo createConfirmOrder() throws ExecutionException, InterruptedException {
         OrderConfirmVo orderConfirmVo = new OrderConfirmVo();
@@ -108,31 +111,36 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public OrderToResponseVo createOrder(SubmitOrderVo orderVo) {
+    public OrderToResponseVo createOrder(SubmitOrderVo submitOrderVo) {
         OrderToResponseVo orderToResponseVo = new OrderToResponseVo();
         UmsMemberVo memberVo = LoginInterceptor.MEMBER_THREADED.get();
-        String orderToken = orderVo.getOrderToken();
+        String orderToken = submitOrderVo.getOrderToken();
         String key = ORDER_TOKEN + memberVo.getId();
         // 原子删除token
         Long result = redisTemplate.execute(new DefaultRedisScript<>(LUA_SCRIPT, Long.class), Collections.singletonList(key), orderToken);
         // 删除成功，执行创建订单的操作
         if (result != null && result == 1L) {
             // 创建订单
-            OrderToResponseVo responseVo = buildOrder(orderVo, memberVo, orderToResponseVo);
+            OrderToResponseVo responseVo = buildOrder(submitOrderVo, memberVo, orderToResponseVo);
             // 验价
             validPrice(responseVo);
             // 验价成功
             if (responseVo.getPayPrice().compareTo(orderToResponseVo.getPayPrice()) == 0) {
                 // 保存订单
-                this.save(orderToResponseVo.getOrder());
+                OmsOrderVo orderVo = orderToResponseVo.getOrder();
+                OmsOrder omsOrder = orderVo.convertToEntity();
+                MyCurdUtils.insertOrUpdate(this.save(orderVo.convertToEntity()), ResponseCode.INSERT_FAILURE);
+                orderToResponseVo.setOrder(ConvertUtils.convert(omsOrder, OmsOrderVo.class));
                 // 保存订单项
-                orderItemService.saveBatch(orderToResponseVo.getItems());
+                List<OmsOrderItem> orderItems = orderToResponseVo.getItems().stream().map(OmsOrderItemVo::convertToEntity).collect(Collectors.toList());
+                orderItemService.saveBatch(ConvertUtils.batchConvert(orderToResponseVo.getItems(), OmsOrderItem.class));
+                orderToResponseVo.setItems(ConvertUtils.batchConvert(orderItems, OmsOrderItemVo.class));
                 // 锁库存
                 Boolean lockResult = lockStocks(orderToResponseVo);
-                int i = 1 / 0;
                 if (!lockResult) {
                     throw new GuliMallException(ResponseCode.LOCK_STOCK_FAILURE);
                 }
+                rabbitTemplate.convertAndSend(MyRabbitMqConfig.ORDER_EVENT_EXCHANGE, MyRabbitMqConfig.ORDER_CREATE_ORDER_ROUTING_KEY, orderVo);
                 return responseVo;
             }
             throw new GuliMallException(ResponseCode.VALID_PRICE_FAILURE);
@@ -142,9 +150,20 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     }
 
     @Override
-    public OmsOrderVo getOrderInfoByOrderSn(String orderSn) {
+    public com.danbro.order.controller.vo.OmsOrderVo getOrderInfoByOrderSn(String orderSn) {
         OmsOrder omsOrder = MyCurdUtils.select(this.getOne(new QueryWrapper<OmsOrder>().lambda().eq(OmsOrder::getOrderSn, orderSn)), ResponseCode.NOT_FOUND);
-        return ConvertUtils.convert(omsOrder, OmsOrderVo.class);
+        return ConvertUtils.convert(omsOrder, com.danbro.order.controller.vo.OmsOrderVo.class);
+    }
+
+    @Override
+    public void closeOrder(OmsOrder order) {
+        // 先到数据库查询当前订单存在并且订单状态不处于WAIT_DELIVER、DELIVERED或者DELIVERED状态
+        OmsOrder omsOrder = this.getOne(new QueryWrapper<OmsOrder>().lambda().eq(OmsOrder::getOrderSn, order.getOrderSn()).eq(OmsOrder::getStatus, OrderStatus.WAIT_PAY));
+        if (MyObjectUtils.isNotNull(omsOrder)) {
+            // 把订单状态修改为关闭状态
+            omsOrder.setStatus(OrderStatus.CLOSED);
+            MyCurdUtils.insertOrUpdate(this.updateById(omsOrder), ResponseCode.UPDATE_FAILURE);
+        }
     }
 
     /**
@@ -164,7 +183,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      * @param responseVo 返回的响应
      */
     private void validPrice(OrderToResponseVo responseVo) {
-        List<OmsOrderItem> items = responseVo.getItems();
+        List<OmsOrderItemVo> items = responseVo.getItems();
         BigDecimal total = BigDecimal.ZERO;
         // 优惠券优惠的总金额
         BigDecimal couponAmountTotal = BigDecimal.ZERO;
@@ -177,7 +196,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         // 赠送的成长值总和
         Integer giftGrowthTotal = 0;
         // 计算出总的促销优惠金额、积分优惠的金额、优惠券优惠的金额、积分、成长值
-        for (OmsOrderItem item : items) {
+        for (OmsOrderItemVo item : items) {
             couponAmountTotal = couponAmountTotal.add(item.getCouponAmount());
             integrationAmountTotal = integrationAmountTotal.add(item.getIntegrationAmount());
             promotionAmountTotal = promotionAmountTotal.add(item.getPromotionAmount());
@@ -186,7 +205,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         // total = 商品金额 - 促销优惠金额 - 积分优惠金额 - 优惠券优惠金额
         total = total.subtract(couponAmountTotal).subtract(integrationAmountTotal).subtract(promotionAmountTotal);
-        OmsOrder order = responseVo.getOrder();
+        OmsOrderVo order = responseVo.getOrder();
         // 应付金额 = 商品应付金额 + 运费
         order.setPayAmount(total.add(order.getFreightAmount()));
         responseVo.setPayPrice(order.getPayAmount());
@@ -203,23 +222,23 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      * @param memberVo 会员信息
      */
     private OrderToResponseVo buildOrder(SubmitOrderVo orderVo, UmsMemberVo memberVo, OrderToResponseVo orderToResponseVo) {
-        OmsOrder order = new OmsOrder();
+        OmsOrderVo omsOrderVo = new OmsOrderVo();
         // 1、订单里的会员信息
-        order.setMemberId(memberVo.getId()).setMemberUsername(memberVo.getUsername());
+        omsOrderVo.setMemberId(memberVo.getId()).setMemberUsername(memberVo.getUsername());
         // 生成订单号
-        order.setOrderSn(MyRandomUtils.snowFlakeId());
+        omsOrderVo.setOrderSn(MyRandomUtils.snowFlakeId());
         // 2、查询出用户地址
         FareVo fareVo = MyCurdUtils.rpcResultHandle(wmsFeignService.getFare(orderVo.getAddrId()));
-        buildAddress(order, fareVo.getAddress());
+        buildAddress(omsOrderVo, fareVo.getAddress());
         // 3、封装运费
-        order.setFreightAmount(fareVo.getFare());
+        omsOrderVo.setFreightAmount(fareVo.getFare());
         //4、构建订单项
         List<CartItemVo> cartItemList = MyCurdUtils.rpcResultHandle(cartFeignService.getCartItemList(memberVo.getId()));
         if (MyCollectionUtils.isNotEmpty(cartItemList)) {
-            List<OmsOrderItem> omsOrderItems = buildOrderItem(order, cartItemList);
-            orderToResponseVo.setItems(omsOrderItems);
+            List<OmsOrderItem> omsOrderItems = buildOrderItem(omsOrderVo, cartItemList);
+            orderToResponseVo.setItems(ConvertUtils.batchConvert(omsOrderItems, OmsOrderItemVo.class));
         }
-        orderToResponseVo.setOrder(order).setFare(fareVo.getFare());
+        orderToResponseVo.setOrder(omsOrderVo).setFare(fareVo.getFare());
         return orderToResponseVo;
     }
 
@@ -230,7 +249,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      * @param cartItemList 要封装到订单里的商品
      * @return 订单项列表
      */
-    private List<OmsOrderItem> buildOrderItem(OmsOrder order, List<CartItemVo> cartItemList) {
+    private List<OmsOrderItem> buildOrderItem(OmsOrderVo order, List<CartItemVo> cartItemList) {
         return cartItemList.stream().map(item -> {
             OmsOrderItem orderItem = new OmsOrderItem();
             // 1、封装sku信息
@@ -271,11 +290,11 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     /**
      * 构建订单的地址
      *
-     * @param order     订单对象
+     * @param orderVo   订单对象
      * @param addressVo 地址对象
      */
-    private void buildAddress(OmsOrder order, UmsMemberReceiveAddressVo addressVo) {
-        order.setReceiverCity(addressVo.getCity()).
+    private void buildAddress(OmsOrderVo orderVo, UmsMemberReceiveAddressVo addressVo) {
+        orderVo.setReceiverCity(addressVo.getCity()).
                 setReceiverDetailAddress(addressVo.getDetailAddress()).
                 setReceiverName(addressVo.getName()).
                 setReceiverProvince(addressVo.getProvince()).

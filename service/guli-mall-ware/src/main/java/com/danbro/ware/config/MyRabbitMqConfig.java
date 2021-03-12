@@ -21,7 +21,7 @@ public class MyRabbitMqConfig {
     public static final String STOCK_DELAY_QUEUE = "stock.delay.queue";
     public static final String STOCK_LOCKED_ROUTING_KEY = "stock.locked";
     public static final String STOCK_RELEASE_ROUTING_KEY = "stock.release.#";
-    public static final int TTL = 30000;
+    public static final int TTL = 40000;
 
     @Bean
     public MessageConverter messageConverter() {

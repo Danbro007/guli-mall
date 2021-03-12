@@ -16,8 +16,8 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class OrderToResponseVo implements Serializable {
-    private OmsOrder order;
-    private List<OmsOrderItem> items;
+    private OmsOrderVo order;
+    private List<OmsOrderItemVo> items;
     private BigDecimal payPrice;
     private BigDecimal fare;
 }

@@ -17,6 +17,10 @@ spring:
   rabbitmq:
     addresses: 192.168.0.109
     port: 5672
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
   session:
     store-type: redis
 server:

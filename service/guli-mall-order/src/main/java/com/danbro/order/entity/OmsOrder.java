@@ -1,5 +1,7 @@
 package com.danbro.order.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.danbro.common.enums.oms.OrderStatus;
 import io.swagger.annotations.ApiModel;
@@ -33,6 +35,7 @@ public class OmsOrder implements Serializable {
     @ApiModelProperty("使用的优惠券")
     private Long couponId;
 
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("create_time")
     private Date createTime;
 
@@ -144,12 +147,15 @@ public class OmsOrder implements Serializable {
     @ApiModelProperty("评价时间")
     private Date commentTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty("修改时间")
     private Date modifyTime;
 
     public OmsOrder() {
         this.autoConfirmDay = 7;
         this.status = OrderStatus.WAIT_PAY;
+        this.confirmStatus = false;
+        this.deleteStatus = false;
     }
 
 }

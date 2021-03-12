@@ -1,23 +1,30 @@
-package com.danbro.ware.controller.vo;
+package com.danbro.order.controller.vo;
 
-import io.swagger.annotations.ApiModel;
+import com.danbro.common.interfaces.Converter;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.order.entity.OmsOrderItem;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * @author makejava
- * @since 2021-01-28 18:50:27
+ * @author Danrbo
+ * @Classname OmsOrderItemVo
+ * @Description TODO
+ * @Date 2021/3/12 16:39
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Accessors(chain = true)
-@ApiModel("订单项信息")
-public class OmsOrderItem implements Serializable {
-    private static final long serialVersionUID = -46041170945738307L;
-
+public class OmsOrderItemVo implements Serializable, Converter<OmsOrderItem, OmsOrderItemVo> {
     @ApiModelProperty("id")
     private Long id;
 
@@ -78,4 +85,17 @@ public class OmsOrderItem implements Serializable {
     @ApiModelProperty("赠送成长值")
     private Integer giftGrowth;
 
+
+    @Override
+    public OmsOrderItemVo convertToVo(OmsOrderItem omsOrderItem) {
+        MyBeanUtils.copyProperties(omsOrderItem, this);
+        return this;
+    }
+
+    @Override
+    public OmsOrderItem convertToEntity() {
+        OmsOrderItem omsOrderItem = new OmsOrderItem();
+        MyBeanUtils.copyProperties(this, omsOrderItem);
+        return omsOrderItem;
+    }
 }
