@@ -1,5 +1,6 @@
 package com.danbro.order.config;
 
+import java.util.HashMap;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
@@ -8,8 +9,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
 
 /**
  * @Classname MyRabbitMqConfig
@@ -25,7 +24,7 @@ public class MyRabbitMqConfig {
     public static final String ORDER_CREATE_ORDER_ROUTING_KEY = "order.create.order";
     public static final String ORDER_RELEASE_ORDER_ROUTING_KEY = "order.release.#";
     public static final String ORDER_RELEASE_OTHER_ROUTING_KEY = "order.release.other.#";
-    public static final int TTL = 30000;
+    public static final int TTL = 300000;
     public static final String STOCK_RELEASE_STOCK_QUEUE = "stock.release.stock.queue";
 
 

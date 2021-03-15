@@ -1,13 +1,12 @@
 package com.danbro.order.interceptor;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.utils.MyObjectUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Danrbo
@@ -24,8 +23,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         // 不过滤
-        boolean match = new AntPathMatcher().match("/order/info/*", requestURI);
-        if (match) {
+        boolean match1 = new AntPathMatcher().match("/order/info/*", requestURI);
+        boolean match2 = new AntPathMatcher().match("/payed/notify", requestURI);
+        if (match1 || match2) {
             return true;
         }
         UmsMemberVo memberVo = (UmsMemberVo) request.getSession().getAttribute(LOGIN_USER);

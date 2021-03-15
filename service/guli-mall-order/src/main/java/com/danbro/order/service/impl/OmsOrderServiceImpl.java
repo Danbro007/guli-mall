@@ -1,5 +1,13 @@
 package com.danbro.order.service.impl;
 
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,6 +23,7 @@ import com.danbro.order.config.MyRabbitMqConfig;
 import com.danbro.order.controller.vo.*;
 import com.danbro.order.entity.OmsOrder;
 import com.danbro.order.entity.OmsOrderItem;
+import com.danbro.order.entity.OmsPaymentInfo;
 import com.danbro.order.interceptor.LoginInterceptor;
 import com.danbro.order.mapper.OmsOrderMapper;
 import com.danbro.order.service.*;
@@ -25,15 +34,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * 订单(OmsOrder)表服务实现类
@@ -49,6 +49,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      * LUA脚本
      */
     public static final String LUA_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+    public static final String TRADE_SUCCESS = "TRADE_SUCCESS";
     @Autowired
     MemberFeignService memberFeignService;
 
@@ -75,6 +76,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Autowired
     OmsOrderItemService omsOrderItemService;
+
+    @Autowired
+    OmsPaymentInfoService omsPaymentInfoService;
 
     @Override
     public OrderConfirmVo createConfirmOrder() throws ExecutionException, InterruptedException {
@@ -207,6 +211,35 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }).collect(Collectors.toList());
         pagination.setList(orderInfoVoList);
         return pagination;
+    }
+
+    @Override
+    public void handlerPayResult(PayAsyncVo payAsyncVo) {
+        // 交易成功
+        if (payAsyncVo.getTrade_status().equals(TRADE_SUCCESS)) {
+            savePaymentInfo(payAsyncVo);
+            // 修改订单状态
+            OmsOrder omsOrder = MyCurdUtils.select(this.getOne(new QueryWrapper<OmsOrder>().lambda().eq(OmsOrder::getOrderSn, payAsyncVo.getOut_trade_no())), ResponseCode.NOT_FOUND);
+            omsOrder.setStatus(OrderStatus.WAIT_DELIVER);
+            MyCurdUtils.insertOrUpdate(this.updateById(omsOrder), ResponseCode.UPDATE_FAILURE);
+            // 把商品库存状态修改调
+        }
+    }
+
+    /**
+     * 添加支付记录
+     *
+     * @param payAsyncVo
+     */
+    private void savePaymentInfo(PayAsyncVo payAsyncVo) {
+        OmsPaymentInfo omsPaymentInfo = new OmsPaymentInfo();
+        omsPaymentInfo.setAlipayTradeNo(payAsyncVo.getTrade_no()).
+                setOrderSn(payAsyncVo.getOut_trade_no()).
+                setCallbackTime(payAsyncVo.getNotify_time()).
+                setPaymentStatus(payAsyncVo.getTrade_status()).
+                setSubject(payAsyncVo.getSubject()).
+                setTotalAmount(payAsyncVo.getTotal_amount());
+        MyCurdUtils.insertOrUpdate(omsPaymentInfoService.save(omsPaymentInfo), ResponseCode.INSERT_FAILURE);
     }
 
     /**

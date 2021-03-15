@@ -1,6 +1,7 @@
 package com.danbro.ware.config;
 
 
+import java.util.HashMap;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
@@ -9,8 +10,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
 
 
 @Configuration
@@ -21,7 +20,7 @@ public class MyRabbitMqConfig {
     public static final String STOCK_DELAY_QUEUE = "stock.delay.queue";
     public static final String STOCK_LOCKED_ROUTING_KEY = "stock.locked";
     public static final String STOCK_RELEASE_ROUTING_KEY = "stock.release.#";
-    public static final int TTL = 40000;
+    public static final int TTL = 300000;
 
     @Bean
     public MessageConverter messageConverter() {
