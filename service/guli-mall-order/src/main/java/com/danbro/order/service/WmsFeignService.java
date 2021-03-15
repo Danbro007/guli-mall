@@ -4,6 +4,7 @@ import com.danbro.common.entity.ResultBean;
 import com.danbro.order.controller.vo.FareVo;
 import com.danbro.order.controller.vo.OrderToResponseVo;
 import com.danbro.order.controller.vo.WmsLockStockResultVo;
+import com.danbro.order.controller.vo.WmsWareOrderTaskDetailVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,4 +42,15 @@ public interface WmsFeignService {
     @ApiOperation("批量锁商品的库存")
     @PostMapping("ware/waresku/lockStock")
     ResultBean<List<WmsLockStockResultVo>> lockStock(@RequestBody OrderToResponseVo responseVo);
+
+
+    /**
+     * 通过订单SN查询到还处于库存锁定状态的库存数
+     *
+     * @param orderSn 订单编号
+     * @return
+     */
+    @ApiOperation("通过订单SN查询到还处于库存锁定状态的库存数")
+    @GetMapping("ware/waresku/stock/list/{orderSn}")
+    ResultBean<List<WmsWareOrderTaskDetailVo>> getOrderTaskDetailList(@PathVariable String orderSn);
 }

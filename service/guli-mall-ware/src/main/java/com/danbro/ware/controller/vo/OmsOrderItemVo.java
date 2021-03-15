@@ -1,7 +1,5 @@
 package com.danbro.ware.controller.vo;
 
-import com.danbro.common.interfaces.Converter;
-import com.danbro.common.utils.MyBeanUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +21,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class OmsOrderItemVo implements Serializable, Converter<OmsOrderItem, OmsOrderItemVo> {
+public class OmsOrderItemVo implements Serializable {
     @ApiModelProperty("id")
     private Long id;
 
@@ -83,18 +81,4 @@ public class OmsOrderItemVo implements Serializable, Converter<OmsOrderItem, Oms
 
     @ApiModelProperty("赠送成长值")
     private Integer giftGrowth;
-
-
-    @Override
-    public OmsOrderItemVo convertToVo(OmsOrderItem omsOrderItem) {
-        MyBeanUtils.copyProperties(omsOrderItem, this);
-        return this;
-    }
-
-    @Override
-    public OmsOrderItem convertToEntity() {
-        OmsOrderItem omsOrderItem = new OmsOrderItem();
-        MyBeanUtils.copyProperties(this, omsOrderItem);
-        return omsOrderItem;
-    }
 }

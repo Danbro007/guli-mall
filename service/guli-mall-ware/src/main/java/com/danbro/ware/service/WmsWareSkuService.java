@@ -6,6 +6,7 @@ import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
 import com.danbro.ware.controller.vo.OrderToResponseVo;
 import com.danbro.ware.controller.vo.WmsLockStockResultVo;
+import com.danbro.ware.controller.vo.WmsWareOrderTaskDetailVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareOrderTaskDetail;
 import com.danbro.ware.entity.WmsWareSku;
@@ -91,4 +92,12 @@ public interface WmsWareSkuService extends IService<WmsWareSku> {
      * @param detailList 要解锁库存的商品列表
      */
     void releaseStock(List<WmsWareOrderTaskDetail> detailList);
+
+    /**
+     * 通过订单号查询到 WmsWareOrderTaskDetailVo 消息
+     *
+     * @param orderSn 订单号
+     * @return
+     */
+    List<WmsWareOrderTaskDetailVo> getOrderTaskDetailListByOrderSn(String orderSn);
 }

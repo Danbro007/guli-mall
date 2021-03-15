@@ -7,6 +7,7 @@ import com.danbro.service.common.validtors.groups.Insert;
 import com.danbro.service.common.validtors.groups.Update;
 import com.danbro.ware.controller.vo.OrderToResponseVo;
 import com.danbro.ware.controller.vo.WmsLockStockResultVo;
+import com.danbro.ware.controller.vo.WmsWareOrderTaskDetailVo;
 import com.danbro.ware.controller.vo.WmsWareSkuVo;
 import com.danbro.ware.entity.WmsWareSku;
 import com.danbro.ware.service.WmsWareSkuService;
@@ -80,4 +81,9 @@ public class WmsWareSkuController {
         return ResultBean.ofSuccess(wmsWareSkuService.lockStock(responseVo));
     }
 
+    @ApiOperation("通过订单号查询到对应的还处于库存锁定的商品库存信息")
+    @GetMapping("stock/list/{orderSn}")
+    public ResultBean<List<WmsWareOrderTaskDetailVo>> getOrderTaskDetailList(@PathVariable String orderSn) {
+        return ResultBean.ofSuccess(wmsWareSkuService.getOrderTaskDetailListByOrderSn(orderSn));
+    }
 }

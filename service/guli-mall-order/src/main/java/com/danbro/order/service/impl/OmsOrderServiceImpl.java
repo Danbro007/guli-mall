@@ -163,6 +163,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             // 把订单状态修改为关闭状态
             omsOrder.setStatus(OrderStatus.CLOSED);
             MyCurdUtils.insertOrUpdate(this.updateById(omsOrder), ResponseCode.UPDATE_FAILURE);
+            List<WmsWareOrderTaskDetailVo> taskDetailVoList = MyCurdUtils.rpcResultHandle(wmsFeignService.getOrderTaskDetailList(omsOrder.getOrderSn()));
+            // 关单成功发送消息给减库存的消息队列
+            rabbitTemplate.convertAndSend(MyRabbitMqConfig.ORDER_EVENT_EXCHANGE, MyRabbitMqConfig.ORDER_RELEASE_OTHER_ROUTING_KEY, taskDetailVoList);
         }
     }
 
