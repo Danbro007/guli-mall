@@ -4,12 +4,8 @@ import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.order.entity.OmsOrder;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,15 +13,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author makejava
- * @since 2021-01-28 18:50:27
+ * @author Danrbo
+ * @Classname OrderInfoVo
+ * @Description TODO
+ * @Date 2021/3/15 15:08
  */
 @Data
-@Accessors(chain = true)
-@ApiModel("订单")
-@AllArgsConstructor
-@NoArgsConstructor
-public class OmsOrderVo implements Serializable, Converter<OmsOrder, OmsOrderVo> {
+public class OrderInfoVo implements Serializable, Converter<OmsOrder, OrderInfoVo> {
     @ApiModelProperty("id")
     private Long id;
 
@@ -35,8 +29,6 @@ public class OmsOrderVo implements Serializable, Converter<OmsOrder, OmsOrderVo>
     @ApiModelProperty("订单号")
     private String orderSn;
 
-    @ApiModelProperty("使用的优惠券")
-    private Long couponId;
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("create_time")
@@ -160,8 +152,9 @@ public class OmsOrderVo implements Serializable, Converter<OmsOrder, OmsOrderVo>
 
     private List<OmsOrderItemVo> items;
 
+
     @Override
-    public OmsOrderVo convertToVo(OmsOrder omsOrder) {
+    public OrderInfoVo convertToVo(OmsOrder omsOrder) {
         MyBeanUtils.copyProperties(omsOrder, this);
         return this;
     }
@@ -172,5 +165,4 @@ public class OmsOrderVo implements Serializable, Converter<OmsOrder, OmsOrderVo>
         MyBeanUtils.copyProperties(this, omsOrder);
         return omsOrder;
     }
-
 }

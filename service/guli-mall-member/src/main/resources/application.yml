@@ -10,5 +10,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.0.109
+  session:
+    store-type: redis
+  redis:
+    host: 192.168.0.109
+    port: 6379
 server:
   port: 8002

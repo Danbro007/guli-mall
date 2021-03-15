@@ -5,7 +5,6 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -69,23 +68,23 @@ public class MyRabbitMqConfig {
                 null);
     }
 
-    @Bean
-    RabbitTemplate rabbitTemplate() {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate();
-        /**
-         * 消息到达 Broker 时获取的确认回调函数
-         */
-        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-
-        });
-        /**
-         * 消息被消费者消费的回调函数
-         */
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-
-        });
-        return rabbitTemplate;
-    }
+//    @Bean
+//    RabbitTemplate rabbitTemplate() {
+//        RabbitTemplate rabbitTemplate = new RabbitTemplate();
+//        /**
+//         * 消息到达 Broker 时获取的确认回调函数
+//         */
+//        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+//
+//        });
+//        /**
+//         * 消息被消费者消费的回调函数
+//         */
+//        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
+//
+//        });
+//        return rabbitTemplate;
+//    }
 
 
 }

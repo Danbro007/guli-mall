@@ -24,7 +24,9 @@ public class MyRabbitMqConfig {
     public static final String ORDER_DELAY_QUEUE = "order.delay.queue";
     public static final String ORDER_CREATE_ORDER_ROUTING_KEY = "order.create.order";
     public static final String ORDER_RELEASE_ORDER_ROUTING_KEY = "order.release.#";
+    public static final String ORDER_RELEASE_OTHER_ROUTING_KEY = "order.release.other.#";
     public static final int TTL = 30000;
+    public static final String STOCK_RELEASE_STOCK_QUEUE = "stock.release.stock.queue";
 
 
     @Bean
@@ -67,6 +69,15 @@ public class MyRabbitMqConfig {
                 Binding.DestinationType.QUEUE,
                 ORDER_EVENT_EXCHANGE,
                 ORDER_RELEASE_ORDER_ROUTING_KEY,
+                null);
+    }
+
+    @Bean
+    public Binding releaseOrderOtherBinding() {
+        return new Binding(STOCK_RELEASE_STOCK_QUEUE,
+                Binding.DestinationType.QUEUE,
+                ORDER_EVENT_EXCHANGE,
+                ORDER_RELEASE_OTHER_ROUTING_KEY,
                 null);
     }
 

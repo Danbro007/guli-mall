@@ -2,10 +2,9 @@ package com.danbro.order.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.danbro.order.controller.vo.OmsOrderVo;
-import com.danbro.order.controller.vo.OrderConfirmVo;
-import com.danbro.order.controller.vo.OrderToResponseVo;
-import com.danbro.order.controller.vo.SubmitOrderVo;
+import com.danbro.common.enums.PageParam;
+import com.danbro.common.utils.Pagination;
+import com.danbro.order.controller.vo.*;
 import com.danbro.order.entity.OmsOrder;
 
 import java.util.concurrent.ExecutionException;
@@ -48,4 +47,15 @@ public interface OmsOrderService extends IService<OmsOrder> {
      */
     void closeOrder(OmsOrder order);
 
+
+    PayVo getPayInfoByOrderSn(String orderSn);
+
+    /**
+     * 分页查询用户的订单
+     *
+     * @param pageParam 分页条件
+     * @param key       关键字
+     * @return 查询结果
+     */
+    Pagination<OmsOrderVo, OmsOrder> queryPageOrder(PageParam<OmsOrder> pageParam, String key);
 }

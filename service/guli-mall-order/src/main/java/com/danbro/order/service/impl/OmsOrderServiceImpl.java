@@ -1,9 +1,12 @@
 package com.danbro.order.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.entity.ResultBean;
+import com.danbro.common.enums.PageParam;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.enums.oms.OrderStatus;
 import com.danbro.common.exceptions.GuliMallException;
@@ -69,6 +72,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    OmsOrderItemService omsOrderItemService;
 
     @Override
     public OrderConfirmVo createConfirmOrder() throws ExecutionException, InterruptedException {
@@ -169,6 +175,40 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
     }
 
+    @Override
+    public PayVo getPayInfoByOrderSn(String orderSn) {
+        OmsOrder omsOrder = MyCurdUtils.select(this.getOne(new QueryWrapper<OmsOrder>().lambda().eq(OmsOrder::getOrderSn, orderSn)), ResponseCode.NOT_FOUND);
+        List<OmsOrderItem> orderItems = MyCurdUtils.select(orderItemService.list(new QueryWrapper<OmsOrderItem>().lambda().eq(OmsOrderItem::getOrderSn, orderSn)), ResponseCode.NOT_FOUND);
+        PayVo payVo = new PayVo();
+        payVo.setOut_trade_no(omsOrder.getOrderSn());
+        payVo.setTotal_amount(omsOrder.getTotalAmount().setScale(2, BigDecimal.ROUND_UP).toString());
+        // 支付订单的标题，这里取第一个商品的标题
+        payVo.setSubject(orderItems.get(0).getSkuName());
+        payVo.setBody(orderItems.get(0).getSkuAttrsVals());
+        return payVo;
+    }
+
+    @Override
+    public Pagination<OmsOrderVo, OmsOrder> queryPageOrder(PageParam<OmsOrder> pageParam, String key) {
+        LambdaQueryWrapper<OmsOrder> queryWrapper = new QueryWrapper<OmsOrder>().lambda();
+        if (MyStrUtils.isNotEmpty(key)) {
+            queryWrapper.like(OmsOrder::getOrderSn, key);
+        }
+        UmsMemberVo memberVo = LoginInterceptor.MEMBER_THREADED.get();
+        queryWrapper.eq(OmsOrder::getMemberId, memberVo.getId());
+        queryWrapper.orderByDesc(OmsOrder::getId);
+        IPage<OmsOrder> page = this.page(new Query<OmsOrder>().getPage(pageParam), queryWrapper);
+        Pagination<OmsOrderVo, OmsOrder> pagination = new Pagination<>(page, OmsOrderVo.class);
+        List<OmsOrderVo> orderInfoVoList = pagination.getList().stream().map(order -> {
+            OmsOrderVo omsOrderVo = ConvertUtils.convert(order, OmsOrderVo.class);
+            List<OmsOrderItemVo> orderItemVos = orderItemService.getOrderItemListByOrderSn(omsOrderVo.getOrderSn());
+            omsOrderVo.setItems(orderItemVos);
+            return omsOrderVo;
+        }).collect(Collectors.toList());
+        pagination.setList(orderInfoVoList);
+        return pagination;
+    }
+
     /**
      * 锁商品的库存
      *
@@ -205,10 +245,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             promotionAmountTotal = promotionAmountTotal.add(item.getPromotionAmount());
             giftIntegrationTotal += item.getGiftIntegration();
             giftGrowthTotal += item.getGiftGrowth();
+            total = total.add(item.getSkuPrice().multiply(new BigDecimal(item.getSkuQuantity())));
         }
         // total = 商品金额 - 促销优惠金额 - 积分优惠金额 - 优惠券优惠金额
         total = total.subtract(couponAmountTotal).subtract(integrationAmountTotal).subtract(promotionAmountTotal);
         OmsOrderVo order = responseVo.getOrder();
+        order.setTotalAmount(total);
         // 应付金额 = 商品应付金额 + 运费
         order.setPayAmount(total.add(order.getFreightAmount()));
         responseVo.setPayPrice(order.getPayAmount());
@@ -226,6 +268,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      */
     private OrderToResponseVo buildOrder(SubmitOrderVo orderVo, UmsMemberVo memberVo, OrderToResponseVo orderToResponseVo) {
         OmsOrderVo omsOrderVo = new OmsOrderVo();
+        omsOrderVo.setStatus(OrderStatus.WAIT_PAY).setAutoConfirmDay(7);
         // 1、订单里的会员信息
         omsOrderVo.setMemberId(memberVo.getId()).setMemberUsername(memberVo.getUsername());
         // 生成订单号
