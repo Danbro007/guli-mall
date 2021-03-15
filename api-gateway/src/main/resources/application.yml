@@ -90,6 +90,11 @@ spring:
           predicates:
             - Host=order.gulimall.com
 
+        - id: member_host_route
+          uri: lb://service-ums
+          predicates:
+            - Host=member.gulimall.com
+
         - id: product_host_route
           uri: lb://service-pms
           predicates:

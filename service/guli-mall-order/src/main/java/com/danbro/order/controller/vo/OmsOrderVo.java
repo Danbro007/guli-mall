@@ -1,17 +1,20 @@
-package com.danbro.order.entity;
+package com.danbro.order.controller.vo;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.danbro.common.enums.oms.OrderStatus;
+import com.danbro.common.interfaces.Converter;
+import com.danbro.common.utils.MyBeanUtils;
+import com.danbro.order.entity.OmsOrder;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author makejava
@@ -20,9 +23,9 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @ApiModel("订单")
-public class OmsOrder implements Serializable {
-    private static final long serialVersionUID = 246711648041979262L;
-    @TableId
+@AllArgsConstructor
+@NoArgsConstructor
+public class OmsOrderVo implements Serializable, Converter<OmsOrder, OmsOrderVo> {
     @ApiModelProperty("id")
     private Long id;
 
@@ -35,7 +38,7 @@ public class OmsOrder implements Serializable {
     @ApiModelProperty("使用的优惠券")
     private Long couponId;
 
-    @TableField(fill = FieldFill.INSERT)
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("create_time")
     private Date createTime;
 
@@ -135,27 +138,39 @@ public class OmsOrder implements Serializable {
     @ApiModelProperty("下单时使用的积分")
     private Integer useIntegration;
 
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("支付时间")
     private Date paymentTime;
 
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("发货时间")
     private Date deliveryTime;
 
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("确认收货时间")
     private Date receiveTime;
 
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("评价时间")
     private Date commentTime;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("修改时间")
     private Date modifyTime;
 
-    public OmsOrder() {
-        this.autoConfirmDay = 7;
-        this.status = OrderStatus.WAIT_PAY;
-        this.confirmStatus = false;
-        this.deleteStatus = false;
+    private List<OmsOrderItemVo> items;
+
+    @Override
+    public OmsOrderVo convertToVo(OmsOrder omsOrder) {
+        MyBeanUtils.copyProperties(omsOrder, this);
+        return this;
+    }
+
+    @Override
+    public OmsOrder convertToEntity() {
+        OmsOrder omsOrder = new OmsOrder();
+        MyBeanUtils.copyProperties(this, omsOrder);
+        return omsOrder;
     }
 
 }

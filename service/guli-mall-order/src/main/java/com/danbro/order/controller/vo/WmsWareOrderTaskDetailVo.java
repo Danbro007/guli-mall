@@ -1,30 +1,18 @@
-package com.danbro.ware.entity;
+package com.danbro.order.controller.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
 /**
- * @author makejava
- * @since 2021-01-28 19:06:16
+ * @author Danrbo
+ * @Classname WmsWareOrderTaskDetailVo
+ * @Description TODO
+ * @Date 2021/3/15 10:23
  */
 @Data
-@Accessors(chain = true)
-@ApiModel("库存工作单")
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class WmsWareOrderTaskDetail implements Serializable {
-    private static final long serialVersionUID = -85001193774750349L;
-
-    @TableId
+public class WmsWareOrderTaskDetailVo implements Serializable {
     @ApiModelProperty("id")
     private Long id;
 
@@ -45,4 +33,5 @@ public class WmsWareOrderTaskDetail implements Serializable {
 
     @ApiModelProperty("库存ID")
     private Long wareId;
+
 }

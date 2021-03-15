@@ -1,8 +1,5 @@
 package com.danbro.common.utils;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.ReflectUtil;
-
 /**
  * @author Danrbo
  * @Classname MyObjectUtils
@@ -12,11 +9,11 @@ import cn.hutool.core.util.ReflectUtil;
 public class MyObjectUtils {
 
     public static Boolean isNull(Object o) {
-        return ObjectUtil.isNull(o);
+        return null == o;
     }
 
     public static Boolean isNotNull(Object o) {
-        return !ObjectUtil.isNull(o);
+        return null != o;
     }
 
 

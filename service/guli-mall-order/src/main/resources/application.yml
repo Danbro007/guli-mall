@@ -17,6 +17,10 @@ spring:
   rabbitmq:
     addresses: 192.168.0.109
     port: 5672
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: manual
   session:
     store-type: redis
 server:
@@ -27,3 +31,13 @@ thread:
     core-pool-size: 20
     maximum-pool-size: 30
     keep-alive-time: 10
+
+alipay:
+  app_id: 2016092700604839
+  merchant_private_key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCBrkAql611s8x27HQ5R7bNspHt4eHP/LUzCe59hHuJqykTdJjH2j0/r4TY/VmHzYeOKLfERl5JK8OTGoYFsI6hpXRmSIDpRqAl4x2ep840iEu2b1J3JHE54Z865Gc2JBXguvg8oLh//AE5SszGOX8GrcyWa0rcjD36tbn+H5d596NCn8qF4SPLXoM8cQIUcvoenSgQ8X3q59GjTJDHkhbKe7nl06tiUYTJsPOAakoLKgZLCNj9hpjfGnCcShz4JgZ6I0xL4P50YBUZKsQ45BYpTUiRWexBS0PIpGNMzqqJ8YG+GYPEXZDE6dh8npu0/LtZ3pfA4vEhfKpMPGlukH4ZAgMBAAECggEAE4Kn3MCdNEwswueoRMXpVuE621NUqfoXOOqRmwjHnVrG/0pXghnvhRlfH1ZelfPyJQ0zOLBtlwyijAs9hrWdf+xoqsrVukMJ7SlSV4Bfob+vxG7TNWGiN1ceobmjXZ3oPLtkhZqYp4i+lmQOkvQrjFGxqh/ST4Q5/vJAXV9bZtoFc6//B9bmV2kQK+tYE81kTD9dVfl9FHVoXKsck5royhAPk+jiTujJgm4mkaxHRLKSTNYwKUzrnVmYmmMUGXiUds2qMeboITY3JhMNyfgj3xYmwtBxbxsjhI+sHH/x5LsWcbNA9Orq+hX/Ipw256P1ilLyA3XvdwemPTCR241w0QKBgQD6YPLPg674Lu10/dZYk/X4e/R7Srk04lpkHvykRg5izaar2+qxpJyU4s2lvV+gGKJYDz4PjUk4zTJzMvOYcS3KHxcucUgd64NQcEwAXISf/AQj4+n3iqqKylbXjy7c59S52MtgxiM2vKfkllekaX3zp6Uy3fZoou1lovQQnZ349wKBgQCEl5cZwOzybnMkwV5tSe1FGQ+oK4IL0Bhc8z3svzeRYQd8OoBw3ezMtzpOs35VLV4Pqffv+0Wo6p4z72vzbdHCcnaKfxK/trR2qGXHXYRixrq2Jtz/AbMJYlXWMxTjbM9TxDxPBdACCrmPj5N3ju0K1JZVqUlNevKfnZP6M7sNbwKBgQCWvgHSICUatR4v3pfLUqG3jeF+zVk+Vr03JFTVDnygzdH4DHp7o3DGTtqjW6WT/ODZBaxGrriT4y7pnpZ8hD+ePiO1yWwy31V6+3E2kn0i2RchCJoXeDv/PZ0VQNZlF4rCrZyc0g3naaPngwCXMxAqvxc9zdcJ3nXxSC+LRWoTtwKBgC6sIZ8KHx3zLQrKGlAEDsYc3TsIHZ3E4V6OrMSSRqAg9H6RJTcVl040TQz498ZJ0utWnBTYcRvVglyrsWcdyBFXM0zrEBF14a5G9pSn4XrXk0+c/HuzAG+UMrzUfEzVt2E4GTaDyEV/uvPCyVjzcZM3Y7fBgDEKzy7KTBVtcjF3AoGAR5TPqoqodQCVfevj/kx+s4WbWzSnRBdTpWVDrXdQ2s6UEyfcwqdJvyxOblUXQYrhEV6P5DA4FM+5zMQa3grF6i8VtKaq/NE+jeyiFfxo1RUO7xajcopbMTUI3uctMOXR46J1Y1O1OxKRVdshaTVlxj6p4KN/D5bPquZ6s2R24HI=
+  alipay_public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlFoaBX7XM5HGMXTwRurgGyGCumz34sjXqfAg2fJPyWuYlsjhiScMwgXm+8gcA3l35P6d+ijambhKDo2nhKWrIrtzmq+bhoYiL6tEh+yk8McyLr38xzeiErmn3fOsqICxA1HL1r1gx5CYg/OxfM9fOlkmIGxXmhM9ufNFleuFl/HnIMjbjrT0JdkgCTt/E2RFkeKJxs6qDltk121r96+f7O/2CdpNvOhv1oZow52mV5OBgzXPhYMPtBDhfJJJDJPuRHXbipC3RU+yk9RqcVszG8iwWQWYeg2j04wqjnertW53GVMhpRjN0p3UEFL36xVwNFaN4NLNBdcBUGVBQvl2TwIDAQAB
+  notify_url: http://6cz30vuxm2.52http.net/payed/notify
+  return_url: http://order.gulimall.com/orderList
+  sign_type: RSA2
+  charset: utf-8
+  gatewayUrl: https://openapi.alipaydev.com/gateway.do

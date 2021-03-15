@@ -1,4 +1,4 @@
-package com.danbro.order.controller.vo;
+package com.danbro.ware.controller.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

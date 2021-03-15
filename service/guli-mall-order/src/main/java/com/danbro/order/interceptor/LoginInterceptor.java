@@ -3,6 +3,7 @@ package com.danbro.order.interceptor;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.utils.MyObjectUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,13 +18,23 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
     public static final String LOGIN_USER = "loginUser";
-    public static ThreadLocal<UmsMemberVo> MEMBER_THREADLOCAL = new ThreadLocal<>();
+    public static ThreadLocal<UmsMemberVo> MEMBER_THREADED = new ThreadLocal<>();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String requestURI = request.getRequestURI();
+        // 不过滤
+        boolean match = new AntPathMatcher().match("/order/info/*", requestURI);
+        if (match) {
+            return true;
+        }
         UmsMemberVo memberVo = (UmsMemberVo) request.getSession().getAttribute(LOGIN_USER);
         if (MyObjectUtils.isNotNull(memberVo)) {
-            MEMBER_THREADLOCAL.set(memberVo);
+            try {
+                MEMBER_THREADED.set(memberVo);
+            } catch (Exception e) {
+                MEMBER_THREADED.remove();
+            }
             return true;
         } else {
             request.getSession().setAttribute("msg", "请先登录！");

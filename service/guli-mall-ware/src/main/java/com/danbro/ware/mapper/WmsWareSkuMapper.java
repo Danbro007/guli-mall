@@ -33,4 +33,14 @@ public interface WmsWareSkuMapper extends BaseMapper<WmsWareSku> {
      * @return 结果
      */
     Long lockStockBySkuId(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("stock") Integer stock);
+
+
+    /**
+     * 库存解锁
+     *
+     * @param stock  要释放的库存数
+     * @param skuId  商品SkuId
+     * @param wareId 仓库Id
+     */
+    Long releaseStockLock(@Param("stock") Integer stock, @Param("skuId") Long skuId, @Param("wareId") Long wareId);
 }
