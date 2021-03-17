@@ -10,11 +10,11 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.0.109:8848
-  mvc:
-    format:
-      date: yyyy-MM-dd HH:mm:ss
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
+#  mvc:
+#    format:
+#      date: yyyy-MM-dd HH:mm:ss
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
 server:
   port: 8007
 

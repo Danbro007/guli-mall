@@ -31,9 +31,10 @@ public class SmsSeckillSkuRelationController {
     @GetMapping("list")
     public ResultPageBean<SmsSeckillSkuRelationVo, SmsSeckillSkuRelation> queryPageSkuRelation(@RequestParam("page") Long page,
                                                                                                @RequestParam("limit") Long limit,
-                                                                                               @RequestParam(value = "key", required = false) String key) {
+                                                                                               @RequestParam(value = "key", required = false) String key,
+                                                                                               @RequestParam("promotionSessionId") Long promotionSessionId) {
         PageParam<SmsSeckillSkuRelation> pageParam = new PageParam<SmsSeckillSkuRelation>().setPage(page).setLimit(limit);
-        return ResultPageBean.ofSuccess(smsSeckillSkuRelationService.queryPage(pageParam, key));
+        return ResultPageBean.ofSuccess(smsSeckillSkuRelationService.queryPage(pageParam, key, promotionSessionId));
     }
 
     @PostMapping()
@@ -47,7 +48,7 @@ public class SmsSeckillSkuRelationController {
     }
 
     @DeleteMapping()
-    public ResultBean<Void> batchDeleteSkuRelation(Long[] Ids) {
+    public ResultBean<Void> batchDeleteSkuRelation(@RequestBody Long[] Ids) {
         smsSeckillSkuRelationService.batchDeleteSkuRelation(Ids);
         return ResultBean.ofSuccess();
     }

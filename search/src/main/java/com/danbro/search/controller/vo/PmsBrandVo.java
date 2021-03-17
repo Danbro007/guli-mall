@@ -1,6 +1,5 @@
 package com.danbro.search.controller.vo;
 
-import com.danbro.common.utils.MyBeanUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,7 +32,6 @@ public class PmsBrandVo {
 
     @ApiModelProperty("检索首字母")
     private String firstLetter;
-
 
     @ApiModelProperty("排序")
     private Integer sort;

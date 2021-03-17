@@ -1,9 +1,5 @@
 package com.danbro.coupon.controller.vo;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import com.danbro.common.interfaces.Converter;
 import com.danbro.common.utils.MyBeanUtils;
 import com.danbro.coupon.entity.SmsSeckillSkuRelation;
@@ -15,6 +11,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author makejava
@@ -40,7 +41,6 @@ public class SmsSeckillSkuRelationVo implements Serializable, Converter<SmsSecki
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty("活动场次id")
     private Long promotionSessionId;
-
 
     @NotNull(message = "添加时商品ID必须存在！", groups = Insert.class)
     @JsonSerialize(using = ToStringSerializer.class)

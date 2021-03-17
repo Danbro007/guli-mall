@@ -1,9 +1,11 @@
 package com.danbro.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.ConvertUtils;
 import com.danbro.common.utils.MyCurdUtils;
+import com.danbro.common.utils.MyObjectUtils;
 import com.danbro.common.utils.MyStrUtils;
 import com.danbro.product.controller.vo.PmsSpuImagesVo;
 import com.danbro.product.entity.PmsSpuImages;
@@ -29,5 +31,14 @@ public class PmsSpuImagesServiceImpl extends ServiceImpl<PmsSpuImagesMapper, Pms
         boolean saveBatch = this.saveBatch(spuImages);
         List<PmsSpuImagesVo> imagesVoList = ConvertUtils.batchConvert(spuImages, PmsSpuImagesVo.class);
         return MyCurdUtils.batchInsertOrUpdate(imagesVoList, saveBatch, ResponseCode.INSERT_FAILURE);
+    }
+
+    @Override
+    public PmsSpuImagesVo getSpuImageBySpuId(Long spuId) {
+        PmsSpuImages pmsSpuImages = this.getOne(new QueryWrapper<PmsSpuImages>().lambda().eq(PmsSpuImages::getSpuId, spuId));
+        if (MyObjectUtils.isNotNull(pmsSpuImages)) {
+            return ConvertUtils.convert(pmsSpuImages, PmsSpuImagesVo.class);
+        }
+        return null;
     }
 }

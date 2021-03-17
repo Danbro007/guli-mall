@@ -49,6 +49,8 @@ public class SkuItemVo {
      */
     private Boolean hasStock;
 
+    private SmsSeckillSkuRelationVo seckillSkuVo;
+
     /**
      * 属性分组，每个属性分组包含多个基本属性。
      */

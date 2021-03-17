@@ -8,12 +8,10 @@ import com.danbro.common.enums.ResponseCode;
 import com.danbro.common.utils.*;
 import com.danbro.product.controller.vo.*;
 import com.danbro.product.controller.vo.front.SkuItemVo;
+import com.danbro.product.controller.vo.front.SmsSeckillSkuRelationVo;
 import com.danbro.product.entity.PmsSkuInfo;
 import com.danbro.product.mapper.PmsSkuInfoMapper;
-import com.danbro.product.rpc.clients.SmsMemberPriceClient;
-import com.danbro.product.rpc.clients.SmsSkuFullReductionClient;
-import com.danbro.product.rpc.clients.SmsSkuLadderClient;
-import com.danbro.product.rpc.clients.WmsWareSkuClient;
+import com.danbro.product.rpc.clients.*;
 import com.danbro.product.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,6 +70,11 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     @Autowired
     ThreadPoolExecutor threadPoolExecutor;
 
+    @Autowired
+    PmsSpuImagesService pmsSpuImagesService;
+
+    @Autowired
+    SecKillFeignService secKillFeignService;
 
     @Override
     public void batchSaveSkuInfo(List<PmsSkuInfoVo> skuInfoVoList) {
@@ -150,6 +153,14 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
     public PmsSkuInfoVo getSkuInfoById(Long skuId) {
         PmsSkuInfo pmsSkuInfo = MyCurdUtils.select(this.getById(skuId), ResponseCode.NOT_FOUND);
         PmsSkuInfoVo skuInfoVo = ConvertUtils.convert(pmsSkuInfo, PmsSkuInfoVo.class);
+        List<PmsSkuImagesVo> skuImages = pmsSkuImagesService.getSkuImageBySkuId(skuId);
+        if (MyObjectUtils.isNotNull(skuImages)) {
+            skuInfoVo.setImages(skuImages);
+            String defaultImage = findDefaultImage(skuImages);
+            if (MyStrUtils.isNotEmpty(defaultImage)) {
+                skuInfoVo.setSkuDefaultImg(defaultImage);
+            }
+        }
         List<PmsSkuSaleAttrValueVo> saleValueList = pmsSkuSaleAttrValueService.getSaleAttrValueListBySkuId(skuId);
         if (MyCollectionUtils.isNotEmpty(saleValueList)) {
             skuInfoVo.setAttr(saleValueList);
@@ -200,7 +211,13 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoMapper, PmsSkuI
             Boolean hasStock = MyCurdUtils.rpcResultHandle(wmsWareSkuClient.hasStock(pmsSkuInfoVo.getSpuId()), true);
             skuItemVo.setHasStock(hasStock);
         }, threadPoolExecutor);
-        CompletableFuture.allOf(skuImageFuture, baseAttrGroupFuture, spuInfoFuture, skuSaleAttrFuture, skuStockFuture).get();
+        CompletableFuture<Void> secKillRelationFuture = pmsSkuInfoFuture.thenAcceptAsync(pmsSkuInfoVo -> {
+            SmsSeckillSkuRelationVo skuRelationVo = MyCurdUtils.rpcResultHandle(secKillFeignService.getSecKillRelationInfo(pmsSkuInfoVo.getSkuId()), false);
+            if (skuRelationVo != null) {
+                skuItemVo.setSeckillSkuVo(skuRelationVo);
+            }
+        }, threadPoolExecutor);
+        CompletableFuture.allOf(skuImageFuture, baseAttrGroupFuture, spuInfoFuture, skuSaleAttrFuture, skuStockFuture, secKillRelationFuture).get();
         return skuItemVo;
     }
 

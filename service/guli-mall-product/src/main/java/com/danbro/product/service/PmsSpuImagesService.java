@@ -23,4 +23,7 @@ public interface PmsSpuImagesService extends IService<PmsSpuImages> {
      * @return 添加完毕后的结果
      */
     List<PmsSpuImagesVo> batchSave(List<String> images, Long spuId);
+
+
+    PmsSpuImagesVo getSpuImageBySpuId(Long spuId);
 }

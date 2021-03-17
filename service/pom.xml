@@ -18,6 +18,7 @@
         <module>guli-mall-order</module>
         <module>guli-mall-ware</module>
         <module>guli-mall-cart</module>
+        <module>guli-mall-seckill</module>
     </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

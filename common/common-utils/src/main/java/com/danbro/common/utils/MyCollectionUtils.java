@@ -1,9 +1,10 @@
 package com.danbro.common.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Danrbo
@@ -23,7 +24,7 @@ public class MyCollectionUtils {
     }
 
     public static Boolean isNotEmpty(Collection<?> collection) {
-        return CollectionUtil.isNotEmpty(collection);
+        return collection != null && collection.size() > 0;
     }
 
 
