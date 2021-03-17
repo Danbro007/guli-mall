@@ -3,6 +3,7 @@ package com.danbro.order.service;
 
 import java.util.concurrent.ExecutionException;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.danbro.common.dto.SecKillSkuDto;
 import com.danbro.common.enums.PageParam;
 import com.danbro.common.utils.Pagination;
 import com.danbro.order.controller.vo.OmsOrderVo;
@@ -69,4 +70,6 @@ public interface OmsOrderService extends IService<OmsOrder> {
      * @param payAsyncVo
      */
     void handlerPayResult(PayAsyncVo payAsyncVo);
+
+    void saveSecKillOrder(SecKillSkuDto secKillSkuDto);
 }

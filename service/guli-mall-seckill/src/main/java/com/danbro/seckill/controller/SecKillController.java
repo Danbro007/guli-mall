@@ -1,5 +1,6 @@
 package com.danbro.seckill.controller;
 
+import java.util.List;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.seckill.service.SecKillService;
 import com.danbro.seckill.vo.SmsSeckillSkuRelationVo;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author Danrbo
@@ -37,11 +36,9 @@ public class SecKillController {
 
     @ApiOperation("秒杀商品")
     @GetMapping("kill")
-    public String killSku(@RequestParam("killId") String killId,
-                          @RequestParam("randomCode") String randomCode,
-                          @RequestParam("num") Integer num) {
-        return secKillService.killSku(killId, randomCode, num);
+    public ResultBean<String> killSku(@RequestParam("killId") String killId,
+                                      @RequestParam("randomCode") String randomCode,
+                                      @RequestParam("num") Integer num) {
+        return ResultBean.ofSuccess(secKillService.killSku(killId, randomCode, num));
     }
-
-
 }

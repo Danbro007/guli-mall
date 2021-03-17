@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.danbro.common.dto.SecKillSkuDto;
 import com.danbro.common.dto.UmsMemberVo;
 import com.danbro.common.entity.ResultBean;
 import com.danbro.common.enums.PageParam;
@@ -224,6 +225,36 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             MyCurdUtils.insertOrUpdate(this.updateById(omsOrder), ResponseCode.UPDATE_FAILURE);
             // 把商品库存状态修改调
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void saveSecKillOrder(SecKillSkuDto secKillSkuDto) {
+        OmsOrder omsOrder = new OmsOrder();
+        OmsOrderItem omsOrderItem = new OmsOrderItem();
+        omsOrder.setMemberId(secKillSkuDto.getMemberId()).
+                setOrderSn(secKillSkuDto.getOrderSn()).
+                setStatus(OrderStatus.WAIT_PAY).setAutoConfirmDay(7).
+                setPayAmount(secKillSkuDto.getSecKillPrice().multiply(new BigDecimal(secKillSkuDto.getNum()))).
+                setTotalAmount(secKillSkuDto.getSecKillPrice().multiply(new BigDecimal(secKillSkuDto.getNum())));
+        boolean save = this.save(omsOrder);
+        MyCurdUtils.insertOrUpdate(save, ResponseCode.INSERT_FAILURE);
+        PmsSkuInfoVo pmsSkuInfoVo = MyCurdUtils.rpcResultHandle(pmsFeignService.getSkuInfo(secKillSkuDto.getSkuId()));
+        PmsBrandVo pmsBrandVo = MyCurdUtils.rpcResultHandle(pmsFeignService.getBrandInfo(pmsSkuInfoVo.getBrandId()));
+        PmsSpuInfoVo pmsSpuInfoVo = MyCurdUtils.rpcResultHandle(pmsFeignService.getSpuInfoBySpuId(pmsSkuInfoVo.getSpuId()));
+        omsOrderItem.setOrderSn(omsOrder.getOrderSn()).
+                setOrderId(omsOrder.getId()).
+                setSkuId(pmsSkuInfoVo.getSkuId()).
+                setSkuName(pmsSkuInfoVo.getSkuName()).
+                setSkuPrice(secKillSkuDto.getSecKillPrice()).
+                setSkuPic(pmsSkuInfoVo.getSkuDefaultImg()).
+                setSkuQuantity(secKillSkuDto.getNum()).
+                setCategoryId(pmsSkuInfoVo.getCatalogId()).
+                setSpuId(pmsSkuInfoVo.getSpuId()).
+                setSpuBrand(pmsBrandVo.getName()).
+                setSpuName(pmsSpuInfoVo.getSpuName());
+        MyCurdUtils.insertOrUpdate(orderItemService.save(omsOrderItem), ResponseCode.INSERT_FAILURE);
+
     }
 
     /**
