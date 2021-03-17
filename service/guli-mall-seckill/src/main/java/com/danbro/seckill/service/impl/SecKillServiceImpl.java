@@ -1,9 +1,6 @@
 package com.danbro.seckill.service.impl;
 
-import com.danbro.common.utils.MyCollectionUtils;
-import com.danbro.common.utils.MyCurdUtils;
-import com.danbro.common.utils.MyJSONUtils;
-import com.danbro.common.utils.MyRandomUtils;
+import com.danbro.common.utils.*;
 import com.danbro.seckill.service.PmsFeignService;
 import com.danbro.seckill.service.SecKillService;
 import com.danbro.seckill.service.SmsFeignService;
@@ -17,9 +14,11 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +44,7 @@ public class SecKillServiceImpl implements SecKillService {
 
     @Autowired
     RedissonClient redissonClient;
+
 
     @Override
     public void uploadLast3DaysSku() {
@@ -114,6 +114,79 @@ public class SecKillServiceImpl implements SecKillService {
             }
         }
         return null;
+    }
+
+    @Override
+    public String killSku(String killId, String randomCode, Integer num) {
+        // 获取秒杀的商品信息
+        BoundHashOperations<String, String, String> operations = redisTemplate.boundHashOps(SEC_KILL_SKUS_PREFIX);
+        String json = operations.get(killId);
+        if (MyStrUtils.isNotEmpty(json)) {
+            // 秒杀产品的信息
+            SmsSeckillSkuRelationVo relationVo = MyJSONUtils.parseObject(json, SmsSeckillSkuRelationVo.class);
+            if (relationVo != null) {
+                // 判断秒杀的场次、商品是否正确以及秒杀是否超时
+                if (isCurrentSecKillPromotion(relationVo, killId) &&
+                        isSecKillOverTime(relationVo) &&
+                        checkRandomCode(relationVo.getRandomCode(), randomCode)) {
+                    // 校验每个人秒杀的数量
+                    if (relationVo.getSeckillCount().compareTo(new BigDecimal(num.toString())) == 0) {
+                        // 获取信号量
+                        RSemaphore semaphore = redissonClient.getSemaphore(SEC_KILL_STOCK_PREFIX + randomCode);
+                        try {
+                            // 获取到信号量
+                            boolean acquire = semaphore.tryAcquire(num, 100, TimeUnit.MILLISECONDS);
+                            if (acquire) {
+                                // 防止单个用户重复秒杀
+                                // key:userId_sessionId_skuId
+                                String key =
+                                        redisTemplate.opsForValue().setIfAbsent()
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
+     * 判断秒杀是不是超时
+     *
+     * @param relationVo
+     */
+    private Boolean isSecKillOverTime(SmsSeckillSkuRelationVo relationVo) {
+        // 判断是不是在秒杀时间内
+        long currentTime = System.currentTimeMillis();
+        Long startTime = relationVo.getStartTime();
+        Long endTime = relationVo.getEndTime();
+        return currentTime >= startTime && currentTime <= endTime;
+    }
+
+    /**
+     * 是不是当前的秒杀活动：活动场次ID_SkuId
+     *
+     * @param relationVo
+     * @return
+     */
+    private Boolean isCurrentSecKillPromotion(SmsSeckillSkuRelationVo relationVo, String killId) {
+        return (relationVo.getPromotionId() + "_" + relationVo.getSkuId()).equals(killId);
+    }
+
+    /**
+     * 校验秒杀商品的随机码
+     *
+     * @param originRandomCode
+     * @param toCheckRandomCode
+     * @return
+     */
+    private Boolean checkRandomCode(String originRandomCode, String toCheckRandomCode) {
+        if (MyStrUtils.isNotEmpty(toCheckRandomCode)) {
+            return originRandomCode.equals(toCheckRandomCode);
+        }
+        return false;
     }
 
     /**

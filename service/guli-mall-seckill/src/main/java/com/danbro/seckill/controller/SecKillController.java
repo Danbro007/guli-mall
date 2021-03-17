@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,5 +34,14 @@ public class SecKillController {
     public ResultBean<SmsSeckillSkuRelationVo> getSecKillInfo(@PathVariable Long skuId) {
         return ResultBean.ofSuccess(secKillService.getSecKillRelationInfo(skuId));
     }
+
+    @ApiOperation("秒杀商品")
+    @GetMapping("kill")
+    public String killSku(@RequestParam("killId") String killId,
+                          @RequestParam("randomCode") String randomCode,
+                          @RequestParam("num") Integer num) {
+        return secKillService.killSku(killId, randomCode, num);
+    }
+
 
 }

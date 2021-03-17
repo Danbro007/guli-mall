@@ -23,4 +23,13 @@ public interface SecKillService {
 
     SmsSeckillSkuRelationVo getSecKillRelationInfo(Long skuId);
 
+    /**
+     * 秒杀商品
+     *
+     * @param killId     商品在缓存中的ID
+     * @param randomCode 随机码
+     * @param num        秒杀的数量
+     * @return
+     */
+    String killSku(String killId, String randomCode, Integer num);
 }
