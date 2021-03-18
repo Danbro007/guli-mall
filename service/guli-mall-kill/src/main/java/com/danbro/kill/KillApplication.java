@@ -1,31 +1,31 @@
-package com.danbro.seckill;
+package com.danbro.kill;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * @author Danrbo
- * @Classname SeckillApplication
- * @Description TODO 秒杀任务
- * @Date 2021/3/16 11:09
+ * @Classname KillApplication
+ * @Description TODO
+ * @Date 2021/3/18 20:43
+ * @Created by Administrator
  */
 
 @EnableRedisHttpSession
-@EnableSwagger2
-@EnableDiscoveryClient
 @EnableFeignClients
-@EnableScheduling
-@EnableAsync
+@EnableDiscoveryClient
+@EnableSwagger2
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-public class SecKillApplication {
+@ComponentScan(basePackages = "com.danbro")
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class KillApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SecKillApplication.class, args);
+        SpringApplication.run(KillApplication.class, args);
     }
 }

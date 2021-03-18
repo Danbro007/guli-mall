@@ -1,4 +1,4 @@
-package com.danbro.seckill.interceptor;
+package com.danbro.kill.interceptors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

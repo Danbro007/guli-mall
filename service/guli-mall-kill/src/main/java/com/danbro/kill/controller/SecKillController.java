@@ -1,9 +1,9 @@
-package com.danbro.seckill.controller;
+package com.danbro.kill.controller;
 
 import java.util.List;
 import com.danbro.common.entity.ResultBean;
-import com.danbro.seckill.service.SecKillService;
-import com.danbro.seckill.vo.SmsSeckillSkuRelationVo;
+import com.danbro.kill.service.SecKillService;
+import com.danbro.kill.vo.SmsSeckillSkuRelationVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

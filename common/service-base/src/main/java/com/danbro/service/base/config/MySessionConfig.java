@@ -2,8 +2,8 @@ package com.danbro.service.base.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
@@ -17,12 +17,14 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 public class MySessionConfig {
     /**
      * 使用 jackson 来序列化对象
+     *
      * @return
      */
     @Bean
-    public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
-        return new GenericJackson2JsonRedisSerializer();
+    public RedisSerializer<String> springSessionDefaultRedisSerializer() {
+        return new StringRedisSerializer();
     }
+
 
     @Bean
     public CookieSerializer cookieSerializer() {
@@ -31,4 +33,5 @@ public class MySessionConfig {
         serializer.setDomainName("gulimall.com");
         return serializer;
     }
+
 }

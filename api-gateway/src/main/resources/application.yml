@@ -100,6 +100,11 @@ spring:
           predicates:
             - Host=seckill.gulimall.com
 
+        - id: test_host_route
+          uri: lb://service-test
+          predicates:
+            - Host=test.gulimall.com
+
         - id: product_host_route
           uri: lb://service-pms
           predicates:
