@@ -18,7 +18,6 @@
         <module>guli-mall-order</module>
         <module>guli-mall-ware</module>
         <module>guli-mall-cart</module>
-        <module>guli-mall-seckill</module>
         <module>guli-mall-kill</module>
     </modules>
     <properties>
