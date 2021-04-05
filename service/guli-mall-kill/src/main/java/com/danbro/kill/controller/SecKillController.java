@@ -27,14 +27,15 @@ public class SecKillController {
     @ResponseBody
     @ApiOperation("获取当前在秒杀的商品列表")
     @GetMapping("currentSecKillSkuList")
-    public ResultBean<List<SmsSeckillSkuRelationVo>> getCurrentSecKillSkuList() {
+    public ResultBean<List<SmsSeckillSkuRelationVo>> getCurrentSecKillSkuList() throws InterruptedException {
         return ResultBean.ofSuccess(secKillService.getCurrentSecKillSkuList());
     }
 
     @ResponseBody
     @ApiOperation("查询要秒杀商品的秒杀信息")
     @GetMapping("seckill/info/{skuId}")
-    public ResultBean<SmsSeckillSkuRelationVo> getSecKillInfo(@PathVariable Long skuId) {
+    public ResultBean<SmsSeckillSkuRelationVo> getSecKillInfo(@PathVariable Long skuId) throws InterruptedException {
+        Thread.sleep(2000);
         return ResultBean.ofSuccess(secKillService.getSecKillRelationInfo(skuId));
     }
 
