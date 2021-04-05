@@ -24,6 +24,7 @@ public enum ResponseCode implements ResultCode {
     WECHAT_LOGIN_FAILURE("微信登录失败！", 4005),
     VALID_PRICE_FAILURE("商品验价失败！", 4007),
     LOCK_STOCK_FAILURE("锁库存失败！", 4008),
+    TOO_MANY_FLOW("访问流量太大！", 4009),
 
     /**
      * 业务代码

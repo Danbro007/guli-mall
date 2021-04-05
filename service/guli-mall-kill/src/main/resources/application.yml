@@ -5,6 +5,11 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.0.109:8848
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 192.168.0.109:8858
+        clientIp: 192.168.0.41
   redis:
     host: 192.168.0.109
     port: 6379

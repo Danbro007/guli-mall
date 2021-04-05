@@ -10,6 +10,10 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.0.109:8848
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 192.168.0.109:8858
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   rabbitmq:
@@ -23,7 +27,7 @@ spring:
     host: 192.168.0.109
     port: 6379
 server:
-  port: 8005
+  port: 8105
 
 mybatis-plus:
   global-config:
